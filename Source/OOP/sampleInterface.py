@@ -27,8 +27,8 @@ second = 3
 totalValue = myCalc.GiveMeTotal(first, second)
 print("Total value:", totalValue)
 
-diffValue = myCalc.GiveMeTotal(first, second)
+diffValue = myCalc.GiveMeDifference(first, second)
 print("Difference value:", diffValue)
 
-multipleValue = myCalc.GiveMeTotal(first, second)
+multipleValue = myCalc.GiveMeMultiple(first, second)
 print("multiple value:", multipleValue)
