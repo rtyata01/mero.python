@@ -36,16 +36,16 @@ def merge(left, right):
             current.next = right
             right = right.next
         current = current.next
-
-    current.next = left or right
+        current.next = left or right
+    
     return temp.next
 
 # test
 head = ListNode(5)
 head.next = ListNode(3)
 head.next.next = ListNode(2)
-head.next.next.next = ListNode(4)
-head.next.next.next.next = ListNode(1)
+head.next.next.next = ListNode(6)
+head.next.next.next.next = ListNode(4)
 
 sorted_head = merge_sort(head)
 
