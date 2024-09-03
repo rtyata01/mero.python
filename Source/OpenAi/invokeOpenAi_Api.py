@@ -1,5 +1,5 @@
 import os
-from openai import OpenAI
+from OpenAi import OpenAI
 from apikey import APIKEY
 
 client = OpenAI(api_key=APIKEY)

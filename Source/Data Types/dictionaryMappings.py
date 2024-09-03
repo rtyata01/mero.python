@@ -1,9 +1,9 @@
-nameGender = {'John':'Male', 'Carol':'Female', 'Sarah':'Female', 'Deer':'Animal'}
-print(nameGender)
+gender_type = {'John':'Male', 'Carol':'Female', 'Sarah':'Female', 'Deer':'Female'}
+print(gender_type)
 
 maleCount = 0
 femaleCount = 0
-for key, value in nameGender.items():
+for key, value in gender_type.items():
     if value.lower() == 'male':
         maleCount = maleCount + 1
     elif value.lower() == 'female':
@@ -14,8 +14,8 @@ for key, value in nameGender.items():
 print('Male count:', maleCount)
 print('Female count:', femaleCount)
 
-print(nameGender.keys())
-print(nameGender.values())
+print(gender_type.keys())
+print(gender_type.values())
 
-keyList = list(nameGender.keys())
+keyList = list(gender_type.keys())
 print(keyList)
