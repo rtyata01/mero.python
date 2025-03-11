@@ -111,12 +111,12 @@ def divide_numbers(a, b):
 class TestCircleShape(unittest.TestCase):
     
     def test_area(self):
-        """Test the area calculation."""
+        "Test the area calculation."
         circle = CircleShape(3)
         self.assertAlmostEqual(circle.area(), PI * 3 ** 2)
     
     def test_divide_numbers(self):
-        """Test division with error handling."""
+        "Test division with error handling."
         self.assertEqual(divide_numbers(10, 2), 5)
         self.assertIsNone(divide_numbers(10, 0))
         self.assertIsNone(divide_numbers("ten", 2))
