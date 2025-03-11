@@ -1,5 +1,7 @@
 new_person = ('John', 10, 'male', 234567890)
 print(new_person)
+print(f'Name: {new_person[0]} and Age: {new_person[1]}')
+print('Name:', new_person[0], 'and Age:', new_person[1])
 
 from collections import namedtuple
 

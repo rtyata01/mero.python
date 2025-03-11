@@ -15,8 +15,10 @@ print(list_odd_numbers)
 list_even_numbers = [x for x in range(10) if x % 2 == 0]
 print(list_even_numbers)
 
+list_words = ['ANGRY', 'Happy', 'Sad' , 'smile', 'LAUGH']
+for word in list_words:
+    print(word.lower())
 
-list_words = ['HELLO', 'HaPPy', 'sad' , 'Smile']
 lowercase_words = [word.lower() for word in list_words]
 print(lowercase_words)
 

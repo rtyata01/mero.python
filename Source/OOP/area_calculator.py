@@ -1,42 +1,42 @@
 from abc import ABC, abstractmethod
 import math
 
-class Shape(ABC):
+class GeometricShape(ABC):
     
     @abstractmethod
-    def area(self):
+    def area(self) -> float:
         pass
 
 
-class Circle(Shape):
+class Circle(GeometricShape):
     
     def __init__(self, radius):
         self.radius = radius
         
-    def area(self):
+    def area(self) -> float:
         return math.pi * self.radius ** 2
 
-class Rectange(Shape):
+class Rectange(GeometricShape):
     
     def __init__(self, width, height):
         self.width = width
         self.height = height
         
-    def area(self):
+    def area(self) -> float:
         return self.width * self.height
     
-class Triangle(Shape):
+class Triangle(GeometricShape):
     
     def __init__(self, base, height):
         self.base = base
         self.height = height
         
-    def area(self):
+    def area(self) -> float:
         return 0.5 * self.base * self.height
     
 
-def get_shape_input():
-    shape_type = input("Enter the shape (circle, rectangle, triangle): ").lower()
+def create_geometric_shape(shape_type: str) -> GeometricShape | None:
+    shape_type = shape_type.lower()
     
     if shape_type == 'circle':
         radius = float(input("Enter the radius of the circle:"))
@@ -56,10 +56,18 @@ def get_shape_input():
     return shape
 
 def main():
-    shape = get_shape_input()
     
-    if shape:
-        print(f"The area of the shape is: {shape.area()}")
+    while True:
+        shape_type = input("Enter the shape (circle, rectangle, triangle) or 'end' to stop: ").lower()
+    
+        if shape_type == 'end':
+            print("Exiting the program")
+            break
+        
+        shape = create_geometric_shape(shape_type)
+        
+        if shape:
+            print(f"The area of the shape is: {shape.area()}")
 
 if __name__ == "__main__":
     main()

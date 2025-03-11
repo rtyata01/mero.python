@@ -1,34 +1,36 @@
-class ICalculator:
-    def give_me_total(self, first, second):
-        raise NotImplementedError()
+from abc import ABC, abstractmethod
+
+class ICalculator(ABC):
     
-    def give_me_multiple(self, first, second):
-        raise NotImplementedError()
+    @abstractmethod
+    def add(self, first: float, second: float) -> float:
+        pass
     
-    def give_me_difference(self, first, second):
-        raise NotImplementedError()
+    @abstractmethod
+    def multiply(self, first: float, second: float) -> float:
+        pass
+    
+    @abstractmethod
+    def subtract(self, first: float, second: float) -> float:
+        pass
     
 class MyCalculator(ICalculator):
 
-    def give_me_total(self, first, second):
+    def add(self, first: float, second: float) -> float:
         return first + second
     
-    def give_me_multiple(self, first, second):
+    def multiply(self, first: float, second: float) -> float:
         return first * second
     
-    def give_me_difference(self, first, second):
+    def subtract(self, first: float, second: float) -> float:
         return first - second
     
 
 # Testing
-myCalc = MyCalculator()
-first = 2
-second = 3
-totalValue = myCalc.give_me_total(first, second)
-print("Total value:", totalValue)
-
-multipleValue = myCalc.give_me_multiple(first, second)
-print("multiple value:", multipleValue)
-
-diffValue = myCalc.give_me_difference(first, second)
-print("Difference value:", diffValue)
+if __name__ == "__main__":
+    my_calc = MyCalculator()
+    first, second = 12, 5
+    
+    print("Total value:", my_calc.add(first, second))
+    print("multiple value:", my_calc.multiply(first, second))
+    print("Difference value:", my_calc.subtract(first, second))

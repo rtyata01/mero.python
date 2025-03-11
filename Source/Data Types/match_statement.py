@@ -1,5 +1,4 @@
-type = 'p'
-x = 10
+type = 'a'
 
 def check_var(variable):
     match variable:
@@ -12,11 +11,10 @@ def check_var(variable):
             
 check_var(type)
 
-
 my_tuple = (1, 3, 4, 5)
 
 match my_tuple:
-    case (1, 2, 3):
+    case (1, 3, 5, 7):
         print('Sequence 1')
     case (1, 2, 3, 4):
         print('Sequence 2')
