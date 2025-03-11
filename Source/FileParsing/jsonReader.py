@@ -1,6 +1,13 @@
 import json
+import os
 
-with open('d:\git\mero.python\Source\Json Parsing\studentsData.json', 'r') as jsonFile:
+# Get the script's directory
+script_dir = os.path.dirname(__file__) 
+
+# Construct the full path to names.txt
+file_path = os.path.join(script_dir, "studentsData.json") 
+
+with open(file_path, 'r') as jsonFile:
     data = json.load(jsonFile)
 
 students = data['students']
@@ -23,5 +30,5 @@ new_student = {
 students.append(new_student)
 updated_data = json.dumps(data, indent=4)
 
-with open('d:\git\mero.python\Source\Json parsing\studentsData.json', 'w') as file:
+with open(file_path, 'w') as file:
     file.write(updated_data)

@@ -22,5 +22,5 @@ for word in list_words:
 lowercase_words = [word.lower() for word in list_words]
 print(lowercase_words)
 
-prefix_words = [word for word in lowercase_words if word.startswith('h')]
+prefix_words = [word for word in lowercase_words if word.startswith('s')]
 print(prefix_words)

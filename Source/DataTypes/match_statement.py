@@ -21,3 +21,14 @@ match my_tuple:
     case (1, (2| 3), 4, 5):
         print('Sequence 3')
         
+        
+name = input("Enter your name: ").strip().title()
+
+match name:
+    case "Harry" | "Hareather":
+        print("Hareather")
+    case "Daniel":
+        print("Danel")
+    case _:
+        print("Who?")
+        
