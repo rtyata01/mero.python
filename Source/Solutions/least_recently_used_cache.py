@@ -24,6 +24,7 @@ cache.put(1,11)
 cache.put(2,22)
 cache.put(3,33)
 cache.put(3,3333)
+
 print(f"Get cache: {cache.get(1)}")
 print(f"Get cache: {cache.get(3)}")
 cache.put(4,44)

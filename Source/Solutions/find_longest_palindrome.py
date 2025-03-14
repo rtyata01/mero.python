@@ -30,3 +30,7 @@ input = "ilikeracecar"
 print(f"Input: {input}, Longest Palindrome: {find_longest_palindrome(input)}")
 input = "hellomadam"
 print(f"Input: {input}, Longest Palindrome: {find_longest_palindrome(input)}")
+
+# time complexity = o(s_len^2), outer loop o(s_len) * 2 * inner loop o(s_len), 
+# space complexity = o(s_len)
+

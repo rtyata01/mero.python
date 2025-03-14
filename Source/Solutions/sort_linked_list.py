@@ -25,8 +25,8 @@ def merge_sort(head):
 
 # merge the sorted halves
 def merge(left, right):
-    temp = ListNode()
-    current = temp
+    dummy = ListNode()
+    current = dummy
 
     while left and right:
         if left.val < right.val:
@@ -36,19 +36,27 @@ def merge(left, right):
             current.next = right
             right = right.next
         current = current.next
-        current.next = left or right
+        current.next = left or right # Assign the remaining nodes, which ever is longer.
     
-    return temp.next
+    return dummy.next
+
+def create_tree(values):
+    dummy = ListNode()
+    current = dummy
+    
+    for value in values:
+        current.next = ListNode(value)
+        current = current.next
+    
+    return dummy.next
+
 
 # test
-head = ListNode(5)
-head.next = ListNode(3)
-head.next.next = ListNode(2)
-head.next.next.next = ListNode(6)
-head.next.next.next.next = ListNode(4)
+nodes = [5, 3, 2, 6, 4]
+head = create_tree(nodes)
 
-sorted_head = merge_sort(head)
+sorted_nodes = merge_sort(head)
 
-while sorted_head:
-    print(sorted_head.val, end="->")
-    sorted_head = sorted_head.next
+while sorted_nodes:
+    print(sorted_nodes.val, end="->")
+    sorted_nodes = sorted_nodes.next

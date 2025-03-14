@@ -40,18 +40,50 @@ class DoublyLinkedList:
         
         head, _ = in_order(root)
         return head
-            
-root = TreeNode(1)
-root.left = TreeNode(2)
-root.right = TreeNode(3)
-root.left.left = TreeNode(4)
-root.left.right = TreeNode(5)
 
+def create_tree(values):
+    if not values:
+        return None
+    
+    root = TreeNode(values[0])  # The first value is the root
+    queue = [root]  # This queue will help in assigning children nodes
+    index = 1  # Start inserting nodes after the root
+    
+    while index < len(values):
+        current = queue.pop(0)  # Pop the first element in the queue
+        
+        # Add the left child if it exists
+        if index < len(values):
+            current.left = TreeNode(values[index])
+            queue.append(current.left)  # Append the left child to the queue
+            index += 1
+        
+        # Add the right child if it exists
+        if index < len(values):
+            current.right = TreeNode(values[index])
+            queue.append(current.right)  # Append the right child to the queue
+            index += 1
+    
+    return root
+
+def print_tree(root):
+    if not root:
+        return
+    
+    print_tree(root.left)
+    print(root.val, end="->")
+    print_tree(root.right)
+
+nodes = [1, 2, 3, 4, 5]
+root = create_tree(nodes)
+print_tree(root)
+
+print()
 sol = DoublyLinkedList()
 head = sol.flatten(root)
 
 # To verify, traverse the linked list:
 current = head
 while current:
-    print(current.val, end=" ")
+    print(current.val, end="->")
     current = current.right

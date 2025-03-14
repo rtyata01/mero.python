@@ -20,7 +20,7 @@ def main():
     
     print(f"Change for {amount} cents:")
     for coin, count in change.items():
-        print(f"{count} x {coin} cents")
+        print(f"{coin} x {count}  cents")
         
 if __name__ == "__main__":
     main()

@@ -14,17 +14,18 @@ def find_anagrams(s: str, p: str):
         if i >= p_len:
             if s_count[s[i-p_len]] == 1:
                 del s_count[s[i-p_len]]
-                print(f"Remove Value: {s[i-p_len]}, count: {s_count}")
-            else:
+                # print(f"Remove Value: {s[i-p_len]}, count: {s_count}")
+            else: 
                 s_count[s[i - p_len]] -=1
-                print(f"Decrease Value: {s[i-p_len]}, count: {s_count}")
+                # print(f"Decrease Value: {s[i-p_len]}, count: {s_count}")
         
         if s_count == p_count:
-            print(f"scount: {s_count}, pcount= {p_count}")
+            # print(f"scount: {s_count}, pcount= {p_count}")
             start_index = i - p_len + 1
             result.append(start_index)
-            print(f"Anagram: {s[start_index: start_index + p_len]}")
+            print(f"Found Anagram: {s[start_index: start_index + p_len]}")
     
     return result
 
+# The final result is [0, 6], as s[0:3] = 'cba' and s[6:9] = 'bac' are both anagrams of p = "abc".
 print(find_anagrams("cbaebabacd", "abc"))

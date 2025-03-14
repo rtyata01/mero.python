@@ -28,7 +28,7 @@ def find_longest_path(matrix):
     for i in range(rows):
         for j in range(cols):
             if matrix[i][j] == 1:
-                max_path_length = max(max_path_length, dfs_traversal(i, j,))
+                max_path_length = max(max_path_length, dfs_traversal(i, j))
     
     return max_path_length
 
