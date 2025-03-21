@@ -4,8 +4,9 @@ def find_longest_path(matrix):
     if not matrix or len(matrix) == 0 or len(matrix[0]) == 0:
         return 0
     
-    rows, cols = len(matrix), len(matrix[0])    
+    rows, cols = len(matrix), len(matrix[0])       
     directions = [(-1 , 0), (1 , 0), (0, -1), (0, 1)] # up, down, left, right
+    # includes diagonal traversal = [(-1, 0), (1, 0), (0, -1), (0, 1), (-1, -1), (-1, 1), (1, -1), (1, 1)]
     max_path_length = 0
     cache = {}
     

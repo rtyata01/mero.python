@@ -69,8 +69,8 @@ def postorder_traverse(root):
     if not root:
         return
 
-    postorder_traverse(root.right)        
     postorder_traverse(root.left)
+    postorder_traverse(root.right)            
     print(root.val, "=>", end="")
         
 def tree_heigth(root):

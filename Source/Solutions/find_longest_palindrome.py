@@ -9,7 +9,7 @@ def find_longest_palindrome(s: str):
         return s[left + 1: right]
         
     for i in range(s_len):
-        print(f"Iterations {i}, Starting value: {s[i]}")
+        #print(f"Iterations {i}, Starting value: {s[i]}")
         # odd length palindromes (single character center)
         odd_palindrome = expand_around_center(i, i)
         if len(odd_palindrome) > len(longest):

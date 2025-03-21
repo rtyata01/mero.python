@@ -1,89 +1,54 @@
 class TreeNode:
-    def __init__(self, val=0, left=None, right=None):
-        self.val = val
-        self.left = left
-        self.right = right
+    def __init__(self, value):
+        self.value = value
+        self.left = None
+        self.right = None
 
-class DoublyLinkedList:    
-    def flatten(self, root: TreeNode) -> TreeNode:
+class BinaryTreeToLinkedList:
+    def __init__(self):
+        self.head = None
+        self.prev = None
+
+    def convert_to_linked_list(self, root):
+        if root is None:
+            return
         
-        if not root:
-            return None
+        # Recursively traverse the left subtree
+        self.convert_to_linked_list(root.left)
         
-        # Helper function to perform in-order traversal
-        def in_order(node):
-            if not node:
-                return None, None
-            
-            # Recursively flatten the left subtree
-            left_head, left_tail = in_order(node.left)
-            
-            # Update the current node's left pointer and right pointer
-            if left_tail:
-                left_tail.right = node
-                node.left = left_tail
-            else:
-                # If there was no left subtree, this node is the new head
-                left_head = node
-            
-            # Recursively flatten the right subtree
-            right_head, right_tail = in_order(node.right)
-            
-            if right_head:
-                right_head.left = node
-                node.right = right_head
-            else:
-                # If there was no right subtree, this node is the new tail
-                right_tail = node
-            
-            return left_head, right_tail
+        # Process the current node
+        if self.prev is not None:
+            self.prev.right = root  # Link the previous node's right to the current node
+        else:
+            self.head = root  # If it's the first node, it becomes the head of the linked list
         
-        head, _ = in_order(root)
-        return head
-
-def create_tree(values):
-    if not values:
-        return None
-    
-    root = TreeNode(values[0])  # The first value is the root
-    queue = [root]  # This queue will help in assigning children nodes
-    index = 1  # Start inserting nodes after the root
-    
-    while index < len(values):
-        current = queue.pop(0)  # Pop the first element in the queue
+        # Update the previous node to the current node
+        self.prev = root
         
-        # Add the left child if it exists
-        if index < len(values):
-            current.left = TreeNode(values[index])
-            queue.append(current.left)  # Append the left child to the queue
-            index += 1
-        
-        # Add the right child if it exists
-        if index < len(values):
-            current.right = TreeNode(values[index])
-            queue.append(current.right)  # Append the right child to the queue
-            index += 1
-    
-    return root
+        # Recursively traverse the right subtree
+        self.convert_to_linked_list(root.right)
 
-def print_tree(root):
-    if not root:
-        return
-    
-    print_tree(root.left)
-    print(root.val, end="->")
-    print_tree(root.right)
+    def print_linked_list(self):
+        current = self.head
+        while current is not None:
+            print(current.value, end=" ")
+            current = current.right  # Move to the next node in the list
+        print()
 
-nodes = [1, 2, 3, 4, 5]
-root = create_tree(nodes)
-print_tree(root)
+# Example usage
+if __name__ == "__main__":
+    # Create a sample binary tree
+    root = TreeNode(1)
+    root.left = TreeNode(2)
+    root.right = TreeNode(3)
+    root.left.left = TreeNode(4)
+    root.left.right = TreeNode(5)
+    root.right.left = TreeNode(6)
+    root.right.right = TreeNode(7)
 
-print()
-sol = DoublyLinkedList()
-head = sol.flatten(root)
+    # Convert the tree to a linked list
+    converter = BinaryTreeToLinkedList()
+    converter.convert_to_linked_list(root)
 
-# To verify, traverse the linked list:
-current = head
-while current:
-    print(current.val, end="->")
-    current = current.right
+    # Print the linked list
+    converter.print_linked_list()

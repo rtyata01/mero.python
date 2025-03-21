@@ -7,9 +7,11 @@ def find_longest_palindrome_brute_force(s: str) -> str:
     
     # Generate all substrings
     for i in range(n):
+        #print("->")
         for j in range(i + 1, n + 1):
-            substring = s[i:j]
-            if is_palindrome(substring) and len(substring) > len(longest):
+            substring = s[i:j]  #sub string start - i, end = j - 1, excluding j.
+            #print(substring, end="->")
+            if len(substring) > len(longest) and is_palindrome(substring):
                 longest = substring
     
     return longest

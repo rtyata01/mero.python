@@ -50,7 +50,6 @@ def create_tree(values):
     
     return dummy.next
 
-
 # test
 nodes = [5, 3, 2, 6, 4]
 head = create_tree(nodes)
