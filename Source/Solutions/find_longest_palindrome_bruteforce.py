@@ -11,7 +11,7 @@ def find_longest_palindrome_brute_force(s: str) -> str:
         for j in range(i + 1, n + 1):
             substring = s[i:j]  #sub string start - i, end = j - 1, excluding j.
             #print(substring, end="->")
-            if len(substring) > len(longest) and is_palindrome(substring):
+            if is_palindrome(substring) and len(substring) > len(longest):
                 longest = substring
     
     return longest
@@ -23,4 +23,4 @@ print(f"Input: {input}, Longest Palindrome: {find_longest_palindrome_brute_force
 input = "hellomadam"
 print(f"Input: {input}, Longest Palindrome: {find_longest_palindrome_brute_force(input)}")
 
-# Time complexity = O(n^3), inner and outer loop o(n^2) * o(n) palindrome check
+# Time complexity = O(n^3) = inner and outer loop o(n^2) * o(n) palindrome check

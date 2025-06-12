@@ -24,3 +24,8 @@ print(lowercase_words)
 
 prefix_words = [word for word in lowercase_words if word.startswith('s')]
 print(prefix_words)
+
+nums = [1, 2, 2, 3, 4, 4]
+unique_set = set(nums)       # Hashset Removes duplicates
+unique_list = list(unique_set)  # Converts set to list
+print(unique_list)

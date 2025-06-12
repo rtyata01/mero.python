@@ -40,7 +40,7 @@ def merge(left, right):
     
     return dummy.next
 
-def create_tree(values):
+def create_linked_list(values):
     dummy = ListNode()
     current = dummy
     
@@ -51,8 +51,8 @@ def create_tree(values):
     return dummy.next
 
 # test
-nodes = [5, 3, 2, 6, 4]
-head = create_tree(nodes)
+nodes = [5, 3, 2, 6, 4, 1]
+head = create_linked_list(nodes)
 
 sorted_nodes = merge_sort(head)
 

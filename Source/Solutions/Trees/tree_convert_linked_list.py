@@ -1,43 +1,59 @@
 class TreeNode:
-    def __init__(self, value):
-        self.value = value
+    def __init__(self, val):
+        self.val = val
         self.left = None
         self.right = None
 
-class BinaryTreeToLinkedList:
-    def __init__(self):
+class SinglyLinkedListNode:
+    def __init__(self, data):
+        self.data = data
+        self.next = None
+
+class SinglyLinkedList:
+    def convert_to_linked_list(self, root: TreeNode):
         self.head = None
-        self.prev = None
-
-    def convert_to_linked_list(self, root):
+        self.tail = None
+        
         if root is None:
-            return
+            return None
         
-        # Recursively traverse the left subtree
-        self.convert_to_linked_list(root.left)
+        def traverse_tree(root: TreeNode):
+            if root is None:
+                return
+            
+            traverse_tree(root.left)
+            new_node = SinglyLinkedListNode(root.val)
+            
+            if self.tail:
+                self.tail.next = new_node  # New node is added at the end.
+            else:
+                self.head = new_node
+                
+            self.tail = new_node  # New node will be the new tail.
+            
+            traverse_tree(root.right)
         
-        # Process the current node
-        if self.prev is not None:
-            self.prev.right = root  # Link the previous node's right to the current node
-        else:
-            self.head = root  # If it's the first node, it becomes the head of the linked list
-        
-        # Update the previous node to the current node
-        self.prev = root
-        
-        # Recursively traverse the right subtree
-        self.convert_to_linked_list(root.right)
+        traverse_tree(root)
+        return self.head
+           
 
-    def print_linked_list(self):
-        current = self.head
-        while current is not None:
-            print(current.value, end=" ")
-            current = current.right  # Move to the next node in the list
-        print()
+def print_linked_list(node: SinglyLinkedListNode):
+    current = node
+    while current is not None:
+        print(current.data, end="=>")
+        current = current.next  # Move to the next node in the list
+    print()
+    
+def print_tree(root: TreeNode):
+    if not root:
+        return None
+    
+    print_tree(root.left)
+    print(root.val, end="=>")
+    print_tree(root.right)
 
 # Example usage
 if __name__ == "__main__":
-    # Create a sample binary tree
     root = TreeNode(1)
     root.left = TreeNode(2)
     root.right = TreeNode(3)
@@ -46,9 +62,11 @@ if __name__ == "__main__":
     root.right.left = TreeNode(6)
     root.right.right = TreeNode(7)
 
-    # Convert the tree to a linked list
-    converter = BinaryTreeToLinkedList()
-    converter.convert_to_linked_list(root)
-
-    # Print the linked list
-    converter.print_linked_list()
+    print("\nTree:")
+    print_tree(root)
+    
+    sll = SinglyLinkedList()
+    head = sll.convert_to_linked_list(root)
+    
+    print("\nSingly linked list:")
+    print_linked_list(head)

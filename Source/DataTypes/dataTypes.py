@@ -10,3 +10,4 @@ print("Input in python programming***************************************")
 x = int(input('Type value of x:'))
 y = float(input('Type value of y:2'))
 print(f"Sum of {x} and {y} equals", x + y)
+

@@ -5,7 +5,6 @@ def find_max_balanced_parentheses(s):
     max_length = 0  # Maximum length of balanced parentheses
     max_start_index = 0
     
-    
     for i, char in enumerate(s):
         if char == '(':
             # Push the index of '(' onto the stack

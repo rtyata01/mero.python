@@ -1,89 +1,88 @@
 class TreeNode:
-    def __init__(self, val=0, left=None, right=None):
+    def __init__(self, val, left=None, right=None):
         self.val = val
         self.left = left
         self.right = right
 
-class DoublyLinkedList:    
-    def flatten(self, root: TreeNode) -> TreeNode:
-        
+class DoublyLinkedListNode:
+    def __init__(self, data, prev=None, next=None):
+        self.data = data
+        self.prev = prev
+        self.next = next
+
+class DoublyLinkedList:
+    def convert_to_doubly_linked_list(self, root: TreeNode):
+        self.head = None
+        self.tail = None
+
         if not root:
-            return None
-        
+            return None, None
+                    
         # Helper function to perform in-order traversal
-        def in_order(node):
+        def traverse_in_order(node):
             if not node:
-                return None, None
+                return
             
             # Recursively flatten the left subtree
-            left_head, left_tail = in_order(node.left)
+            traverse_in_order(node.left)
             
-            # Update the current node's left pointer and right pointer
-            if left_tail:
-                left_tail.right = node
-                node.left = left_tail
+            new_node = DoublyLinkedListNode(node.val)
+            
+            if self.tail:
+                self.tail.next = new_node
+                new_node.prev = self.tail
             else:
-                # If there was no left subtree, this node is the new head
-                left_head = node
+                self.head = new_node
+            
+            self.tail = new_node
             
             # Recursively flatten the right subtree
-            right_head, right_tail = in_order(node.right)
-            
-            if right_head:
-                right_head.left = node
-                node.right = right_head
-            else:
-                # If there was no right subtree, this node is the new tail
-                right_tail = node
-            
-            return left_head, right_tail
+            traverse_in_order(node.right)
         
-        head, _ = in_order(root)
-        return head
+        traverse_in_order(root)
+        return self.head, self.tail
 
-def create_tree(values):
-    if not values:
-        return None
-    
-    root = TreeNode(values[0])  # The first value is the root
-    queue = [root]  # This queue will help in assigning children nodes
-    index = 1  # Start inserting nodes after the root
-    
-    while index < len(values):
-        current = queue.pop(0)  # Pop the first element in the queue
-        
-        # Add the left child if it exists
-        if index < len(values):
-            current.left = TreeNode(values[index])
-            queue.append(current.left)  # Append the left child to the queue
-            index += 1
-        
-        # Add the right child if it exists
-        if index < len(values):
-            current.right = TreeNode(values[index])
-            queue.append(current.right)  # Append the right child to the queue
-            index += 1
-    
-    return root
-
-def print_tree(root):
+def print_tree(root: TreeNode):
     if not root:
         return
     
     print_tree(root.left)
     print(root.val, end="->")
     print_tree(root.right)
+    
+def print_linked_list_from_head(head: DoublyLinkedListNode):
+    current = head
+    while current is not None:
+        print(current.data, end="=>")
+        current = current.next  # Move to the next node in the list
+    print()
 
-nodes = [1, 2, 3, 4, 5, 7]
-root = create_tree(nodes)
-print_tree(root)
+def print_linked_list_from_tail(tail: DoublyLinkedListNode):
+    current = tail
+    while current is not None:
+        print(current.data, end="=>")
+        current = current.prev  # Move to the next node in the list
+    print()
 
-print()
-sol = DoublyLinkedList()
-head = sol.flatten(root)
+# Example usage
+if __name__ == "__main__":
+    root = TreeNode(1)
+    root.left = TreeNode(2)
+    root.right = TreeNode(3)
+    root.left.left = TreeNode(4)
+    root.left.right = TreeNode(5)
+    root.right.left = TreeNode(6)
+    root.right.right = TreeNode(7)
+    
+    print("\nTree:")
+    print_tree(root)
 
-# To verify, traverse the linked list:
-current = head
-while current:
-    print(current.val, end="->")
-    current = current.right
+    print()
+    dll = DoublyLinkedList()
+    head, tail = dll.convert_to_doubly_linked_list(root)
+    
+    print("\nDoubly linked list from head:")
+    print_linked_list_from_head(head)
+    
+    print("\nDoubly linked list from tail:")
+    print_linked_list_from_tail(tail)

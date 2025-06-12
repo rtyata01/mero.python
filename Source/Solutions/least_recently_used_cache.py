@@ -16,7 +16,7 @@ class LRUCache:
         if key in self.cache:
             self.cache.move_to_end(key)
         elif len(self.cache) >= self.capacity:
-            self.cache.popitem(last = False)
+            self.cache.popitem(last = False) # remove the first item. true value will remove the most recently used i.e. last item.
         self.cache[key] = value
         
 cache = LRUCache(capacity=3)

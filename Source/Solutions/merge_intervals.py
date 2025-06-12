@@ -6,7 +6,7 @@ def merge_intervals(intervals):
     
     # sort the interval, using interval key i.e. x[0] and using anonymous function lamda x
     # time complexity of this sort will be O(n log n)
-    intervals.sort(key= lambda x: x[0])
+    intervals.sort(key = lambda x: x[0])
     merged = [intervals[0]]
     
     for current in intervals[1:]:
@@ -24,7 +24,7 @@ print(f"Test ----------------------------------------")
 print(f"Original Input: {intervals}")
 print(f"Merged output: {merge_intervals(intervals)}")
 
-intervals = [[-1, 3], [-2, 6], [8, 10], [15, 18]]
+intervals = [[-2, 6], [-1, 3], [8, 10], [15, 18]]
 print(f"Test ----------------------------------------")
 print(f"Original Input: {intervals}")
 print(f"Merged output: {merge_intervals(intervals)}") 

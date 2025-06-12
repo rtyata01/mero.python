@@ -10,7 +10,7 @@ class Solution:
         adj_list = defaultdict(list)
         for word in wordList:
             for i in range(len(word)):
-                pattern = word[:i] + '*' + word[i+1:]  # For example, word hit have pattern h*t, hi*, *it
+                pattern = word[:i] + '*' + word[i+1:]  # For example, word hit have pattern *it, h*t, hi*, 
                 adj_list[pattern].append(word)
         
         # BFS to find the shortest paths

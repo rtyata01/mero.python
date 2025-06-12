@@ -15,13 +15,31 @@ def get_tree_level_nodes(root, level, cache_levels):
     cache_levels[level].append(root.val)
     
     # Recursively calculate the depth and collect levels for both left and right subtrees
-    left_level, cache_levels = get_tree_level_nodes(root.left, level + 1, cache_levels)
-    right_level, cache_levels = get_tree_level_nodes(root.right, level + 1, cache_levels)
+    left_height, cache_levels = get_tree_level_nodes(root.left, level + 1, cache_levels)
+    right_height, cache_levels = get_tree_level_nodes(root.right, level + 1, cache_levels)
     
     # The current level is the max depth of the left and right subtrees + 1 for the current node
-    current_level = max(left_level, right_level) + 1
+    max_height = max(left_height, right_height) + 1
     
-    return current_level, cache_levels
+    return max_height, cache_levels
+
+class Solution:
+     def get_tree_nodes(self, root: TreeNode):
+         self.cache = {}
+         
+         def traverse_nodes(node, level = 0):
+            if not node:
+                return 
+            
+            if level not in self.cache:
+                self.cache[level] = []
+                
+            self.cache[level].append(node.val)
+            traverse_nodes(node.left, level + 1)
+            traverse_nodes(node.right, level + 1)
+        
+         _ = traverse_nodes(root)
+         return self.cache
 
 # Example tree
 root = TreeNode(1)
@@ -43,3 +61,7 @@ height, levels = get_tree_level_nodes(root, start_level, cache_levels)
 print(f"Tree height: {height}")
 for key, value in levels.items():
     print("Levels:", key, "Nodes:", value)
+
+sol = Solution()
+result = sol.get_tree_nodes(root)
+print(result)
