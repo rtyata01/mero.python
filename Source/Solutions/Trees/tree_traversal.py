@@ -98,7 +98,7 @@ print("Post-Order:")
 postorder_traverse(root)
 print()
 
-
+nodes = [1, 8, 3, 4, 7, 6 , 5, 2]
 root = create_bst(nodes)
 print("Pre-Order:")
 preorder_traverse(root)

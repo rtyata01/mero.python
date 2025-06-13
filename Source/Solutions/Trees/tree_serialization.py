@@ -1,11 +1,10 @@
 from collections import deque
 
 class TreeNode:
-    def __init__(self, value):
+    def __init__(self, value, left=None, right=None):
         self.value = value
-        self.left = None
-        self.right = None
-
+        self.left = left
+        self.right = right
 
 def pre_order_traverse(node: TreeNode):
     if not node:
@@ -18,7 +17,7 @@ def pre_order_traverse(node: TreeNode):
 def tree_serialize(root: TreeNode):
     queue = deque()
     
-    def pre_inorder_traverse(node, type = "T"):
+    def pre_order_traverse(node, type = "T"):
         if not node:
             queue.append((type, "null"))
             print("null", end="->")
@@ -26,10 +25,10 @@ def tree_serialize(root: TreeNode):
         
         queue.append((type, node.value))
         print(node.value, end="->")
-        pre_inorder_traverse(node.left, "L")
-        pre_inorder_traverse(node.right, "R")
+        pre_order_traverse(node.left, "L")
+        pre_order_traverse(node.right, "R")
     
-    pre_inorder_traverse(root)
+    pre_order_traverse(root)
     return queue
 
 def tree_deserialize(queue: deque):

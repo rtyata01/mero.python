@@ -60,10 +60,11 @@ def is_balanced(root):
 nodes = [1, 2, 3, 4, 5, 6 , 7]
 root = create_bst(nodes)
 inorder_travers(root)
-print(f"Is tree balanced:", is_balanced(root))
+print(f"\nIs tree balanced:", is_balanced(root))
 
 root = TreeNode(1)
 root.left = TreeNode(3)
 root.left.left = TreeNode(5)
 root.left.left.left = TreeNode(7)
-print(f"Is tree balanced:", is_balanced(root))
+inorder_travers(root)
+print(f"\nIs tree balanced:", is_balanced(root))

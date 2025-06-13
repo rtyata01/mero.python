@@ -5,7 +5,6 @@ class TreeNode:
         self.left = left
         self.right = right
         
-
 class Codec:
     def serialize(self, root: TreeNode) -> str:
         """Encodes a tree to a single string."""

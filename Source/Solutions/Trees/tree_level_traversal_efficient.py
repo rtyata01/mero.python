@@ -4,24 +4,24 @@ class TreeNode:
         self.left = left
         self.right = right
 
-def get_tree_level_nodes(root, level, cache_levels):
+def get_tree_level_nodes(root, level, cache):
     if not root:
-        return 0, cache_levels
+        return 0, cache
     
     # Add the current node's value to the corresponding level
-    if level not in cache_levels:
-        cache_levels[level] = []
+    if level not in cache:
+        cache[level] = []
     
-    cache_levels[level].append(root.val)
+    cache[level].append(root.val)
     
     # Recursively calculate the depth and collect levels for both left and right subtrees
-    left_height, cache_levels = get_tree_level_nodes(root.left, level + 1, cache_levels)
-    right_height, cache_levels = get_tree_level_nodes(root.right, level + 1, cache_levels)
+    left_height, cache = get_tree_level_nodes(root.left, level + 1, cache)
+    right_height, cache = get_tree_level_nodes(root.right, level + 1, cache)
     
     # The current level is the max depth of the left and right subtrees + 1 for the current node
     max_height = max(left_height, right_height) + 1
     
-    return max_height, cache_levels
+    return max_height, cache
 
 class Solution:
      def get_tree_nodes(self, root: TreeNode):

@@ -4,6 +4,14 @@ class TreeNode:
         self.left = left
         self.right = right
         
+def pre_order_traverse(root):
+    if not root:
+        return None
+    
+    print(root.val, end="=>")
+    pre_order_traverse(root.left)
+    pre_order_traverse(root.right)
+        
 def create_bst(values):
     if not values:
         return None
@@ -43,17 +51,21 @@ def find_good_nodes(root):
         good_nodes_count += dfs(node.right, max_value)
         return good_nodes_count
     
-    _ = dfs(root, root.val)
+    good_nodes = dfs(root, root.val)
+    print(f"Good Nodes Count: {good_nodes}")
+    
     return cache
 
 
 # test    
 nodes = [1, 2, 3, 4, 5, 6, 7]
 root = create_bst(nodes)
+pre_order_traverse(root)
 print(f"BST Find good Nodes: {find_good_nodes(root)}")
 
 root = TreeNode(1)
 root.left = TreeNode(3)
 root.left.left = TreeNode(5)
 root.left.left.left = TreeNode(7)
+pre_order_traverse(root)
 print(f"Random Find good Nodes: {find_good_nodes(root)}")

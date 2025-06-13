@@ -31,8 +31,8 @@ def merge(left, right):
     return merged
 
 
-arr = [5, 2, 9, 1, 6, 3, 7]
+arr = [5, -2, 9, 1, 6, 3, -7]
 sorted_arr = merge_sort(arr)
-print(sorted_arr)  # Output: [1, 2, 3, 5, 6, 9]
+print(sorted_arr)
 
 # Time Complexity = O(n log n) = uses Divide and Conquer sorting algorithm.

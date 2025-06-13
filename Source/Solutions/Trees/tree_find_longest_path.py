@@ -53,9 +53,8 @@ root.left.left.left.left = TreeNode(8)
 root.left.left.left.left.left = TreeNode(10)
 root.right = TreeNode(3)
 root.right.right = TreeNode(5)
-
-print(f"Expected length: 6, Computed Length: {get_tree_longest_path(root)}")
+print(f"Expected length: 7, Computed Length: {get_tree_longest_path(root)}")
 
 tree = Tree()
-print(f"Expected length: 6, Computed Length: {tree.diameter_of_binary_tree(root)}")
+print(f"Expected length: 7, Computed Length: {tree.diameter_of_binary_tree(root)}")
 
