@@ -4,24 +4,23 @@ class TreeNode:
         self.left = left
         self.right = right
 
-def longest_tree_path(root: TreeNode, maxLength: int) -> int:
-    if not root:
-        return 0, maxLength  # Return both depth and current maxLength
-    
-    # Recursively calculate the depth of the left and right subtrees
-    left_depth, maxLength = longest_tree_path(root.left, maxLength)
-    right_depth, maxLength = longest_tree_path(root.right, maxLength)
-    
-    # Calculate the diameter at the current node
-    maxLength = max(maxLength, left_depth + right_depth)
-    
-    # Return the height of the current node and the updated maxLength
-    return max(left_depth, right_depth) + 1, maxLength
-
 def get_tree_longest_path(root: TreeNode) -> int:
-    maxLength = 0
-    _, maxLength= longest_tree_path(root, maxLength)
-    return maxLength
+    def longest_path(node: TreeNode, max_length: int) -> int:
+        if not node:
+            return 0, max_length # Return both depth and current maxLength
+        
+        # Recursively calculate the depth of the left and right subtrees
+        left_depth, max_length = longest_path(node.left, max_length)
+        right_depth, max_length = longest_path(node.right, max_length)
+        
+        # Calculate the diameter at the current node
+        max_length = max(max_length, left_depth + right_depth)
+        
+        # Return the height of the current node and the updated maxLength
+        return max(left_depth, right_depth) + 1, max_length
+    
+    max_length = 0
+    return longest_path(root, max_length)[1]
 
 class Tree:
     def diameter_of_binary_tree(self, root: TreeNode) -> int:

@@ -34,6 +34,7 @@ def find_longest_path(matrix):
 
 # time complexity = o(directions * rows * cols)
 # BFS uses queue and it does not use backtracking. This is suitable for both smaller and larger matrix. The bigger the matrix, it will consume more memory space.
+# Choose BFS for shortest path problems.
 
 matrix = [
     [1, 0, 1, 1],

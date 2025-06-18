@@ -8,7 +8,7 @@ def min_path_weight(grid):
     for i in range(rows):
         for j in range(cols):
             if grid[i][j] == -1:
-                grid[i][j] = INF
+                grid[i][j] = INF # obstacle
             elif i == 0 and j == 0:
                 continue  # start cell
             else:
@@ -29,4 +29,13 @@ grid = [
     [4, 2, 1, 1]
 ]
 
-print("Minimum weight path:", min_path_weight(grid))  # Output: 9
+print("Exprected: 9, Minimum weight path (2 directions):", min_path_weight(grid))  # Output: 9
+
+grid = [
+    [1, 3, 1, 2],
+    [1, 1, -1, 3],
+    [2, 1, 1, -1],
+    [4, 2, 1, 1]
+]
+
+print("Exprected: 7, Minimum weight path (2 directions):", min_path_weight(grid))  # Output: 9

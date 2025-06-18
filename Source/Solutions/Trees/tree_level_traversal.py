@@ -4,19 +4,19 @@ class TreeNode:
         self.left = left
         self.right = right
 
-def compute_tree_height(root):
+def tree_height(root):
     if not root:
         return 0
     
-    left_height = compute_tree_height(root.left)
-    right_height = compute_tree_height(root.right)
+    left_height = tree_height(root.left)
+    right_height = tree_height(root.right)
     
     return max(left_height, right_height) + 1
 
 def print_tree_level_nodes(root):
     values = []
     
-    tree_height = compute_tree_height(root)
+    tree_height = tree_height(root)
     print("Tree hieght: ", tree_height)
     
     def traverse_level_nodes(root, level):

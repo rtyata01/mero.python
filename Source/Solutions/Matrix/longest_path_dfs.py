@@ -29,6 +29,7 @@ def find_longest_path(matrix):
 # time complexity = o(directions * rows * cols)
 # DFS uses stack, i.e. recursive backtracking. This is normally suitable if the matrix size is fixed and smaller like 8 * 8. 
 # Recursive logic will be complex and hard to manage, when the matrix size grows.
+# Choose DFS for exhaustive search or problems involving backtracking.
 
 matrix = [
     [1, 0, 1, 1],

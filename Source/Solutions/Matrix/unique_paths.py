@@ -17,6 +17,10 @@ def unique_paths_with_obstacles(grid):
     
     return grid[-1][-1]
 
+# If the cell is free (not an obstacle), the number of paths to reach it is the sum of paths from
+#    the cell above (if any), and
+#    the cell to the left (if any).
+
 # Time Complexity: O(m * n) time and O(1) space.
 
 # 1 = free, 0 = obstacle

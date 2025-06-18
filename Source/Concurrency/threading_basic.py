@@ -10,5 +10,6 @@ def function_thread():
 first_thread = threading.Thread(target=function_thread)
 print(first_thread.is_alive())
 first_thread.start()
+print(first_thread.is_alive())
 first_thread.join() # this will block first thread, until it is released or executed.
 print(first_thread.is_alive())
