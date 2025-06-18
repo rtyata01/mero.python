@@ -1,4 +1,6 @@
-# Definition for a binary tree node.
+# Serialization: Convert a binary tree into a string so it can be stored or transmitted.
+# Deserialization: Convert the string back into the original binary tree structure.
+
 class TreeNode:
     def __init__(self, val=0, left=None, right=None):
         self.val = val

@@ -25,6 +25,14 @@ class Trie:
                 return False
             node = node.children[char]
         return True  # found the full prefix
+    
+    def search(self, word):
+        node = self.root
+        for char in word:
+            if char not in node.children:
+                return False  # character path not found
+            node = node.children[char]
+        return node.is_end_of_word  # must be the end of a valid word
 
 
 # Example usage

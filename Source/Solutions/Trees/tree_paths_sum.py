@@ -1,3 +1,6 @@
+# calculates the sum of all numbers formed by root-to-leaf paths in a binary tree, 
+# where each node contains a single digit (0–9).
+
 class TreeNode:
     def __init__(self, val=0, left=None, right=None):
         self.val = val
@@ -18,9 +21,26 @@ def find_tree_paths_sum(root):
 
     return dfs(root, 0)
 
+# If nodes may contain multi-digit values, and you want to treat the path as true string concatenation of values,
+# you need to build the number as a string, then convert it to an integer at the leaf:
+
+def find_tree_paths_sum_multi_digit(root):
+    def dfs(node, path):
+        if not node:
+            return 0
+
+        path += str(node.val)
+
+        if not node.left and not node.right:
+            return int(path)
+
+        return dfs(node.left, path) + dfs(node.right, path)
+
+    return dfs(root, "")
+
+# Use BFS for computing the sum of nodes.
 
 from collections import deque
-
 def sum_Nodes(root) -> int: 
     if not root:
         return 0
@@ -68,3 +88,18 @@ print(f"Expected output: 5447, Computed result: ", find_tree_paths_sum(root))
 # BFS Time Complexity = O(n)
 # Space Complexity avg = O(W) width of tree, worst = o(n)
 print(f"Expected output: 5447, Computed result: ", sum_Nodes(root))
+
+
+root = TreeNode(4)
+root.left = TreeNode(9)
+root.right = TreeNode(10)
+root.left.left = TreeNode(50)
+root.left.right = TreeNode(1)
+root.left.right.right = TreeNode(23)
+
+# Run and print the result
+# 4950 + 49123 + 410 = 54483
+
+# DFS Time Complexity = O(n)
+# Space Complexity avg = O(log n), worst = o(n)
+print(f"Expected output: 5447, Computed result: ", find_tree_paths_sum_multi_digit(root))

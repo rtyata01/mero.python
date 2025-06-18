@@ -13,10 +13,10 @@ class Solution:
 
 sol = Solution()
 
-# Time complexity O(n)
+# Time complexity O(n + m)
 print(sol.is_anagram("listen", "silent"))  # True
 print(sol.is_anagram("hello", "bello"))    # False
 
-# Time complexity O(n log n)
+# Time complexity O(n log n + m long m)
 print(sol.is_anagram_sort("listen", "silent"))  # True
 print(sol.is_anagram_sort("hello", "bello"))    # False

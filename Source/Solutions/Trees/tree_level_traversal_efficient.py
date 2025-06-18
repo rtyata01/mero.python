@@ -1,8 +1,31 @@
+# Collects nodes from a binary tree level by level 
+# essentially performing a level-order traversal (also known as breadth-first traversal), 
+# but using depth-first recursion.
+
 class TreeNode:
     def __init__(self, val=0, left=None, right=None):
         self.val = val
         self.left = left
         self.right = right
+
+class Solution:
+     def get_tree_nodes(self, root: TreeNode):
+         self.cache = {}
+         
+         def traverse_nodes(node, level = 0):
+            if not node:
+                return 
+            
+            if level not in self.cache:
+                self.cache[level] = []
+                
+            self.cache[level].append(node.val)
+            traverse_nodes(node.left, level + 1)
+            traverse_nodes(node.right, level + 1)
+        
+         _ = traverse_nodes(root)
+         return self.cache
+
 
 def get_tree_level_nodes(root, level, cache):
     if not root:
@@ -22,24 +45,6 @@ def get_tree_level_nodes(root, level, cache):
     max_height = max(left_height, right_height) + 1
     
     return max_height, cache
-
-class Solution:
-     def get_tree_nodes(self, root: TreeNode):
-         self.cache = {}
-         
-         def traverse_nodes(node, level = 0):
-            if not node:
-                return 
-            
-            if level not in self.cache:
-                self.cache[level] = []
-                
-            self.cache[level].append(node.val)
-            traverse_nodes(node.left, level + 1)
-            traverse_nodes(node.right, level + 1)
-        
-         _ = traverse_nodes(root)
-         return self.cache
 
 # Example tree
 root = TreeNode(1)

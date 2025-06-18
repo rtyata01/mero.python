@@ -1,3 +1,6 @@
+# SinglyLinkedList that converts a binary tree into a singly linked list.
+# the linked list nodes represent the values of the tree in in-order traversal order, as it results nodes in sorted order.
+
 class TreeNode:
     def __init__(self, val):
         self.val = val

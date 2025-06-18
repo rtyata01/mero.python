@@ -12,11 +12,11 @@ def character_replacement_with_result(s: str, k: int):
     start_index = 0  # To track the starting index of the longest window
     max_count_char = ''  # The dominant character to fill with
 
-    for right in range(len(s)):
-        count[s[right]] += 1
-        if count[s[right]] > max_count:
-            max_count = count[s[right]]
-            max_count_char = s[right]  # Update the dominant char
+    for right, char in enumerate(s):
+        count[char] += 1
+        if count[char] > max_count:
+            max_count = count[char]
+            max_count_char = char  # Update the dominant char
 
         window_size = right - left + 1
         if window_size - max_count > k:
@@ -29,8 +29,9 @@ def character_replacement_with_result(s: str, k: int):
 
     # Build the final result string using the dominant character
     result_string = s[start_index:start_index + max_len]
+    print(f"original string: ", result_string)
+    
     replaced_string = max_count_char * max_len
-
     return max_len, replaced_string
 
 

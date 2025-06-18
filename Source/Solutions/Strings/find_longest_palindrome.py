@@ -9,18 +9,18 @@ def find_longest_palindrome(s: str):
         return s[left + 1: right]
         
     for i in range(s_len):
-        #print(f"Iterations {i}, Starting value: {s[i]}")
+        # print(f"Iterations {i}, Starting value: {s[i]}")
         # odd length palindromes (single character center)
         odd_palindrome = expand_around_center(i, i)
         if len(odd_palindrome) > len(longest):
             longest = odd_palindrome
-            print(f"Found odd palindrome: {longest}")
+            # print(f"Found odd palindrome: {longest}")
         
         # even length palindromes (two character center)
         even_palindrome = expand_around_center(i, i + 1)
         if len(even_palindrome) > len(longest):
             longest = even_palindrome
-            print(f"Found even palindrome: {longest}")
+            # print(f"Found even palindrome: {longest}")
         
     return longest
 
