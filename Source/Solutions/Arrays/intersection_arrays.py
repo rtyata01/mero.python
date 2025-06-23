@@ -10,7 +10,8 @@ def intersection_with_duplicates(arr1, arr2):
 
     for num in c1:
         if num in c2:
-            result.extend([num] * min(c1[num], c2[num]))
+            # result.append([num] * min(c1[num], c2[num]))   [[2, 2], [3]]
+            result.extend([num] * min(c1[num], c2[num]))  # [2, 2, 3]
     return result
 
 

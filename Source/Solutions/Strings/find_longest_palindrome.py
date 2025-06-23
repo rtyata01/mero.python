@@ -3,7 +3,7 @@ def find_longest_palindrome(s: str):
     s_len = len(s)
     
     def expand_around_center(left: int, right: int):
-        while left >= 0 and right < s_len and s[left] == s[right]:
+        while left >= 0 and right < s_len and s[left].lower() == s[right].lower():  # case insensitive check.
             left -=1
             right +=1
         return s[left + 1: right]
@@ -22,8 +22,15 @@ def find_longest_palindrome(s: str):
             longest = even_palindrome
             # print(f"Found even palindrome: {longest}")
         
+
     return longest
 
+input = "a"
+print(f"Input: {input}, Longest Palindrome: {find_longest_palindrome(input)}")
+input = "aa"
+print(f"Input: {input}, Longest Palindrome: {find_longest_palindrome(input)}")
+input = "a b a"
+print(f"Input: {input}, Longest Palindrome: {find_longest_palindrome(input)}")
 input = "babad"
 print(f"Input: {input}, Longest Palindrome: {find_longest_palindrome(input)}")
 input = "ilikeracecar"

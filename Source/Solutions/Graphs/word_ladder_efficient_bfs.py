@@ -1,0 +1,100 @@
+# Find all shortest transformation sequences from beginWord to endWord.
+
+from collections import defaultdict, deque
+
+class Solution:
+    def findLadders(self, beginWord: str, endWord: str, wordSet: list) -> list:
+        wordSet = set(wordSet)
+        if endWord not in wordSet:
+            return []
+        
+        # Create an adjacency list where each word is linked to wordsm, with one letter or character different
+        adj_list = defaultdict(list)
+        for word in wordSet:
+            for i in range(len(word)):
+                pattern = word[:i] + '*' + word[i+1:]  # For example, word hit have pattern *it, h*t, hi*, 
+                adj_list[pattern].append(word)
+        
+        # BFS to find the shortest paths
+        queue = deque([(beginWord, [beginWord])])
+        visited = set()
+        visited.add(beginWord)
+        found = False
+        result = []
+        
+        while queue and not found:
+            level_visited = set()
+            for _ in range(len(queue)):
+                word, path = queue.popleft()
+                for i in range(len(word)):
+                    pattern = word[:i] + '*' + word[i+1:]
+                    for neighbor in adj_list[pattern]:
+                        if neighbor == endWord:
+                            result.append(path + [endWord])
+                            found = True
+                        if neighbor not in visited:
+                            level_visited.add(neighbor)
+                            queue.append((neighbor, path + [neighbor]))
+            visited.update(level_visited)
+        
+        return result
+
+# Example Usage
+sol = Solution()
+beginWord = "hit"
+endWord = "cog"
+wordList = ["hot", "dot", "dog", "lot", "log", "cog"]
+result = sol.findLadders(beginWord, endWord, wordList)
+print(f"result = {result}")
+
+# adj_list
+#{
+#  "*ot": ["hot", "dot", "lot"],
+#  "h*t": ["hot"],
+#  "ho*": ["hot"],
+#  "d*t": ["dot"],
+#  "do*": ["dot", "dog"],
+#  "*og": ["dog", "log", "cog"],
+#  "d*g": ["dog"],
+#  "l*t": ["lot"],
+#  "lo*": ["lot", "log"],
+#  "l*g": ["log"],
+#  "c*g": ["cog"],
+#  "co*": ["cog"]
+#}
+
+# word = "hit", path = ["hit"]
+# queue = deque([("hot", ["hit", "hot"])])
+# visited = {"hit"} 
+# level_visited = {"hot"}
+
+# queue = deque([("dot", ["hit", "hot", "dot"]),("lot", ["hit", "hot", "lot"])])
+# visited = {"hit", "hot"}  # Updated after finishing the level
+# level_visited = {"dot", "lot"}
+
+# queue = deque([("dog", ["hit", "hot", "dot", "dog"]), ("log", ["hit", "hot", "lot", "log"])])
+# visited = {"hit", "hot",, "dot", "lot"}  # Updated after finishing the level
+# level_visited = {"dog", "log"}
+
+# queue = deque()
+# result = [["hit", "hot", "dot", "dog", "cog"],["hit", "hot", "lot", "log", "cog"]]
+
+beginWord = "hit"
+endWord = "cog"
+wordList = ["hot","dot","dog","lot","log"]
+result = sol.findLadders(beginWord, endWord, wordList)
+print(f"result = {result}")
+
+# Same
+beginWord = "hit"
+endWord = "hit"
+wordList = ["hot","dot","dog","lot","hit"]
+result = sol.findLadders(beginWord, endWord, wordList)
+print(f"result = {result}")
+
+# no matching word, with one letter difference.
+beginWord = "hit"
+endWord = "xyz"
+wordList = ["hot","dot","dog","lot","hit"]
+result = sol.findLadders(beginWord, endWord, wordList)
+print(f"result = {result}")

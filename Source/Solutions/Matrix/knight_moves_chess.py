@@ -33,7 +33,6 @@ def min_knight_moves(start, target, blocked):
 
     return -1  # not reachable
 
-
 start = (1, 1)
 target = (7, 7)
 blocked = {(2, 1), (1, 2), (3, 3)}

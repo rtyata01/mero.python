@@ -1,3 +1,8 @@
+# Design and implement a data structure for a Least Recently Used (LRU) cache.
+# Eviction criterion: Remove the item that hasn't been accessed for the longest time.
+# Tracks: Recency of access.
+# Cache entries that have been used recently are more likely to be used again soon.
+
 from collections import OrderedDict
 
 class LRUCache:
@@ -23,11 +28,18 @@ cache = LRUCache(capacity=3)
 cache.put(1,11)
 cache.put(2,22)
 cache.put(3,33)
+# OrderedDict([(1, 11), (2, 22), (3, 33)])
 cache.put(3,3333)
+# OrderedDict([(1, 11), (2, 22), (3, 3333)])
 
 print(f"Get cache: {cache.get(1)}")
 print(f"Get cache: {cache.get(3)}")
+# OrderedDict([(2, 22), (1, 11), (3, 3333)])
 cache.put(4,44)
+# OrderedDict([(1, 11), (3, 3333), (4, 44)])
 cache.put(4,444)
+# OrderedDict([(1, 11), (3, 3333), (4, 444)])
+
 print(f"Get cache: {cache.get(2)}") # returns -1, since key was removed due to capacity limit.
-print(f"Get cache: {cache.get(4)}")
+print(f"Get cache: {cache.get(1)}")
+# OrderedDict([(3, 3333), (4, 444), (1, 11)])

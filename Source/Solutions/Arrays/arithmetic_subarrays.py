@@ -28,7 +28,7 @@ def find_arithmetic_subarrays(nums):
             for j in range(start, i):
                 if i + 1 - j >= 3:
                     new_array = nums[j:i+1]
-                    result.append(nums[j:i+1])
+                    result.append(new_array)
                     count += 1
         else:
             # Sequence broken

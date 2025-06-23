@@ -1,6 +1,9 @@
 from collections import Counter
 
 def find_anagrams(s: str, p: str):
+    s = s.lower()
+    p = p.lower()
+    
     p_len = len(p)
     p_count = Counter(p)
     s_count = Counter()
@@ -26,7 +29,13 @@ def find_anagrams(s: str, p: str):
             result.append(start_index)
             print(f"Found Anagram: {s[start_index: start_index + p_len]}")
     
+    if not result:
+        print("No anagram found.")
+        
     return result
 
 # The final result is [0, 6], as s[0:3] = 'cba' and s[6:9] = 'bac' are both anagrams of p = "abc".
 print(find_anagrams("cbaebabacd", "abc"))
+print(find_anagrams("abc", "abc"))
+print(find_anagrams("a", "abc"))
+print(find_anagrams("CBAebabACD", "abc"))

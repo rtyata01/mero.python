@@ -11,7 +11,7 @@ class Codec:
     def serialize(self, root: TreeNode) -> str:
         """Encodes a tree to a single string."""
         def dfs(node):
-            if node is None:
+            if not node:
                 return "null,"
             return str(node.val) + ',' + dfs(node.left) + dfs(node.right)
         
