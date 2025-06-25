@@ -1,9 +1,9 @@
 # use dynamic programming for finding minimum numbe rof coins, regardless of order or value.
 
 def get_min_change(denominations, amount):
-    dp = [float('inf')] * (amount + 1) # holds the minimum number of coins, fill with infinity
-    prev = [-1] * (amount + 1) # coin used to reach amount, fill with -1
-    dp[0] = 0  # 0 coins needed to make amount 0
+    dp = [float('inf')] * (amount + 1) # Start with "infinite" coins needed
+    prev = [-1] * (amount + 1)  # No coin used initially
+    dp[0] = 0   # 0 coins needed to make amount 0
 
     for coin in denominations:
         for i in range(coin, amount + 1):
@@ -33,6 +33,8 @@ amount = 12 # Amount in cents
 result = get_min_change(denominations, amount)
 print(f"Change for {amount} cents:", result)
 
+# dp =    [0, ∞, ∞, ∞, ∞, ∞, ∞]
+# prev = 
 # dp[9-9] + 1 < inf = 0 + 1 < inf = dp[9] = 1, prev[9] = 9
 # dp[6-6] + 1 < inf = 0 + 1 < inf = dp[6] = 1, prev[6] = 6
 # dp[12-6] + 1 < inf = 1 + 1 < inf = dp[12] = 2, prev[12] = 6

@@ -8,13 +8,11 @@ def min_turns_path(grid, k):
     directions = [(-1,0), (1,0), (0,-1), (0,1)]
     queue = deque()
 
-    # (x, y, direction_index, turns)
     # 0 = up, 1= down, 2 = left, 3 = right 
     for i, (dx, dy) in enumerate(directions):
-        queue.append((0, 0, i, 0))
+        queue.append((0, 0, i, 0))  # (x, y, direction_index, turns)
     
     visited = set()
-
     while queue:
         x, y, dir_idx, turns = queue.popleft()
 

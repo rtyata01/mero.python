@@ -31,3 +31,19 @@ heights = [
 ]
 
 print(f"Expected height:2, Minumum Height: ", minimumEffortPath(heights))
+
+"""
+(0,0) height=1
+-> (0,1) height=2  | diff = 1
+-> (0,2) height=2  | diff = 0
+-> (1,2) height=2  | diff = 0
+-> (2,2) height=5  | diff = 3 (But this step has effort 3, so we tried another route)
+
+Better path is:
+
+(0,0) height=1
+-> (1,0) height=3  | diff = 2
+-> (2,0) height=5  | diff = 2
+-> (2,1) height=3  | diff = 2
+-> (2,2) height=5  | diff = 2
+"""

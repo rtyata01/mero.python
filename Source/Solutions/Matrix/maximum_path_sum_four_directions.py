@@ -1,3 +1,6 @@
+# start from any cell, but end at bottom right cell.
+# find the maximum sum path reaching to end.
+
 def maximum_path_sum(grid):
     if not grid or not grid[0][0]:
         return -1
@@ -5,32 +8,29 @@ def maximum_path_sum(grid):
     rows, cols = len(grid), len(grid[0])
     directions = [(0, 1), (1, 0)] # right, down
     directions += [(0, -1), (-1, 0)] # left, up
-    NEG_INF = float('-inf')
-    max_total_cost = NEG_INF
+    max_total_cost = 0
 
     def dfs(x, y, visited):
         if (x,y) == (rows - 1, cols - 1):
             return grid[x][y]
         
         visited.add((x,y))
-        max_cost = NEG_INF
+        max_cost = 0
         
         for dx, dy in directions:
             nx, ny = x + dx, y + dy
             if (0 <= nx < rows and 0 <= ny < cols and grid[nx][ny] > 0 and (nx, ny) not in visited):
-                cost = dfs(nx, ny, visited)
-                if cost != NEG_INF:
-                    max_cost = max(max_cost, grid[x][y] + cost)
+                max_cost = max(max_cost, dfs(nx, ny, visited))
 
         visited.remove((x,y))
-        return max_cost
+        return grid[x][y] + max_cost
 
     for i in range(rows):
         for j in range(cols):
             if grid[i][j] > 0:
                 max_total_cost = max(max_total_cost, dfs(i, j, set()))
                 
-    return max_total_cost if max_total_cost != NEG_INF else -1
+    return max_total_cost
 
 grid = [
     [-1, 2, 8],

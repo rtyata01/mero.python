@@ -4,27 +4,24 @@ def maximum_path_sum(grid):
     
     rows, cols = len(grid), len(grid[0])
     directions = [(0, 1), (1, 0)] # right, down
-    NEG_INF = float('-inf')
 
     def dfs(x, y, visited):
         if (x,y) == (rows - 1, cols - 1):
             return grid[x][y]
         
         visited.add((x,y))
-        max_cost = NEG_INF
+        max_cost = 0
         
         for dx, dy in directions:
             nx, ny = x + dx, y + dy
             if (0 <= nx < rows and 0 <= ny < cols and grid[nx][ny] > 0 and (nx, ny) not in visited):
-                cost = dfs(nx, ny, visited)
-                if cost != NEG_INF:
-                    max_cost = max(max_cost, grid[x][y] + cost)
+                max_cost = max(max_cost, dfs(nx, ny, visited))
 
         visited.remove((x,y))
-        return max_cost
+        return grid[x][y] + max_cost
 
     result = dfs(0, 0, set())            
-    return result if result != NEG_INF else -1
+    return result
 
 grid = [
     [-1, 2, 8],

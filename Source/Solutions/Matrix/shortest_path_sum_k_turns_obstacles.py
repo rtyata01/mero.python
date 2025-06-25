@@ -1,5 +1,5 @@
 # In an N x M grid, you can only make at most K direction changes. 
-# Find the shortest path from start to end, with moves right and down.
+# Find the shortest path from start to end, with moves right, down, up, left
 
 import heapq
 
@@ -10,16 +10,16 @@ def min_turns_path_sum(grid, k):
     rows, cols = len(grid), len(grid[0])
     directions = {'right': (0,1), 'down':(1,0), 'left': (0,-1), 'up': (-1, 0)}
 
-    # (cost, x, y, direction_index, turns)
-    heap = []
-    for dir_name, (dx, dy) in directions.items():
+    heap = [] 
+    # start from (0,0) and travel applicable directions to add (cost, x, y, direction_index, turns)
+    for dir_name, (dx, dy) in directions.items(): 
         nx, ny = 0 + dx, 0 + dy
         if 0 <= nx < rows and 0 <= ny < cols:
             heapq.heappush(heap, (grid[0][0] + grid[nx][ny], nx, ny, dir_name, 0))
-            
-    # heap = [(3, 0, 1, 'right', 0), (5, 1, 0, 'down', 0)]
-    visited = {}
 
+    # heap = [(3, 0, 1, 'right', 0), (5, 1, 0, 'down', 0)]            
+    
+    visited = {}
     while heap:
         cost, x, y, dir_name, turns = heapq.heappop(heap)
 
