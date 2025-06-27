@@ -18,8 +18,3 @@
 # Database and Persistence
 # Data Structures and Algorigthms
 # Version Control.
-
-
-# Design Facebook’s News Feed System
-# (System Design + Coding)
-# Implement parts like the News Feed algorithm, push/pull model, or how you’d prioritize stories from friends/pages.
