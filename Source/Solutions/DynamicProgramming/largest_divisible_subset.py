@@ -62,3 +62,9 @@ print(largest_divisible_subset(nums))  # Output: [1, 3, 9]
 
 nums = [1, 2, 3, 4, 8, 9]
 print(largest_divisible_subset(nums))  # Output: [1, 2, 4, 8]
+
+# Use the Bottom-Up Iterative DP version when:
+# You want maximum performance.
+# You want fine control over path reconstruction.
+# You're solving a version with huge input sizes.
+# You're extending it to track additional things (e.g., subset count, subset sum).

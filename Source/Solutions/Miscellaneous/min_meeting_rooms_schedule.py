@@ -9,6 +9,7 @@ def min_meeting_rooms_with_schedule(meetings):
 
     # Step 1: Sort by start time with indexing
     indexed_meetings = sorted(enumerate(meetings), key=lambda x: x[1][0])
+    
     # indexed_meetings = list(enumerate(meetings))
     # indexed_meetings.sort(key=lambda x: x[1][0])
     # [(0, (0, 30)), (1, (5, 10)), (2, (15, 20))]
@@ -38,7 +39,7 @@ def min_meeting_rooms_with_schedule(meetings):
 
     return room_id_counter, room_schedule #, meeting_to_room
 
-meetings = [(0, 30), (5, 10), (15, 20)]
+meetings = [ (5, 10), (0, 30), (15, 20)]
 rooms_required, schedule = min_meeting_rooms_with_schedule(meetings)
 
 print("Rooms required:", rooms_required)
@@ -46,7 +47,7 @@ print("Schedule:")
 for room, times in schedule.items():
     print(f"Room {room}: {times}")
 
-meetings = [(0, 30), (0, 45), (5, 10), (15, 40), (35, 45)]
+meetings = [(15, 40), (5, 10), (0, 30), (0, 45), (35, 45)]
 rooms_required, schedule = min_meeting_rooms_with_schedule(meetings)
 
 print("Rooms required:", rooms_required)

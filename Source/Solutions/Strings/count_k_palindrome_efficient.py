@@ -13,7 +13,7 @@ def generate_palindromes(n):
         if n % 2 == 0:
             full = first_half_str + first_half_str[::-1]    # 12[::-1] = 1221
         else:
-            full = first_half_str + first_half_str[-half::-1]  # 12[-2::-1] = 121
+            full = first_half_str + first_half_str[-2::-1]  # 12[-2::-1] = 121
         palindromes.append(full)
     return palindromes
 

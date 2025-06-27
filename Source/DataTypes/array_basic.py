@@ -12,7 +12,6 @@ def get_integer_input() -> int:
     except ValueError:
         print(f"The input value is not an integer.")
         
-
 def print_square(size):
     # For each row 
     for i in range(size):
@@ -29,4 +28,13 @@ def print_square_blocks(size):
 def print_column(width):
     print(f"#" * width)
         
+denominations = [1, 9, 6]
+print (f"original order: {denominations}")
+
+denominations.sort()
+print (f"increasing order: {denominations}")
+
+denominations.sort(reverse = True)
+print (f"descending order: {denominations}")
+
 main()

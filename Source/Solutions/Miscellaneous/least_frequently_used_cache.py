@@ -20,6 +20,7 @@ class LFUCache:
             del self.freq_to_keys[freq]
             if freq == self.min_freq:
                 self.min_freq += 1
+                
         # Add to next frequency
         self.freq_to_keys[freq + 1][key] = None
         self.key_to_val_freq[key] = (val, freq + 1)

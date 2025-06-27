@@ -34,7 +34,7 @@ def find_kth_smallest_v2(arr, k):
     # Time complexity: O(n + k log n) is generally better when k is large 
 
 # Test
-arr = [3, 2, 1, 5, 6, 4]
+arr = [3, 2, 1, 5, 7, 8, 9, 6, 4]
 k = 4
 print(f"\n{k} largest elment in: {arr}: ")
 print(find_kth_largest(arr, k))  # Output: 4

@@ -27,17 +27,27 @@ def get_min_change(denominations, amount):
     return result
 
 # Example
+denominations = [1, 4, 3]
+amount = 6 # Amount in cents
+result = get_min_change(denominations, amount)
+print(f"Change for {amount} cents:", result)
+
+# coin 1, i=1 to 6, dp = [0, 1, 2, 3, 4, 5, 6] prev = [-1, 1, 1, 1, 1, 1, 1]
+# coin 4, i=4 to 6, dp = [0, 1, 2, 3, 1, 2, 3] prev = [-1, 1, 1, 1, 4, 4, 4]
+# coin 3, i=3 to 6, dp = [0, 1, 2, 1, 1, 2, 2] prev = [-1, 1, 1, 3, 4, 4, 3]
+
+# Example
 denominations = [9, 6, 1]
 amount = 12 # Amount in cents
 
 result = get_min_change(denominations, amount)
 print(f"Change for {amount} cents:", result)
 
-# dp =    [0, ∞, ∞, ∞, ∞, ∞, ∞]
-# prev = 
-# dp[9-9] + 1 < inf = 0 + 1 < inf = dp[9] = 1, prev[9] = 9
-# dp[6-6] + 1 < inf = 0 + 1 < inf = dp[6] = 1, prev[6] = 6
-# dp[12-6] + 1 < inf = 1 + 1 < inf = dp[12] = 2, prev[12] = 6
+# dp = [0, ∞, ∞, ∞, ∞, ∞, ∞, ∞, ∞, ∞, ∞, ∞]
+# prev = [0, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1]
+# coin 9, dp[9-9] + 1 < inf = 0 + 1 < inf = dp[9] = 1, prev[9] = 9
+# coin 6, dp[6-6] + 1 < inf = 0 + 1 < inf = dp[6] = 1, prev[6] = 6
+# coin 6, dp[12-6] + 1 < inf = 1 + 1 < inf = dp[12] = 2, prev[12] = 6
 # #
 # coin = prev[12] = 6
 # result = { 6 : 1 }

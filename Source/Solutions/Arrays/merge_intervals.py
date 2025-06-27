@@ -11,7 +11,7 @@ def merge_intervals(intervals):
     
     for current in intervals[1:]:
             last_merged = merged[-1]
-            if current[0] <= last_merged[1]:
+            if last_merged[1] >= current[0]:
                     last_merged[1] = max(last_merged[1], current[1])
             else:
                 merged.append(current)

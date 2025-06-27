@@ -49,4 +49,4 @@ amount = 12 # Amount in cents
 
 result = get_change_min_coins(denominations, amount)
 print(f"Change for {amount} cents:", result)
-    
+

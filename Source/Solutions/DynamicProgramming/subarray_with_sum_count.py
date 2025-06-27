@@ -15,13 +15,20 @@ def subarray_sum(nums, k):
 
 arr = [1, 2, 3]    
 # {0:1} 
+print(f"expected: 0, result: ", subarray_sum(arr, 10))
+
+arr = [1, 2, 3]    
+# {0:1} 
 # {0:1, 1:1}
 # {0:1, 1:1, 3:1}
-# {0:1, 1:1, 3:1, 6:2}  # sum, count
+# {0:1, 1:1, 3:2}  # sum, count
 print(f"expected: 2, result: ", subarray_sum(arr, 3))
 
 arr = [1, 1, 1]    
 print(f"expected: 2, result: ", subarray_sum(arr, 2))
 
 arr = [1, -1, 0]   
+print(f"expected: 3, result: ", subarray_sum(arr, 0))
+
+arr = [1, -1, 0 , -2, 2]   
 print(f"expected: 3, result: ", subarray_sum(arr, 0))

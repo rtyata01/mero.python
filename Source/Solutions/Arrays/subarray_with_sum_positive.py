@@ -1,3 +1,6 @@
+# Count how many contiguous subarrays of nums, whose sum is exactly equal to k.
+# Works only for positive numbers.
+
 def subarray_sum_positive(nums, k):
     count = 0
     left = 0
