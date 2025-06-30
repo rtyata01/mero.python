@@ -45,7 +45,7 @@ print(f"Expected: 3, longest increasing sub sequence: {result}")
 arr = [2, 2, 2, 2, 2]
 print(f"Expected: 1, longest increasing sequence count: ", longest_increasing_sequence(arr))
 result = longest_increasing_sub_sequence(arr)
-print(f"Expected: 3, longest increasing sub sequence: {result}")
+print(f"Expected: 1, longest increasing sub sequence: {result}")
 
 arr = [1, 3, 5, 4, 7, 8, 9, 15, 10, 17]
 print(f"Expected: 5, longest increasing sequence count: ", longest_increasing_sequence(arr))

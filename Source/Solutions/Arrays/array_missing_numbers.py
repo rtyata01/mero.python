@@ -12,10 +12,11 @@ def find_missing_numbers_efficient(nums):
             result.append(num)
 
      # Calculate how many more missing numbers needed to match input length
-    missing_count = len(nums) - (len(num_set) + len(result))
+    missing_count = len(nums) - len(num_set) + len(result)
     
     if missing_count > 0:
-        missing = range(max_val + 1, max_val + 1 + missing_count)
+        start = max_val + 1
+        missing = range(start, start + missing_count)
         result.extend(missing)
     
     return result
@@ -32,8 +33,8 @@ def find_missing_numbers(nums):
 
     # Find missing numbers between the sorted unique numbers
     for i in range(1, len(sorted_unique)):
-        prev = sorted_unique[i - 1]
         curr = sorted_unique[i]
+        prev = sorted_unique[i - 1]
         missing = range(prev + 1, curr)
         result.extend(missing)
 

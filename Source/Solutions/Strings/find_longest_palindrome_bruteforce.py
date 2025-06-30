@@ -9,14 +9,14 @@ def find_longest_palindrome_brute_force(s: str) -> str:
     for i in range(n):
         #print("->")
         for j in range(i + 1, n + 1):
-            substring = s[i:j]  #sub string start - i, end = j - 1, excluding j.
-            #print(substring, end="->")
-            if is_palindrome(substring) and len(substring) > len(longest):
-                longest = substring
+            new_string = s[i:j]  # substring start with i, end with j - 1, excluding j.
+            #print(new_string, end="->")
+            if is_palindrome(new_string) and len(new_string) > len(longest):
+                longest = new_string
     
     return longest
 
-input = "babad"
+input = "aba"
 print(f"Input: {input}, Longest Palindrome: {find_longest_palindrome_brute_force(input)}")
 input = "ilikeracecar"
 print(f"Input: {input}, Longest Palindrome: {find_longest_palindrome_brute_force(input)}")

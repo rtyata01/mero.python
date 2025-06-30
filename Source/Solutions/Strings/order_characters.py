@@ -1,9 +1,13 @@
-from collections import Counter
+from collections import Counter, defaultdict
 
 def custom_sort(input_str, order):
-    count = {}
+    # count = {}                      
+    # for char in input_str:
+    #    count[char] = count.get(char, 0) + 1
+        
+    count = defaultdict(int)
     for char in input_str:
-        count[char] = count.get(char, 0) + 1
+        count[char] +=1
 
     # Add characters in the order specified
     result = []

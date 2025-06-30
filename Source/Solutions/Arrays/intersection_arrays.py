@@ -1,6 +1,9 @@
 def intersection(arr1, arr2):
     return list(set(arr1) & set(arr2))
 
+def union(arr1, arr2):
+    return list(set(arr1 + arr2))
+
 from collections import Counter
 
 def intersection_with_duplicates(arr1, arr2):
@@ -18,5 +21,6 @@ def intersection_with_duplicates(arr1, arr2):
 arr1 = [4, 2, 3, 2, 1]
 arr2 = [3, 2, 2, 5]
 
+# print(union(arr1, arr2))  # Output: [1, 2, 3, 4, 5]
 print(intersection(arr1, arr2))  # Output: [2, 3]
 print(intersection_with_duplicates(arr1, arr2))  # Output: [2, 2, 3]

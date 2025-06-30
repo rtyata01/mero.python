@@ -36,3 +36,6 @@ print(palindrome_pairs(words)) # Output: [(1, 0), (0, 1)]
 
 words = ["lls", "s", "sssll"]
 print(palindrome_pairs(words)) 
+
+words = ["ab", "a", "ba"]
+print(palindrome_pairs(words)) 

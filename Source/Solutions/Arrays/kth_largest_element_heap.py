@@ -26,12 +26,16 @@ def find_kth_smallest(nums, k):
     # Time complexity: O(n log k) is better for small k, 
 
 def find_kth_smallest_v2(arr, k):
-    heapq.heapify(arr)  # Convert array into a min-heap
-    for _ in range(k - 1):  # Pop k-1 smallest elements
-        heapq.heappop(arr)
-    return heapq.heappop(arr)  # The k-th smallest element
+    if not 1 <= k <= len(arr):
+        raise ValueError("k must be between 1 and the length of the list.")
 
-    # Time complexity: O(n + k log n) is generally better when k is large 
+    min_heap = arr[:]  # equivalent to arr.copy(), which creates a new array object with the same elements.
+    heapq.heapify(min_heap)
+
+    for _ in range(k - 1):
+        heapq.heappop(min_heap)
+
+    return min_heap[0]
 
 # Test
 arr = [3, 2, 1, 5, 7, 8, 9, 6, 4]

@@ -37,10 +37,10 @@ def character_replacement_with_result(s: str, k: int):
 
 #"ACABD" → replace 'C' and 'B' with 'A' → "AAAA"
 length, result = character_replacement_with_result("ACABD", 2)
-print(f"Expected: 4, Replacing 2 characters, longest possible string lenght: {length}, replaced string: {result}")
+print(f"Expected: 4, Replacing 2 characters, longest possible string length:{length}, replaced string: {result}")
 
 length, result = character_replacement_with_result("AABABBD", 2)
-print(f"Expected: 5, Replacing 2 characters, longest possible string lenght: {length}, replaced string: {result}")
+print(f"Expected: 5, Replacing 2 characters, longest possible string length: {length}, replaced string: {result}")
 
 length, result = character_replacement_with_result("ABCABBD", 2)
-print(f"Expected: 5, Replacing 2 characters, longest possible string lenght: {length}, replaced string: {result}")
+print(f"Expected: 5, Replacing 2 characters, longest possible string length: {length}, replaced string: {result}")
