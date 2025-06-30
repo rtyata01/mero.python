@@ -1,9 +1,12 @@
-# Roll dice, with constraint rollMax. 
+# Roll die, with constraint rollMax. 
 # It allows specific dice face to roll consecutively i.e. repeatedly as specified by rollMax array.
+
+# die = one die = has six side.
+# dice = tow or more die.
 
 import random
 
-def constrained_dice_roll(n, rollMax):
+def constrained_die_roll(n, rollMax):
     results = []
     last_face = None
     current_streak = 0
@@ -36,8 +39,8 @@ def constrained_dice_roll(n, rollMax):
 # Example usage
 n = 10
 rollMax = [2, 0, 1, 2, 2, 3]
-result = constrained_dice_roll(n, rollMax)
-print("Constrained Dice Roll:", result)
+result = constrained_die_roll(n, rollMax)
+print("Constrained Die Roll:", result)
 
 # rollMax[0] = 2 means, face 1 cannot appear more than 2 time consecutively. if it appears 3rd time consecutively, then it should be blocked.
 # rollMaz[1] = 0 means, face 2 cannot appear at all. If it appears face 2, then roll again for different face.
