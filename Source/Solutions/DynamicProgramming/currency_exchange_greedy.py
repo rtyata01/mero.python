@@ -20,7 +20,7 @@ def get_change_min_coins(denominations, amount):
     best_result = None
     min_count = float('inf')
 
-    # Try greedy with all subsets where 0 or more largest coins are removed
+    # Try greedy with all subsets in decescending order.
     sorted_denoms = sorted(denominations, reverse=True)
     for i in range(len(sorted_denoms)):
         subset = sorted_denoms[i:]  # Try skipping largest i coins
@@ -50,3 +50,7 @@ amount = 12 # Amount in cents
 result = get_change_min_coins(denominations, amount)
 print(f"Change for {amount} cents:", result)
 
+denominations = [10, 8, 2, 1]
+amount = 35
+result = get_change_min_coins(denominations, amount)
+print(f"[Not-optimal] Change for {amount} cents:", result) # 5 = 10 + 8*3 + 1 

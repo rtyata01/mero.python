@@ -1,5 +1,8 @@
 class Solution:
-    def recurse(self, n, cache):
+    def recurse(self, n, cache=None):
+        if cache is None:
+            cache = {}
+            
         if n == 1:
             return 1
         if n == 2:
@@ -12,7 +15,7 @@ class Solution:
         return cache[n]
     
     def num_stairs(self, n):
-        return self.recurse(n, {})
+        return self.recurse(n)
     
 sln = Solution()
 result = sln.num_stairs(5)

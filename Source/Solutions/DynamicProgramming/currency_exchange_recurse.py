@@ -1,4 +1,12 @@
 class Solution:
+    
+    def print_optimal_change(self, denominations, amount):
+        optimal_change = self.get_min_change_all(denominations, amount)
+        print(f"All minimum coin combinations to make {amount}:")
+        for change in optimal_change:
+            print(change)
+        print(f"Number of minimum combinations: {len(optimal_change[0])}")
+        
     def get_min_change_all(self, denominations, amount, cache=None):
         if cache is None:
             cache = {}
@@ -35,10 +43,8 @@ class Solution:
 sol = Solution()
 denominations = [1, 3, 4]
 amount = 6
+sol.print_optimal_change(denominations, amount)
 
-all_min_combinations = sol.get_min_change_all(denominations, amount)
-
-print(f"All minimum coin combinations to make {amount}:")
-for combo in all_min_combinations:
-    print(combo)
-print(f"Number of minimum combinations: {len(all_min_combinations[0])}")
+denominations = [10, 8, 2, 1]
+amount = 35
+sol.print_optimal_change(denominations, amount)

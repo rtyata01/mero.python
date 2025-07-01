@@ -3,6 +3,13 @@
 from collections import defaultdict
 
 class Solution:
+    def print_subarrays_with_sum(self, nums, target):
+        subarrays = self.find_subarrays_with_sum(arr, target_sum)
+        print(f"Count: {len(subarrays)}")
+        print("Subarrays with sum = ", target_sum)
+        for sub in subarrays:
+            print(sub)
+    
     def find_subarrays_with_sum(self, nums, target, cache=None):
         if cache is None:
             cache = {}
@@ -36,10 +43,5 @@ class Solution:
 sol = Solution()
 arr = [1, -1, 0, -2, 2]
 target_sum = 0
-subarrays = sol.find_subarrays_with_sum(arr, target_sum)
-print(f"Count: {len(subarrays)}")
-print("Subarrays with sum =", target_sum)
-for sub in subarrays:
-    print(sub)
-
+sol.print_subarrays_with_sum(arr, target_sum)
 # [1, -1, 0, -2, 2], [0, -2, 2], [-2, 2]

@@ -7,7 +7,7 @@ def largest_divisible_subset(nums):
     dp = [1] * n           # dp[i] = size of largest subset ending with nums[i]
     prev = [-1] * n        # to reconstruct path
 
-    max_size = 1
+    max_size = 0
     max_index = 0
 
     for i in range(1, n):
@@ -20,13 +20,13 @@ def largest_divisible_subset(nums):
             max_index = i
 
     # Reconstruct subset
-    answer = []
+    result = []
     current = max_index
     while current != -1:
-        answer.append(nums[current])
+        result.append(nums[current])
         current = prev[current]
 
-    return answer[::-1]  # reverse to get correct order
+    return result[::-1]  # reverse to get correct order
 
 # Example usage:
 nums = [1, 2, 4, 8]

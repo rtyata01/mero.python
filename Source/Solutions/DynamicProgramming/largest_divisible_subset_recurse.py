@@ -1,3 +1,5 @@
+# Find the Largest Divisible Subset using DFS with memoization.
+
 class Solution:
     def largest_divisible_subset(self, nums):
         if not nums:
@@ -7,7 +9,7 @@ class Solution:
         n = len(nums)
         cache = {}
 
-        def dfs(i):
+        def dfs_recurse(i):
             if i in cache:
                 return cache[i]
 
@@ -15,20 +17,20 @@ class Solution:
 
             for j in range(i + 1, n):
                 if nums[j] % nums[i] == 0:
-                    candidate = dfs(j)
+                    candidate = dfs_recurse(j)
                     if len(candidate) + 1 > len(max_subset):
                         max_subset = [nums[i]] + candidate
 
             cache[i] = max_subset
             return max_subset
 
-        max_subset = []
+        largest_subset = []
         for i in range(n):
-            subset = dfs(i)
-            if len(subset) > len(max_subset):
-                max_subset = subset
+            subset = dfs_recurse(i)
+            if len(subset) > len(largest_subset):
+                largest_subset = subset
 
-        return max_subset
+        return largest_subset
 
 nums = [1, 2, 4, 8]
 sol = Solution()
