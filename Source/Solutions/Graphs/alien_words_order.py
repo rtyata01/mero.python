@@ -1,3 +1,5 @@
+# Given sorted list of words in alien dictionary, find the correct character order in that language.
+
 from collections import defaultdict, deque
 
 def alien_order(words):
@@ -38,12 +40,12 @@ def alien_order(words):
 
     # If not all characters are in the result → cycle exists
     if len(order) < len(in_degree):
-        return ""
+        return "cannot find the error, cycle exists or gap exists"
 
     return "".join(order)
 
 
-words = ["wrt", "wrf", "er", "ett", "rftt"]
+words = ["x", "wrt", "wrf", "er", "ett", "rftt"]  # sorted list of words
 print(alien_order(words))  # Output: "wertf"
 
 # in_degree = {'w': 0, 'r': 0, 't': 0, 'f': 0, 'e': 0 }

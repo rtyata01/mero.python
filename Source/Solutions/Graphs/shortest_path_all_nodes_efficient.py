@@ -5,31 +5,31 @@ from collections import deque
 
 def shortest_path_length(graph):
     n = len(graph)
-    all_nodes = frozenset(range(n)) #frozenset is an immutable version of a set, once created it cannot be changed.
+    all_visited = (1 << n) - 1  # Bitmask when all nodes are visited
     queue = deque()
     visited = set()
 
-    # Initialize BFS for each node with visited set = {node} and steps = 0
+    # Initialize BFS with each node as a starting point
     for node in range(n):
-        state = (node, frozenset([node]), 0)  # (current_node, visited_set, steps)
-        queue.append(state)
-        visited.add((node, frozenset([node])))
+        mask = 1 << node
+        queue.append((node, mask, 0))  # (current_node, visited_mask, steps)
+        visited.add((node, mask))
 
     while queue:
-        current_node, visited_set, steps = queue.popleft()
+        current_node, visited_mask, steps = queue.popleft()
 
-        # If all nodes visited, return the number of steps
-        if visited_set == all_nodes:
+        # If all nodes are visited, return the number of steps
+        if visited_mask == all_visited:
             return steps
 
         for neighbor in graph[current_node]:
-            new_visited = visited_set | frozenset([neighbor])
-            state = (neighbor, new_visited)
+            next_mask = visited_mask | (1 << neighbor)
+            state = (neighbor, next_mask)
             if state not in visited:
                 visited.add(state)
-                queue.append((neighbor, new_visited, steps + 1))
+                queue.append((neighbor, next_mask, steps + 1))
 
-    return -1  # Should not happen for connected graphs
+    return -1  # If no valid path exists (shouldn't happen for connected graphs)
 
 # Example usage
 graph = [
@@ -48,4 +48,4 @@ graph = [
     [1]        # Node 3 connects to 1
 ]
 
-print(f"Expected: 3, Shortest Path Length: {shortest_path_length(graph)}") 
+print(f"Expected: 3, Shortest Path Length: {shortest_path_length(graph)}")

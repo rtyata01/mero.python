@@ -3,24 +3,26 @@
 from collections import defaultdict, deque
 
 class Solution:
-    def findLadders(self, beginWord: str, endWord: str, wordSet: list) -> list:
-        wordSet = set(wordSet)
-        if endWord not in wordSet:
-            return []
+    def findLadders(self, beginWord: str, endWord: str, words: list) -> list:
+        if beginWord == endWord:
+            return [[beginWord]]
         
-        # Create an adjacency list where each word is linked to wordsm, with one letter or character different
-        adj_list = defaultdict(list)
-        for word in wordSet:
+        wordset = set(words)
+        if endWord not in wordset:
+            return []
+    
+        # Create an adjacency list where each word is linked to words, with one letter or character different
+        adj = defaultdict(list)
+        for word in wordset:
             for i in range(len(word)):
                 pattern = word[:i] + '*' + word[i+1:]  # For example, word hit have pattern *it, h*t, hi*, 
-                adj_list[pattern].append(word)
+                adj[pattern].append(word)
         
         # BFS to find the shortest paths
-        queue = deque([(beginWord, [beginWord])])
-        visited = set()
-        visited.add(beginWord)
-        found = False
         result = []
+        queue = deque([(beginWord, [beginWord])])
+        visited = set([beginWord])
+        found = False
         
         while queue and not found:
             level_visited = set()
@@ -28,7 +30,7 @@ class Solution:
                 word, path = queue.popleft()
                 for i in range(len(word)):
                     pattern = word[:i] + '*' + word[i+1:]
-                    for neighbor in adj_list[pattern]:
+                    for neighbor in adj[pattern]:  # adj.get(pattern, []):
                         if neighbor == endWord:
                             result.append(path + [endWord])
                             found = True

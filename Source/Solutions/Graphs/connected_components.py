@@ -21,6 +21,13 @@ class Solution:
                 components += 1
         
         return components
+    
+# O(n)        → create node entries
+# + O(e)      → build adjacency list
+# + O(n)      → visited list
+# + O(n + e)  → DFS traversal
+#------------------------
+# = O(n + e)
 
 # Example Usage
 sol = Solution()

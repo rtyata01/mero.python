@@ -23,10 +23,10 @@ def min_trio_degree(n, edges):
     # Try all triplets (i, j, k)
     for i in range(1, n + 1):
         for j in range(i + 1, n + 1):
-            if not graph[i][j]:
+            if not graph[i][j]:   # equivalent to (graph[i][j] == False)
                 continue
             for k in range(j + 1, n + 1):
-                if graph[i][k] and graph[j][k]:
+                if graph[i][k] and graph[j][k]:  # equivalent to (graph[i][k] == True)
                     # Connected trio found
                     # Trio degree = sum of degrees - 6
                     total_deg = degree[i] + degree[j] + degree[k] - 6
@@ -37,7 +37,7 @@ def min_trio_degree(n, edges):
 
 n = 6
 edges = [[1, 2], [2, 3], [3, 1], [4, 1], [5, 2], [6, 3]]
-print(min_trio_degree(n, edges))  # Output: 0
+print(f"Expected: 3, Expected Min Tri Degree: ", min_trio_degree(n, edges))  # Output: 0
 
 
 #     4
@@ -55,3 +55,6 @@ print(min_trio_degree(n, edges))  # Output: 0
 # if you add connections from 1 to 6, then 1, 3 and 6 will be another connected trio.
 # min_trio(1,3,6) = 4 + 3 + 2 - 6 = 3
 # min_trio(1,2,3) = 4 + 3 + 3 - 6 = 4
+n = 6
+edges = [[1, 2], [1, 6], [2, 3], [3, 1], [4, 1], [5, 2], [6, 3]]
+print(f"Expected: 3, Expected Min Tri Degree: ", min_trio_degree(n, edges))  # Output: 0

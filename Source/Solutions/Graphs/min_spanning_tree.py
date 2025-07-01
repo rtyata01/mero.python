@@ -1,39 +1,51 @@
+# A Minimum Spanning Tree is a subset of the edges of a graph that connects all the vertices together, without any cycles, 
+# and with the minimum possible total edge weight.
+
 import heapq
+from collections import defaultdict
 
 class Solution:
-    def minSpanningTree(self, n: int, edges: list) -> int:
-        """ A Minimum Spanning Tree is a subset of the edges of a graph that connects all the vertices together, without any cycles, and with the minimum possible total edge weight."""
+    def min_spanning_tree_weight(self, n: int, edges: list) -> int:
+        if n == 0:
+            return 0
         
-        adj = {i: [] for i in range(n)}
-        for u, v, weight in edges:
-            adj[u].append((v, weight))
-            adj[v].append((u, weight))
+        # Build adjacency list
+        adj = defaultdict(list)
+        for u, v, w in edges:
+            adj[u].append((v, w))
+            adj[v].append((u, w))
         
-        # Prim's algorithm
-        min_heap = [(0, 0)]  # (weight, node) The heap will need to prioritize the weight first, so order matters.
-        in_mst = [False] * n
-        mst_weight = 0
-        edges_used = 0
+        visited = [False] * n
+        min_heap = [(0, 0)]  # Start with edge weight 0, from node 0.
+        total_weight = 0
+        nodes_visited = 0
         
-        while min_heap and edges_used < n:
+        while min_heap and nodes_visited < n:
             weight, node = heapq.heappop(min_heap)
-            if in_mst[node]:
+            if visited[node]:
                 continue
-            in_mst[node] = True
-            mst_weight += weight
-            edges_used += 1
             
-            for neighbor, edge_weight in adj[node]:
-                if not in_mst[neighbor]:
-                    heapq.heappush(min_heap, (edge_weight, neighbor))
+            visited[node] = True
+            total_weight += weight
+            nodes_visited += 1
+            
+            for neighbor, w in adj[node]:
+                if not visited[neighbor]:
+                    heapq.heappush(min_heap, (w, neighbor))
         
-        return mst_weight
+        # Check if all nodes were visited (i.e., graph is connected)
+        return total_weight if nodes_visited == n else -1
+
+# Time Complexity
+# Building Graph = o(m) = m is number of edges, n is number of nodes
+# Heap operations: o(m log n) = m heap insertions with each o(log n)
+
 
 # Example Usage
 sol = Solution()
 n = 4
-edges = [[0, 1, 1], [0, 2, 2], [1, 2, 3], [1, 3, 1], [2, 3, 1]]
-print(f"Minimum spanning tree weight: {sol.minSpanningTree(n, edges)}")
+edges = [[0, 1, 1], [0, 2, 2], [1, 2, 3], [1, 3, 1], [2, 3, 1]] # edges with weight
+print(f"Minimum spanning tree weight: {sol.min_spanning_tree_weight(n, edges)}")
 # The smallest edges are selected to grow the MST: (0, 1), (1, 3), and (2, 3).
 # The total weight of the MST will be the sum of these edges: 1 + 1 + 1 = 3.
 
@@ -49,6 +61,6 @@ edges = [
     [3, 5, 3],  # Edge between node 3 and node 5 with weight 3
     [0, 5, 7]   # Edge between node 0 and node 5 with weight 7
 ]
-print(f"Minimum spanning tree weight: {sol.minSpanningTree(n, edges)}")
+print(f"Minimum spanning tree weight: {sol.min_spanning_tree_weight(n, edges)}")
 # The smallest edges are selected to grow the MST: (0, 2), (1, 2), (1, 3), (3, 4) and (3, 5)
 # The total weight of the MST is: 3 + 1 + 2 + 2 + 3 = 11.

@@ -18,7 +18,7 @@ def findLadders(beginWord, endWord, wordList):
                 for c in 'abcdefghijklmnopqrstuvwxyz':
                     new_word = word[:i] + c + word[i+1:]
                     if new_word in wordSet:
-                        new_layer[new_word] += [j + [new_word] for j in layer[word]]
+                        new_layer[new_word] += [path + [new_word] for path in layer[word]]
         wordSet -= set(new_layer.keys())
         layer = new_layer
 
