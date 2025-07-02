@@ -14,9 +14,9 @@ def alien_order(words):
         word1, word2 = words[i], words[i+1]
         min_len = min(len(word1), len(word2))
         
-        # Check for prefix case like ["abc", "ab"]
+        # Check for invalid ordering like ["abc", "ab"], where ab is expected to be first.
         if len(word1) > len(word2) and word1[:min_len] == word2[:min_len]:
-            return ""
+            return "invalid order detected in inputs."
 
         for j in range(min_len):
             if word1[j] != word2[j]:
@@ -46,7 +46,7 @@ def alien_order(words):
 
 
 words = ["x", "wrt", "wrf", "er", "ett", "rftt"]  # sorted list of words
-print(alien_order(words))  # Output: "wertf"
+print(alien_order(words))  # Output: "xwertf"
 
 # in_degree = {'w': 0, 'r': 0, 't': 0, 'f': 0, 'e': 0 }
 # graph = {'t': {'f'}, 'w': {'e'},'r': {'t'},'e': {'r'}}

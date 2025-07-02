@@ -35,7 +35,7 @@ def min_trio_degree(n, edges):
     return min_trio if min_trio != math.inf else -1
 
 
-n = 6
+n = 6 # note, node start from index 1 here but not index 0.
 edges = [[1, 2], [2, 3], [3, 1], [4, 1], [5, 2], [6, 3]]
 print(f"Expected: 3, Expected Min Tri Degree: ", min_trio_degree(n, edges))  # Output: 0
 

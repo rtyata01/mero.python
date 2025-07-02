@@ -32,7 +32,7 @@ class Solution:
 # Example Usage
 sol = Solution()
 
-n = 5
+n = 5 # note, node start from index 0 here but not index 1.
 edges = [[0, 1], [1, 2], [3, 4]]
 print(f"Number of connected components: {sol.numComponents(n, edges)}")
 # The graph has 5 nodes and 2 connected components.

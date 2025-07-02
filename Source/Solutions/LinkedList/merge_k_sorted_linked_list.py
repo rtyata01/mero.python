@@ -17,7 +17,7 @@ class Solution:
         
         for node in lists:
             if node:
-                heapq.heappush(heap, (node.val, id(node), node))  # insert head from each linked list to heap.
+                heapq.heappush(heap, (node.val, id(node), node))  # insert head node from each linked list to heap.
                 # id(node) in the tuple. it will prevent TypeError when pushing nodes with same value.
                 
         head = ListNode()
@@ -54,10 +54,10 @@ def print_linked_list(node : ListNode):
 # Space complexity: o (k), number of nodes in heap at any time.
 
 # This solution only works for sorted lists.
-list1 = create_linked_list([-1, 2, 4, 5])
-list2 = create_linked_list([1, 3, 4])
-list3 = create_linked_list([2, 6])
-lists = [list1, list2, list3]
+head1 = create_linked_list([-1, 2, 4, 5])
+head2 = create_linked_list([1, 3, 4])
+head3 = create_linked_list([2, 6])
+lists = [head1, head2, head3]
 
 # Run
 solution = Solution()

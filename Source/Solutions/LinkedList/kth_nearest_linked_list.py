@@ -4,6 +4,9 @@ class ListNode:
         self.next = next
 
 def find_kth_from_end(head: ListNode, k: int) -> int:
+    if k <= 0:
+        return None
+    
     # Initialize two pointers
     fast = slow = head
     

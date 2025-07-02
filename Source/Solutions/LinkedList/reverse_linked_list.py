@@ -51,6 +51,7 @@ print("\nLinked list:")
 print_linked_list(head)
 
 reverse_head = reverse_linked_list(head)
+
 print("\nReversed linked list:")
 print_linked_list(reverse_head)
 

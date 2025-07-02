@@ -46,6 +46,11 @@ sol = Solution()
 n = 4
 edges = [[0, 1, 1], [0, 2, 2], [1, 2, 3], [1, 3, 1], [2, 3, 1]] # edges with weight
 print(f"Minimum spanning tree weight: {sol.min_spanning_tree_weight(n, edges)}")
+#  (0) --1-- (1)
+#   |      /   |
+#  2|   3/    1|
+#   |  /       |
+#  (2) --1-- (3)
 # The smallest edges are selected to grow the MST: (0, 1), (1, 3), and (2, 3).
 # The total weight of the MST will be the sum of these edges: 1 + 1 + 1 = 3.
 

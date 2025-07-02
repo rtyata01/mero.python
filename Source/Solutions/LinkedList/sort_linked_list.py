@@ -36,8 +36,8 @@ def merge(left, right):
             current.next = right
             right = right.next
         current = current.next
-        current.next = left or right # Assign the remaining nodes, which ever is longer.
     
+    current.next = left or right # Assign the remaining nodes, which ever is longer.
     return dummy.next
 
 def create_linked_list(values):
@@ -50,12 +50,19 @@ def create_linked_list(values):
     
     return dummy.next
 
+def print_linked_list(head):
+    current = head
+    while current:
+        print(current.val, end="->")
+        current = current.next
+
 # test
 nodes = [5, 3, 2, 6, 4, 1]
 head = create_linked_list(nodes)
+print_linked_list(head)
 
-sorted_nodes = merge_sort(head)
+print("\nSorting linked list nodes:")
+sorted_head = merge_sort(head)
 
-while sorted_nodes:
-    print(sorted_nodes.val, end="->")
-    sorted_nodes = sorted_nodes.next
+print_linked_list(sorted_head)
+
