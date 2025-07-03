@@ -1,0 +1,10 @@
+Arrays = 2
+DynamicProgramming = 2
+Graphs = 2
+LinkedList = 1
+Matrix = 1
+Miscellaneous = 1
+RateLimiter = 1
+Simulate = 1
+Strings = 2
+Trees = 2
