@@ -1,6 +1,8 @@
 # Serialization: Convert a binary tree into a string so it can be stored or transmitted.
 # Deserialization: Convert the string back into the original binary tree structure.
 
+from collections import deque
+
 class TreeNode:
     def __init__(self, val=0, left=None, right=None):
         self.val = val
@@ -17,8 +19,11 @@ class Codec:
         
         return dfs(root)
     
-    def deserialize(self, data: str) -> TreeNode: 
+    def deserialize_dfs(self, data: str) -> TreeNode: 
         """Decodes your encoded data to tree."""
+        if not data:
+            return None
+    
         values = data.split(',')
         self.index = 0
 
@@ -38,19 +43,31 @@ class Codec:
             return node
         
         return dfs()
+
+def inorder_tree(root):
+    if not root:
+        return
+    
+    inorder_tree(root.left)
+    print(root.val, end="=>")
+    inorder_tree(root.right)
+        
 # Example Usage
 codec = Codec()
-root = TreeNode(1)
+root = TreeNode(4)
 root.left = TreeNode(2)
-root.right = TreeNode(3)
-root.left.left = TreeNode(4)
-root.left.right = TreeNode(5)
+root.right = TreeNode(5)
+root.left.left = TreeNode(1)
+root.left.right = TreeNode(3)
 
+print("\nTree: ")
+inorder_tree(root)
 serialized = codec.serialize(root)
-print(f"Serialized: {serialized}")
-deserialize_root = codec.deserialize(serialized)
-serialized = codec.serialize(deserialize_root)
-print(f"Serialized Again: {serialized}")
+print(f"\nSerialized string: {serialized}")
+deserialize_root = codec.deserialize_dfs(serialized)
+print("DFS Deserialized Tree: ")
+inorder_tree(root)
+
 
 root = TreeNode(1)
 root.left = TreeNode(2)
@@ -60,8 +77,11 @@ root.right = TreeNode(3)
 root.right.right = TreeNode(5)
 root.right.right.right = TreeNode(7)
 
+print("\n\nTree: ")
+inorder_tree(root)
 serialized = codec.serialize(root)
-print(f"Serialized: {serialized}")
-deserialize_root = codec.deserialize(serialized)
-serialized = codec.serialize(deserialize_root)
-print(f"Serialized Again: {serialized}")
+print(f"\nSerialized string: {serialized}")
+deserialize_root = codec.deserialize_dfs(serialized)
+print("DFS Deserialized Tree: ")
+inorder_tree(root)
+

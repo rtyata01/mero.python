@@ -17,7 +17,7 @@ def print_tree_level_nodes(root):
     values = []
     
     tree_height = tree_height(root)
-    print("Tree hieght: ", tree_height)
+    print("Tree height: ", tree_height)
     
     def traverse_level_nodes(root, level):
         if not root:

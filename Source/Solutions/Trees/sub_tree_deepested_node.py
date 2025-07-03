@@ -1,5 +1,6 @@
 # Find the smallest subtree that contains all the deepest nodes in a binary tree. 
 # This subtree is rooted at the lowest common ancestor (LCA) of the deepest nodes.
+# if the left and right subtree is balanced with 2 nodes each and same depth, then root will be the LCA.
 
 class TreeNode:
     def __init__(self, val=0, left=None, right=None):
@@ -22,7 +23,8 @@ def subtree_with_all_deepest(root: TreeNode) -> TreeNode:
         else:
             return (left_depth + 1, node)
     
-    return dfs(root)[1]
+    _, node = dfs(root)
+    return node
 
 root  = TreeNode(3)
 root.left = TreeNode(5)

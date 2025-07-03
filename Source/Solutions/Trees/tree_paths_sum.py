@@ -102,4 +102,4 @@ root.left.right.right = TreeNode(23)
 
 # DFS Time Complexity = O(n)
 # Space Complexity avg = O(log n), worst = o(n)
-print(f"Expected output: 5447, Computed result: ", find_tree_paths_sum_multi_digit(root))
+print(f"Expected output: 54483, Computed result: ", find_tree_paths_sum_multi_digit(root))

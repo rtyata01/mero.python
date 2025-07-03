@@ -23,8 +23,8 @@ def find_good_nodes(root):
         good_nodes_count += dfs(node.right, max_value)
         return good_nodes_count
     
-    good_nodes = dfs(root, root.val)
-    print(f"Good Nodes Count: {good_nodes}")
+    good_nodes_count = dfs(root, root.val)
+    print(f"Good Nodes Count: {good_nodes_count}")
     
     return cache
 

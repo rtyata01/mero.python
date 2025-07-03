@@ -1,5 +1,14 @@
 # Compute the diameter of a binary tree.
-# The length of the longest path between any two nodes, measured by the number of edges, not nodes.
+# Diameter: Longest path between any two nodes
+# Max Depth or Height: Longest path from the root to any leaf node.
+#     A
+#    / \
+#   B   C
+#      /
+#     D
+# 
+# Path B → A → C → D has 3 edges, so diameter = 3
+# Path A → C → D has depth 3, so depth or height = 3
 
 class TreeNode:
     def __init__(self, value=0, left=None, right=None):
@@ -29,22 +38,22 @@ class Tree:
         return self.diameter  # This returns the diameter in terms of the number of edges
 
 def get_tree_longest_path(root: TreeNode) -> int:
-    def longest_path(node: TreeNode, max_length: int) -> int:
+    def longest_path(node: TreeNode, diameter: int) -> int:
         if not node:
-            return 0, max_length # Return both depth and current maxLength
+            return 0, diameter # Return both depth and current diameter
         
         # Recursively calculate the depth of the left and right subtrees
-        left_depth, max_length = longest_path(node.left, max_length)
-        right_depth, max_length = longest_path(node.right, max_length)
+        left_depth, diameter = longest_path(node.left, diameter)
+        right_depth, diameter = longest_path(node.right, diameter)
         
         # Calculate the diameter at the current node
-        max_length = max(max_length, left_depth + right_depth)
+        diameter = max(diameter, left_depth + right_depth)
         
         # Return the height of the current node and the updated maxLength
-        return max(left_depth, right_depth) + 1, max_length
+        return max(left_depth, right_depth) + 1, diameter
     
-    max_length = 0
-    return longest_path(root, max_length)[1]
+    diameter = 0
+    return longest_path(root, diameter)[1]
 
 
 # Example tree
@@ -73,5 +82,7 @@ root.left.left.left.left.left = TreeNode(10)
 root.right = TreeNode(3)
 root.right.right = TreeNode(5)
 print(f"Expected length: 7, Computed Length: {get_tree_longest_path(root)}")
+
+
 
 

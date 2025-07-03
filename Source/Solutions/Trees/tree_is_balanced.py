@@ -11,7 +11,7 @@ def is_balanced(root):
     """ Determines if a binary tree is balanced i.e. if the left and the right subtrees of every node differ in height by no more than 1. """
     def dfs(root):
         if not root:
-            return True, 0
+            return True, 0  # isBalanded flag, tree height.
         
         left_balanced, left_height = dfs(root.left)
         if not left_balanced:

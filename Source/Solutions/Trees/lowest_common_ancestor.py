@@ -67,8 +67,8 @@ second = root.left.right.right # Node 5
 result = lowest_common_ancestor_efficient(root, first, second)
 print(f"Expected: 4, lowest common ancestor: ", result.val)
 
-first = root.left.right.left # Node 0
-second = root.left.right.right  # Node 4
+first = root.left.left # Node 0
+second = root.left.right  # Node 4
 result = lowest_common_ancestor_efficient(root, first, second)
 print(f"Expected: 2, lowest common ancestor: ", result.val)
 
