@@ -5,6 +5,9 @@ from collections import deque
 import heapq
 
 def shortest_path_k_turns(grid, start, end, k):
+    if not grid or k <= 0:
+        return -1
+    
     if start == end:
         return 0
     
@@ -16,24 +19,24 @@ def shortest_path_k_turns(grid, start, end, k):
     queue = deque()
     visited = set()
     
-    for i, (dx, dy) in enumerate(directions): # 0 = up, 1= down, 2 = left, 3 = right 
+    for di, (dx, dy) in enumerate(directions): # di = direction index, 0 = up, 1= down, 2 = left, 3 = right 
         nx, ny = sx + dx, sy + dy
         if 0 <= nx < rows and 0 <= ny < cols and grid[nx][ny] == 0:
-            queue.append((1, nx, ny, i, 0)) # (steps, x, y, direction_index, turns)
-            visited.add((nx, ny, i, 0))
+            queue.append((nx, ny, di, 0, 1)) # (x, y, direction_index, turns, steps)
+            visited.add((nx, ny, di, 0))
     
     while queue:
-        steps, x, y, dir_idx, turns = queue.popleft()
+        x, y, dir_index, turns, steps = queue.popleft()
 
         if (x, y) == (ex, ey):
             return steps
 
-        for i, (dx, dy) in enumerate(directions):
+        for di, (dx, dy) in enumerate(directions):
             nx, ny = x + dx, y + dy
             if 0 <= nx < rows and 0 <= ny < cols and grid[nx][ny] == 0:
-                new_turns = turns + (i != dir_idx)
-                if new_turns <= k and (nx, ny, i, new_turns) not in visited:
-                    queue.append((steps + 1, nx, ny, i, new_turns))
+                new_turns = turns + (di != dir_index)  # True = 1, False = 0
+                if new_turns <= k and (nx, ny, di, new_turns) not in visited:
+                    queue.append((nx, ny, di, new_turns, steps + 1))
     
     return -1 
 

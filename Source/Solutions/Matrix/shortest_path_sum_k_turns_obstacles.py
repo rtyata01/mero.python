@@ -31,7 +31,6 @@ def min_turns_path_sum(grid, k):
             continue
         visited[key] = cost
 
-
         for new_dir, (dx, dy) in directions.items():
             nx, ny = x + dx, y + dy
             if 0 <= nx < rows and 0 <= ny < cols and grid[nx][ny] > 0:

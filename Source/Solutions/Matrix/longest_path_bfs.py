@@ -7,8 +7,7 @@ def find_longest_path(matrix):
     rows, cols = len(matrix), len(matrix[0])
     directions = [(-1 , 0), (1 , 0), (0, -1), (0, 1)] # up, down, left, right
     # directions  += [(-1, -1), (-1, 1), (1, -1), (1, 1)] # diagonal traversal
-    max_path = 0
-
+    
     def bfs(x, y):
         queue = deque()
         queue.append((x, y, {(x, y)}, 1))  # (current x, y, visited set, path length)
@@ -25,6 +24,7 @@ def find_longest_path(matrix):
 
         return max_len
 
+    max_path = 0
     for i in range(rows):
         for j in range(cols):
             if matrix[i][j] == 1:
@@ -33,7 +33,8 @@ def find_longest_path(matrix):
     return max_path
 
 # time complexity = o(directions * rows * cols)
-# BFS uses queue and it does not use backtracking. This is suitable for both smaller and larger matrix. The bigger the matrix, it will consume more memory space.
+# BFS uses queue and it does not use backtracking. This is suitable for both smaller and larger matrix. 
+# The bigger the matrix, it will consume more memory space.
 # Choose BFS for shortest path problems.
 
 matrix = [

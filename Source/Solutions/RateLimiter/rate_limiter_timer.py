@@ -20,4 +20,10 @@ class RateLimiter:
             return True
         else:
             return False    
-    
+
+# Let's simulate this with n=3 requests per t=5 seconds.    
+limiter = RateLimiter(n=3, t=5)
+
+for i in range(5):
+    print(f"Request {i+1}: {'Allowed' if limiter.allow() else 'Blocked'}")
+    time.sleep(1)  # Wait 1 second between requests

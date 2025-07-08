@@ -17,23 +17,35 @@ def dieSimulator(n, rollMax):
             return cache[key]
         
         if i == 0:
-            return 1  # successfully formed a valid sequence
+            return 1, [[]]  # successfully formed a valid sequence
 
         total = 0
+        sequences = []
+        
         for face in range(6):
             if rollMax[face] == 0:
                 continue
             if face == last_face:
                 if streak < rollMax[face]:
-                    total += count_die_sequences(i - 1, face, streak + 1)
+                    sub_total, sub_sequences = count_die_sequences(i - 1, face, streak + 1)
+                    total += sub_total
+                    for seq in sub_sequences:
+                        sequences.append([face + 1] + seq)
             else:
-                total += count_die_sequences(i - 1, face, 1)
+                sub_total, sub_sequences= count_die_sequences(i - 1, face, 1)
+                total += sub_total
+                for seq in sub_sequences:
+                    sequences.append([face + 1] + seq)
 
-        cache[(i, last_face, streak)] = total
-        return total % MOD
+        cache[key] = (total % MOD, sequences)
+        return cache[key]
 
     # start with no last_face (-1) and 0 streak
-    return count_die_sequences(n, -1, 0)
+    total_count, all_sequences = count_die_sequences(n, -1, 0)
+    print("Valid sequences:")
+    for seq in all_sequences:
+        print(seq)
+    return total_count
 
 n = 3  # sequence of size 3
 rollMax = [1, 2, 0, 0, 0, 0]
@@ -41,5 +53,5 @@ print(f"Expected: 4, Output: ", dieSimulator(n, rollMax))
 # Allowed = [1, 2, 1], [1, 2, 2], [2, 1, 2], [2, 2, 1] = 4 sequence
 
 n = 2
-rollMax = [1, 1, 1, 2, 2, 3]
-print(f"Expected: 33, Output: ", dieSimulator(n, rollMax))
+rollMax = [1, 1, 0, 0, 0, 1]
+print(f"Expected: 6, Output: ", dieSimulator(n, rollMax))

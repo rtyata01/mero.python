@@ -5,12 +5,15 @@ def find_longest_path(matrix):
     rows, cols = len(matrix), len(matrix[0])
     directions = [(-1 , 0), (1 , 0), (0, -1), (0, 1)] # up, down, left, right
     # directions  += [(-1, -1), (-1, 1), (1, -1), (1, 1)] # diagonal traversal
-    max_path = 0
-
+    
+    # visited trackes the DFS path and it prevents from revisiting nodes(and forming cycles).
+    # memo is used to cache the earlier paths and it does not consisder the visisted states.
+    # therefore, do not use memo and visisted together.
+    # use only memo, no visisted, if matrix is DAG (Directly Acyclic Graph) i.e. no cycles.
+    
     def dfs(x, y, visited):
-        max_len = 1
         visited.add((x, y))
-
+        max_len = 1
         for dx, dy in directions:
             nx, ny = x + dx, y + dy
             if (0 <= nx < rows and 0 <= ny < cols and matrix[nx][ny] == 1 and (nx, ny) not in visited):
@@ -19,6 +22,7 @@ def find_longest_path(matrix):
         visited.remove((x, y))  # Backtrack
         return max_len
 
+    max_path = 0
     for i in range(rows):
         for j in range(cols):
             if matrix[i][j] == 1:

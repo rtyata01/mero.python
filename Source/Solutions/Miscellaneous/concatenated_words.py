@@ -9,7 +9,7 @@ def find_all_concatenated_words(words):
     result = []
     memo = {}
 
-    def is_concatenated_word(word, is_original):
+    def is_concatenated_word(word):
         if word in memo:
             return memo[word]
         
@@ -18,7 +18,7 @@ def find_all_concatenated_words(words):
             suffix = word[i:]
 
             if prefix in word_set:
-                if suffix in word_set or is_concatenated_word(suffix, False):
+                if suffix in word_set or is_concatenated_word(suffix):
                     memo[word] = True
                     return True
                 
@@ -28,10 +28,11 @@ def find_all_concatenated_words(words):
     for word in words:
         if not word:
             continue
+        
         word_set.remove(word)  # avoid using the word itself
-        if is_concatenated_word(word, True):
+        if is_concatenated_word(word):
             result.append(word)
-        word_set.add(word)
+        word_set.add(word)  # add the word back, after comparision.
 
     return result
 

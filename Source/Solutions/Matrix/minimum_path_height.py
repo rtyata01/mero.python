@@ -4,22 +4,24 @@
 import heapq
 
 def minimumEffortPath(heights):
-    m, n = len(heights), len(heights[0])
+    rows, cols = len(heights), len(heights[0])
     directions = [(0,1),(1,0),(-1,0),(0,-1)]
     INF = float('inf')
-    effort = [[INF] * n for _ in range(m)] # Set Grid with Infinity.
+    effort = [[INF] * cols for _ in range(rows)] # Set Grid with Infinity.
     effort[0][0] = 0
     heap = [(0, 0, 0)]  # (effort, row, col)
 
     while heap:
         curr_effort, x, y = heapq.heappop(heap)
-        if x == m - 1 and y == n - 1:
+        
+        if x == rows - 1 and y == cols - 1:
             return curr_effort
+        
         for dx, dy in directions:
             nx, ny = x + dx, y + dy
-            if 0 <= nx < m and 0 <= ny < n:
+            if 0 <= nx < rows and 0 <= ny < cols:
                 next_effort = max(curr_effort, abs(heights[x][y] - heights[nx][ny]))
-                if effort[nx][ny] > next_effort:
+                if next_effort < effort[nx][ny]:
                     effort[nx][ny] = next_effort
                     heapq.heappush(heap, (next_effort, nx, ny))
 

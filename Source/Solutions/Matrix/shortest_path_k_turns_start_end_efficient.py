@@ -1,8 +1,11 @@
-from collections import deque
+from collections import deque, defaultdict
 
 def shortest_path_with_k_turns(grid, start, end, k):
-    if not grid:
+    if not grid or k <= 0:
         return -1
+    
+    if start == end:
+        return 0
     
     rows, cols = len(grid), len(grid[0])
     directions = [(-1,0), (1,0), (0,-1), (0,1)]  # up, down, left, right
@@ -10,27 +13,27 @@ def shortest_path_with_k_turns(grid, start, end, k):
     sx, sy = start
     ex, ey = end
 
-    visited = [[[float('inf')] * 4 for _ in range(cols)] for _ in range(rows)]
+    visited = {}
     queue = deque()
 
-    for d, (dx, dy) in enumerate(directions):
+    for di, (dx, dy) in enumerate(directions):
         nx, ny = sx + dx, sy + dy
         if 0 <= nx < rows and 0 <= ny < cols and grid[nx][ny] == 0:
-            visited[nx][ny][d] = 0
-            queue.append((nx, ny, d, 0, 1))  # initialize x, y, direction, turns, steps
+            visited[(nx, ny, di)] = 0 # initialize (x, y, direction) = turns,
+            queue.append((nx, ny, di, 0, 1))  # initialize x, y, direction, turns, steps
 
     while queue:
-        x, y, dir, turns, steps = queue.popleft()
+        x, y, di, turns, steps = queue.popleft()
         if (x, y) == (ex, ey):
             return steps
 
-        for new_dir, (dx, dy) in enumerate(directions):
+        for new_di, (dx, dy) in enumerate(directions):
             nx, ny = x + dx, y + dy
             if 0 <= nx < rows and 0 <= ny < cols and grid[nx][ny] == 0:
-                new_turns = turns + (new_dir != dir)
-                if new_turns <= k and new_turns < visited[nx][ny][new_dir]:
-                    visited[nx][ny][new_dir] = new_turns
-                    queue.append((nx, ny, new_dir, new_turns, steps + 1))
+                new_turns = turns + (new_di != di)
+                if new_turns <= k and new_turns < visited.get((nx, ny, new_di), float('inf')):
+                    visited[(nx, ny, new_di)] = new_turns
+                    queue.append((nx, ny, new_di, new_turns, steps + 1))
 
     return -1  # not reachable within k turns
 

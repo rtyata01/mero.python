@@ -4,6 +4,9 @@
 from collections import deque
 
 def min_turns_path(grid, k):
+    if not grid or k <= 0:
+        return -1
+    
     rows, cols = len(grid), len(grid[0])
     directions = [(-1,0), (1,0), (0,-1), (0,1)]
     queue = deque()

@@ -13,20 +13,20 @@ def quick_sort(arr):
 
 def quick_sort_in_place(arr, low, high):
     if low < high:
-        pi = partition(arr, low, high)
+        pi = partition(arr, low, high) # get pivot
         quick_sort_in_place(arr, low, pi - 1)
         quick_sort_in_place(arr, pi + 1, high)
 
 def partition(arr, low, high):
     pivot = arr[high]
-    i = low - 1
+    i = low
     for j in range(low, high):
         if arr[j] <= pivot:
-            i += 1
             arr[i], arr[j] = arr[j], arr[i]
+            i += 1
     
-    arr[i + 1], arr[high] = arr[high], arr[i + 1]
-    return i + 1
+    arr[i], arr[high] = arr[high], arr[i]
+    return i  # return next pivot index.
 
 # Best or Average case Time Complexity: O(n log n)
 # Worst case Time Complexity: O(n^2)

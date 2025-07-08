@@ -23,14 +23,14 @@ def min_meeting_rooms_with_schedule(meetings):
     room_schedule = {}
 
     for idx, (start, end) in indexed_meetings:
-        if heap and heap[0][0] <= start:
+        if heap and heap[0][0] <= start: # if heap has at least one element and heap[0] =(0.5, "post A") and heap[0][0] = 0.5, the first heap element.
             # Reuse a room
             earliest_end, room_id = heapq.heappop(heap)
         else:
             # Need new room
             room_id = room_id_counter
-            room_id_counter += 1
             room_schedule[room_id] = []
+            room_id_counter += 1
 
         # Assign meeting to the room
         heapq.heappush(heap, (end, room_id))
@@ -39,7 +39,7 @@ def min_meeting_rooms_with_schedule(meetings):
 
     return room_id_counter, room_schedule #, meeting_to_room
 
-meetings = [ (5, 10), (0, 30), (15, 20)]
+meetings = [(5, 10), (0, 30), (15, 20)]
 rooms_required, schedule = min_meeting_rooms_with_schedule(meetings)
 
 print("Rooms required:", rooms_required)

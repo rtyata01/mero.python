@@ -30,9 +30,13 @@ def merge(left, right):
 
     return merged
 
+# Time Complexity = O(n log n) = uses Divide and Conquer sorting algorithm.
+
+arr = [5, -2, 9, 1, 6, 3]
+print(f"sorted: {merge_sort(arr)}")
 
 arr = [5, -2, 9, 1, 6, 3, -7]
-sorted_arr = merge_sort(arr)
-print(sorted_arr)
+print(f"sorted: {merge_sort(arr)}")
 
-# Time Complexity = O(n log n) = uses Divide and Conquer sorting algorithm.
+
+

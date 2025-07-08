@@ -1,7 +1,6 @@
 def find_max_balanced_parentheses(s):
     open_brace_count = 0
     cur_length = 0
-    cur_start = 0
     max_start = 0
     max_length = 0
 
@@ -17,7 +16,6 @@ def find_max_balanced_parentheses(s):
                     #print(f"Start Index: {max_length_start_index}, Max Length: {max_length}")
                     
         if open_brace_count == 0:
-            cur_start = i - max_length + 1
             cur_length = 0
 
     return max_length, s[max_start: max_start + max_length]

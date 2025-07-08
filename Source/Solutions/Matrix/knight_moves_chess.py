@@ -7,8 +7,7 @@ def min_knight_moves(start, target, blocked):
 
     # Board size
     N = 8    
-    visited = [[False]*N for _ in range(N)]
-
+    visited = set()
     sx, sy = start
     tx, ty = target
 
@@ -19,16 +18,16 @@ def min_knight_moves(start, target, blocked):
 
     queue = deque()
     queue.append((sx, sy, 0))  # (x, y, distance)
-    visited[sx][sy] = True
+    visited.add((sx, sy))
 
     while queue:
         x, y, dist = queue.popleft()
         for dx, dy in moves:
             nx, ny = x + dx, y + dy
-            if 0 <= nx < N and 0 <= ny < N and not visited[nx][ny] and (nx, ny) not in blocked:
+            if 0 <= nx < N and 0 <= ny < N and (nx, ny) not in visited and (nx, ny) not in blocked:
                 if (nx, ny) == (tx, ty):
                     return dist + 1
-                visited[nx][ny] = True
+                visited.add((nx, ny))
                 queue.append((nx, ny, dist + 1))
 
     return -1  # not reachable

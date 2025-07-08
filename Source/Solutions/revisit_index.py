@@ -1,10 +1,10 @@
-Arrays = 2
-DynamicProgramming = 2
-Graphs = 2
+Arrays = 1
+DynamicProgramming = 1
+Graphs = 1
 LinkedList = 1
 Matrix = 1
 Miscellaneous = 1
 RateLimiter = 1
 Simulate = 1
-Strings = 2
-Trees = 2
+Strings = 1
+Trees = 1

@@ -20,8 +20,8 @@ class User:
 def recency_score(post, current_time):
     # Exponential decay: newer posts get higher scores
     delta = current_time - post.created_at
-    hours_passed = delta.total_seconds() / 3600
-    return math.exp(-0.1 * hours_passed)
+    hours_passed = delta.total_seconds() / 60*60  # 1h = 60 m * 60 sec 
+    return math.exp(-0.1 * hours_passed) # math.exp(-k * t), k is he decay rate and t is the time passed in hours.
 
 def interaction_score(user, post):
     # How much the user has interacted with this author
@@ -40,9 +40,9 @@ def rank_posts(posts, user, current_time):
     for post in posts:
         score = (
             0.4 * recency_score(post, current_time) +
-            0.3 * interaction_score(user, post) +
-            0.2 * relationship_score(user, post) +
-            0.1 * popularity_score(post)
+            0.3 * popularity_score(post) +
+            0.2 * interaction_score(user, post) +
+            0.1 * relationship_score(user, post)
         )
         scored_posts.append((post, score))
     scored_posts.sort(key=lambda x: x[1], reverse=True)

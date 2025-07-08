@@ -1,7 +1,6 @@
 def find_max_balanced_parentheses(s):
-    stack = []  # Stack to keep track of indices of '('
+    stack = [-1]  # Stack to store indices; start with -1 for edge case handling
     length = 0
-    start_index = -1  # Start index of the longest balanced substring
     max_length = 0  # Maximum length of balanced parentheses
     max_start_index = 0
     

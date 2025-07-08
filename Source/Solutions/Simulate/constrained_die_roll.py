@@ -1,5 +1,5 @@
 # Roll die, with constraint rollMax. 
-# It allows specific dice face to roll consecutively i.e. repeatedly as specified by rollMax array.
+# It allows specific dic face to roll consecutively i.e. repeatedly as specified by rollMax array.
 
 # die = one die = has six side.
 # dice = tow or more die.

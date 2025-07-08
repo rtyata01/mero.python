@@ -10,7 +10,7 @@ def min_cost_path(grid):
         return -1
     
     rows, cols = len(grid), len(grid[0])
-    directions = [(-1,0),(1,0),(0,-1),(0,1)]
+    directions = [(0,1), (1,0), (-1,0), (0,-1)] 
     heap = [(grid[0][0], 0, 0)]  # (cost, x, y)
     visited = set()
 
@@ -25,7 +25,8 @@ def min_cost_path(grid):
         for dx, dy in directions:
             nx, ny = x + dx, y + dy
             if (0 <= nx < rows and 0 <= ny < cols and (nx, ny) not in visited and grid[nx][ny] > 0):  # -1 is an obstacle
-                heapq.heappush(heap, (cost + grid[nx][ny], nx, ny))
+                new_cost = cost + grid[nx][ny]
+                heapq.heappush(heap, (new_cost, nx, ny))
     return -1  # path not found
 
 grid = [
@@ -43,3 +44,10 @@ grid = [
     [4, 2, 1, 1]
 ]
 print("Expected: 7, Minimum weight path (4 directions):", min_cost_path(grid))
+
+grid = [
+    [1,  1,  100],
+    [1, -1,  1],
+    [1,  1,   1]
+]
+print("Expected: 5, Minimum weight path (4 directions):", min_cost_path(grid))
