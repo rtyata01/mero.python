@@ -48,4 +48,8 @@ nums = [7, 5, 3, 1, 2, 3, 4]
 # [1,2,3], [2,3,4], [1,2,3,4]
 # [7,5,3], [5,3,1], [7,5,3,1]
 print(f"Expected Output: 6, Arthmetic subarrays count: ", count_arithmetic_subarrays(nums))
-print(f"Expected Output: 3, Arthmetic subarrays count: ", find_arithmetic_subarrays(nums))
+print(f"Expected Output: 6, Arthmetic subarrays count: ", find_arithmetic_subarrays(nums))
+
+nums = [1, 3, 5, 7, 9, 10, 11]
+print(f"Expected Output: 7, Arthmetic subarrays count: ", count_arithmetic_subarrays(nums))
+print(f"Expected Output: 7, Arthmetic subarrays count: ", find_arithmetic_subarrays(nums))
