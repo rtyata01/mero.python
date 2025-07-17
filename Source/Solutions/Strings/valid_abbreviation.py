@@ -1,26 +1,25 @@
 # check if a given string (like "u12uz4n") is a valid abbreviation of a word (like "internationalization"), based on a common abbreviation format.
 def valid_abbreviation(word, abbr):
-    i = j = 0
-    word_len, abbr_len = len(word), len(abbr)
+    w_index = a_index = 0
     
-    while i < word_len and j < abbr_len:
-        if abbr[j].isdigit():
-            if abbr[j] == '0':
+    while w_index < len(word) and a_index < len(abbr):
+        if abbr[a_index].isdigit():
+            if abbr[a_index] == '0':
                 return False
             num = 0
-            while j < abbr_len and abbr[j].isdigit():
-                num = num * 10 + int(abbr[j])
-                j += 1
-            i += num
+            while a_index < len(abbr) and abbr[a_index].isdigit():
+                num = num * 10 + int(abbr[a_index])
+                a_index += 1
+            w_index += num
         else:
-            if i >= word_len or word[i] != abbr[j]:
+            if w_index >= len(word) or word[w_index] != abbr[a_index]:
                 return False
-            i +=1
-            j +=1
+            w_index +=1
+            a_index +=1
     
-    return i == word_len and j == abbr_len
-print(f"Expected: True, Result: ", valid_abbreviation("", ""))
+    return w_index == len(word) and a_index == len(abbr)
 
+print(f"Expected: True, Result: ", valid_abbreviation("", ""))
 print(f"\nExpected: True, Result: ", valid_abbreviation("internationalization", "i18n"))
 print(f"Expected: True, Result: ", valid_abbreviation("internationalization", "20"))
 print(f"Expected: False, Result: ", valid_abbreviation("internationalization", "u12uz4n"))

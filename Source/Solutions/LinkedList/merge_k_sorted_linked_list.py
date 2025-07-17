@@ -1,4 +1,4 @@
-# Merge k sorted linked lists and return it as one sorted linked list.
+# Hard: Merge k sorted linked lists and return it as one sorted linked list.
 
 from typing import List, Optional
 import heapq
@@ -17,7 +17,7 @@ class Solution:
         
         for node in lists:
             if node:
-                heapq.heappush(heap, (node.val, id(node), node))  # insert head node from each linked list to heap.
+                heapq.heappush(heap, (node.val, id(node), node))  # insert 3 heads (node.va, node.id, node) from each linked list to heap.
                 # id(node) in the tuple. it will prevent TypeError when pushing nodes with same value.
                 
         head = ListNode()

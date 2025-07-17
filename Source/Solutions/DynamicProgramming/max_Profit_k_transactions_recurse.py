@@ -2,37 +2,38 @@
 # An integer k representing the maximum number of transactions (buy and sell pairs).
 # Find the Maximize total profit with at most k transactions.
 
-def maxProfit(k, prices):
-    from functools import cache
+from functools import cache
 
-    n = len(prices)
+def maxProfit(k, prices):
     if not prices or k == 0:
         return 0
 
+    n = len(prices)
+    
     # Optimization: for large k, convert to unlimited transactions case
     if k >= n // 2:
         return sum(max(prices[i+1] - prices[i], 0) for i in range(n - 1))
 
     @cache
-    def dfs(day, transactions_left, holding):
+    def compute_max_profit(day, transactions_left, holding):
         if day == n or transactions_left == 0:
             return 0
 
         if holding:
             # Option 1: Sell today
-            sell = prices[day] + dfs(day + 1, transactions_left - 1, 0)
+            sell = prices[day] + compute_max_profit(day + 1, transactions_left - 1, 0)
             # Option 2: Hold and do nothing
-            hold = dfs(day + 1, transactions_left, 1)
+            hold = compute_max_profit(day + 1, transactions_left, 1)
             return max(sell, hold)
         else:
             # Option 1: Buy today
-            buy = -prices[day] + dfs(day + 1, transactions_left, 1)
+            buy = -prices[day] + compute_max_profit(day + 1, transactions_left, 1)
             # Option 2: Skip and do nothing
-            skip = dfs(day + 1, transactions_left, 0)
+            skip = compute_max_profit(day + 1, transactions_left, 0)
             return max(buy, skip)
 
     # Start at day 0, with k transactions left, and not holding a stock as, there is no stock and you need to buy first.
-    return dfs(0, k, 0)
+    return compute_max_profit(0, k, 0)
 
 prices = [3, 2, 6, 8, 0, 3]
 k = 2

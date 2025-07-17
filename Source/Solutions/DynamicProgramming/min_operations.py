@@ -33,6 +33,9 @@ sol = Solution()
 n = 4
 print(f"Print A [{n}] times, Number of operations: {sol.min_operations(n)}")  
 
+n = 6
+print(f"Print A [{n}] times, Number of operations: {sol.min_operations(n)}")  
+
 n = 7
 print(f"Print A [{n}] times, Number of operations: {sol.min_operations(n)}")       
 

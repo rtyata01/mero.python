@@ -5,7 +5,7 @@ def custom_sort(input_str, order):
     # for char in input_str:
     #    count[char] = count.get(char, 0) + 1
         
-    count = defaultdict(int)
+    count = defaultdict(int)  # preserver order of insertion, {'b': 2, 'a': 1, 'c': 3}
     for char in input_str:
         count[char] +=1
 
@@ -23,14 +23,14 @@ def custom_sort(input_str, order):
     return ''.join(result)
 
 def custom_sort_relative_order(input_str, order):
-    count = Counter(input_str)
+    count = Counter(input_str)  # does not preserve the order, Counter({'a': 3, 'n': 2, 'b': 1})
     result = []
 
     # Add characters in the specified order
     for ch in order:
         result.append(ch * count.pop(ch, 0)) # if ch is not present, then it results 0, which refers it appends empty string ch * 0.
 
-    # Append the remaining characters in any order (relative order not preserved in dict)
+    # Append the remaining characters in any order (relative order not preserved in counter)
     for ch, freq in count.items():
         result.append(ch * freq)
 

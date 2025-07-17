@@ -1,5 +1,6 @@
-# Serialization: Convert a binary tree into a string so it can be stored or transmitted.
+# Hard: Serialization: Convert a binary tree into a string so it can be stored or transmitted.
 # Deserialization: Convert the string back into the original binary tree structure.
+# Use DFS for both serialization and deserialization, results better performance and consume low memory.
 
 from collections import deque
 

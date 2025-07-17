@@ -32,11 +32,17 @@ class Solution:
 
         return largest_subset
 
-nums = [1, 2, 4, 8]
 sol = Solution()
+nums = [1, 2, 4, 8]
 print(sol.largest_divisible_subset(nums))  # Output: [1, 2, 4, 8]
 
 # Use the Recursive + Memoization version when:
 # You prefer a more elegant, functional-style solution.
 # You want something easy to read and reason about.
 # Your inputs are moderate (e.g. n <= 1000) and stack depth isn't an issue.
+
+nums = [1, 3, 6, 9, 18]
+print(sol.largest_divisible_subset(nums))  # output [1, 3, 6, 18]
+
+nums = [2, 2, 2, 2, 2]
+print(sol.largest_divisible_subset(nums))  # output [2, 2, 2, 2, 2]

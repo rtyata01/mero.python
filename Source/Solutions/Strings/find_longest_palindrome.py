@@ -1,3 +1,5 @@
+
+
 def find_longest_palindrome(s: str):
     longest = ""
     s_len = len(s)

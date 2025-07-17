@@ -1,0 +1,20 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: monitoring
+---
+# Install CRDs and operator
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: prometheus-operator
+  namespace: monitoring
+spec:
+  replicas: 1
+  selector: { matchLabels: { name: prometheus-operator } }
+  template:
+    metadata: { labels: { name: prometheus-operator } }
+    spec:
+      containers:
+      - name: operator
+        image: quay.io/prometheus-operator/prometheus-operator:v0.62.0

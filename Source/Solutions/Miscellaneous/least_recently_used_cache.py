@@ -1,4 +1,4 @@
-# Design and implement a data structure for a Least Recently Used (LRU) cache.
+# Hard: Design and implement a data structure for a Least Recently Used (LRU) cache.
 # Eviction criterion: Remove the item that hasn't been accessed for the longest time.
 # Tracks: Recency of access.
 # Cache entries that have been used recently are more likely to be used again soon.
@@ -7,6 +7,9 @@ from collections import OrderedDict
 
 class LRUCache:
     def __init__(self, capacity: int):
+        if capacity <= 0:
+            raise ValueError("Capacity must be a positive integer")
+    
         self.cache = OrderedDict()
         self.capacity = capacity
         
@@ -18,9 +21,6 @@ class LRUCache:
             return self.cache[key]
     
     def put(self, key: int, value: int):
-        if self.capacity == 0:
-            return
-        
         if key in self.cache:
             self.cache.move_to_end(key)
         elif len(self.cache) >= self.capacity:

@@ -8,18 +8,18 @@ def multiply(num1: str, num2: str) -> str:
     # Multiply from back to front
     for i in reversed(range(m)):
         for j in reversed(range(n)):
-            mul = int(num1[i]) * int(num2[j])
-            p1, p2 = i + j, i + j + 1
+            product = int(num1[i]) * int(num2[j])
+            p_low, p_high = i + j, i + j + 1  # low will store the result, high is the carry
             
             # Add mul to the position
-            total = mul + res[p2]
-            res[p2] = total % 10
-            res[p1] += total // 10
+            total = product + res[p_high]  # add existing value.
+            res[p_high] = total % 10     # result.
+            res[p_low] += total // 10   # carrry
     
     # Remove leading zeros
     result = []
     for digit in res:
-        if not result and digit == 0:
+        if not result and digit == 0:  # only skip the leading zero when result is empty.
             continue
         result.append(str(digit))
     

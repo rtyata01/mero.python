@@ -1,4 +1,5 @@
-# Find all shortest transformation sequences from beginWord to endWord.
+# Hard: Find all shortest transformation sequences from beginWord to endWord.
+# Transform one word to another by changing a letter at a time, using a dictionary.
 
 from collections import defaultdict, deque
 
@@ -20,7 +21,7 @@ class Solution:
         
         # BFS to find the shortest paths
         result = []
-        queue = deque([(beginWord, [beginWord])])
+        queue = deque([(beginWord, [beginWord])]) # (word, path)
         visited = set([beginWord])
         found = False
         
@@ -40,6 +41,9 @@ class Solution:
             visited.update(level_visited)
         
         return result
+
+# Time Complexity:
+# Total: O(N × L × K + P × N) , where N = words, L is length of each word, BFS path propagation is K + P * N, where K is neighbour, P is pattern.
 
 # Example Usage
 sol = Solution()

@@ -2,9 +2,9 @@
 # 1 represents land
 # 0 represents water
 # An island is a group of connected 1s (connected 4-directionally: up, down, left, right).
-# Find the size of the largest island you can get by flipping exactly one 0 to 1.
+# Find how many islands and the size of largest island
 
-def largest_connected_island(grid):
+def count_island_size(grid):
     if not grid:
         return 0
     
@@ -31,29 +31,10 @@ def largest_connected_island(grid):
                 island_area[island_id] = area
                 island_id += 1
 
-    # if no island or all values are 0, then return 0.
-    max_area = max(island_area.values(), default=0)
+    return island_area
 
-    # Step 2: Try flipping each 0
-    for x in range(n):
-        for y in range(n):
-            if grid[x][y] == 0:
-                seen = set()
-                area = 1  # for the flipped 0
-                for dx, dy in directions:
-                    nx, ny = x + dx, y + dy
-                    if 0 <= nx < n and 0 <= ny < n:
-                        id = grid[nx][ny]
-                        if id > 1 and id not in seen:
-                            area += island_area[id]
-                            seen.add(id)
-                max_area = max(max_area, area)
-
-    return max_area
-
-
-# Time complexity= o(n^2)
-# Space complexity= o(n^2)
+# Time complexity= o(m * n)
+# Space complexity= o(m * n)
 
 # Before DFS
 grid = [
@@ -64,35 +45,26 @@ grid = [
 # After DFS labeling:
 #[2, 0]    # island_id=2, size=1
 #[0, 3]    # island_id=3, size=1
-print(f"Expected: 3, Largest connected island: ", largest_connected_island(grid))
+island_to_size = count_island_size(grid)
+print(f"island count: {len(island_to_size)}, island with max area: {max(island_to_size.values())}" )
 
-# Before DFS
 grid = [
-  [0, 0],
-  [0, 0]
-]
-
-# After DFS labeling:
-#[0, 0]    
-#[0, 0]    
-print(f"Expected: 1, Largest connected island: ", largest_connected_island(grid))
-
-# Before DFS
-matrix = [
     [1, 0, 1, 1],
     [1, 0, 1, 0],
     [0, 1, 1, 1],
     [1, 0, 0, 0]
 ]
+
 # After DFS labeling:
 #[2, 0, 3, 3]  # island_id=2, size=2
 #[2, 0, 3, 0]  # island_id=3, size=6
 #[0, 3, 3, 3]  # island_id=4, size=1
 #[4, 0, 0, 0]  
-print(f"Expected: 10, Longest Path: {largest_connected_island(matrix)}") 
+island_to_size = count_island_size(grid)
+print(f"island count: {len(island_to_size)}, island with max area: {max(island_to_size.values())}" )
 
 # Before DFS
-matrix = [
+grid = [
     [1, 0, 1, 1],
     [1, 0, 1, 0],
     [0, 1, 1, 1],
@@ -103,4 +75,5 @@ matrix = [
 [2, 0, 3, 0]  # island_id=3, size=8
 [0, 3, 3, 3]
 [3, 3, 0, 0]
-print(f"Expected: 11, Longest Path: {largest_connected_island(matrix)}")
+island_to_size = count_island_size(grid)
+print(f"island count: {len(island_to_size)}, island with max area: {max(island_to_size.values())}" )

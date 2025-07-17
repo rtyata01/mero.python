@@ -1,6 +1,9 @@
 from collections import defaultdict, deque
 
 def findLadders(beginWord, endWord, wordList):
+    if beginWord == endWord:
+        return [[beginWord]]
+        
     wordSet = set(wordList)
     if endWord not in wordSet:
         return []
@@ -23,6 +26,9 @@ def findLadders(beginWord, endWord, wordList):
         layer = new_layer
 
     return []
+
+# Time Complexity:
+# Total: O(N × L × 26 + P × N) , where N = words, L is lenght of each word, BFS path propagation is P * N.
 
 beginWord = "hit"
 endWord = "cog"

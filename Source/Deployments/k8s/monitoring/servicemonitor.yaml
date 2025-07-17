@@ -1,0 +1,33 @@
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: search-worker-monitor
+  namespace: monitoring
+  labels:
+    env: production
+spec:
+  selector:
+    matchLabels:
+      app: search
+  endpoints:
+  - port: http
+    path: /metrics
+  namespaceSelector:
+    any: true
+---
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: worker-monitor
+  namespace: monitoring
+  labels:
+    env: production
+spec:
+  selector:
+    matchLabels:
+      app: worker
+  endpoints:
+  - port: metrics
+    path: /metrics
+  namespaceSelector:
+    any: true

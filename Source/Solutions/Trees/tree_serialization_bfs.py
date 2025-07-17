@@ -1,3 +1,7 @@
+# Hard: Serialization: Convert a binary tree into a string so it can be stored or transmitted.
+# Deserialization: Convert the string back into the original binary tree structure.
+# Use BFS for both serialization and deserialization, results better integration, debugging and scalability.
+
 from collections import deque
 class TreeNode:
     def __init__(self, val=0, left=None, right=None):

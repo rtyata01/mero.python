@@ -23,6 +23,10 @@ def find_unique_palindromes(source, fixedLength):
 
 result = find_unique_palindromes("abcba", 3)
 print(f"Unique palindrome count: {len(result)}, palindromes: {result}")
+longest = max(result, key=len) if result else None
+print(f"Longest palindrome: {longest}")
 
 result = find_unique_palindromes("ilikeracecar", 3)
 print(f"Unique palindrome count: {len(result)}, palindromes: {result}")
+longest = max(result, key=len) if result else None
+print(f"Longest palindrome: {longest}")

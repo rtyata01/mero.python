@@ -48,6 +48,8 @@ def maxProfit(k, prices):
 
     profit, raw_path = dfs(0, k, 0)
 
+    print(f"Raw Paths: {raw_path}")
+
     # Post-process raw_path to match buys with sells
     transactions = []
     buy_price = None

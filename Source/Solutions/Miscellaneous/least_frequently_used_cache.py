@@ -1,4 +1,4 @@
-# Design and implement a data structure for a Least Frequently Used (LFU) cache.
+# Hard: Design and implement a data structure for a Least Frequently Used (LFU) cache.
 # Eviction criterion: Remove the item that has been accessed the fewest number of times.
 # Tracks: Frequency of access.
 # Cache entries that are rarely used are less valuable and should be evicted first, regardless of how recently they were accessed.
@@ -7,6 +7,9 @@ from collections import defaultdict, OrderedDict
 
 class LFUCache:
     def __init__(self, capacity: int):
+        if capacity <= 0:
+            raise ValueError("Capacity must be a positive integer")
+    
         self.capacity = capacity
         self.key_to_val_freq = {}  # key: (value, frequency)
         self.freq_to_keys = defaultdict(OrderedDict)  # OrderedDiction within default dictionary.
@@ -32,9 +35,6 @@ class LFUCache:
         return self.key_to_val_freq[key][0]
 
     def put(self, key: int, value: int) -> None:
-        if self.capacity == 0:
-            return
-
         if key in self.key_to_val_freq:
             self.key_to_val_freq[key] = (value, self.key_to_val_freq[key][1])
             self._update_freq(key)

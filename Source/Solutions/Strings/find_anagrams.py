@@ -9,13 +9,13 @@ def find_anagrams(source: str, target: str):
     s_count = Counter()
     result = []
     
-    for i, char in enumerate(source):
+    for right, char in enumerate(source):
         s_count[char] += 1
         # print(f"Iteration: {i} ...............")
         # print(f"Processing Value: {s[i]}, scount= {s_count}")
         
-        if i >= t_len:
-            left_char = source[i - t_len]
+        if right >= t_len:
+            left_char = source[right - t_len]
             if s_count[left_char] == 1:
                 del s_count[left_char]
             else: 
@@ -23,7 +23,7 @@ def find_anagrams(source: str, target: str):
         
         if s_count == t_count:
             # print(f"scount: {s_count}, tcount= {t_count}")
-            start_index = i - t_len + 1
+            start_index = right - t_len + 1
             result.append(start_index)
             print(f"Found Anagram: {source[start_index: start_index + t_len]}")
     

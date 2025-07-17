@@ -1,5 +1,4 @@
 class Solution:
-    
     def print_optimal_change(self, denominations, amount):
         optimal_change = self.get_min_change_all(denominations, amount)
         print(f"All minimum coin combinations to make {amount}:")

@@ -11,9 +11,9 @@ def generate_palindromes(n):
     for first_half in range(start, end):
         first_half_str = str(first_half)
         if n % 2 == 0:
-            full = first_half_str + first_half_str[::-1]    # 12[::-1] = 1221
+            full = first_half_str + first_half_str[::-1]    # reverse string, 12[::-1] = 1221
         else:
-            full = first_half_str + first_half_str[-2::-1]  # 12[-2::-1] = 121
+            full = first_half_str + first_half_str[-2::-1]  # reverse from second last char, 12[-2::-1] = 121 
         palindromes.append(full)
     return palindromes
 

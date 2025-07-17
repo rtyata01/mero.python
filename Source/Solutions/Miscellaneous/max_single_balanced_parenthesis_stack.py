@@ -1,5 +1,8 @@
-def find_max_balanced_parentheses(s):
-    stack = [-1]  # Stack to store indices; start with -1 for edge case handling
+# Hard: Given a string containing '(' and ')', find the length of the longest valid parentheses substring.
+
+# this will treat consecutive balanced as different balanced string. i.e. (())(((()()))) i.e. 4, 10 = so max is 10.
+def find_max_single_balanced_parentheses(s):
+    stack = []  #
     length = 0
     max_length = 0  # Maximum length of balanced parentheses
     max_start_index = 0
@@ -7,7 +10,7 @@ def find_max_balanced_parentheses(s):
     for i, char in enumerate(s):
         if char == '(':
             # Push the index of '(' onto the stack
-            stack.append(char)
+            stack.append(i)
         elif char == ')' and stack:
             # Pop the last unmatched '(' index from the stack
             stack.pop()
@@ -22,24 +25,23 @@ def find_max_balanced_parentheses(s):
                 
         if not stack:
             length = 0
-            start_index = i - max_length + 1
             
     # Extract the longest balanced substring using start_index and max_length
-    longest_balanced_substring = s[max_start_index:max_start_index + max_length] if start_index != -1 else ""
+    longest_balanced_substring = s[max_start_index:max_start_index + max_length]
     
     return max_length, longest_balanced_substring
 
 # Test the function
 test_input = "(((()()))))(())"
 print("Original string:", test_input)
-length, substring = find_max_balanced_parentheses(test_input)
+length, substring = find_max_single_balanced_parentheses(test_input)
 print("Result .............................")
 print("Maximum Length:", length) 
 print("Balanced Substring:", substring)
 
 test_input = "(())(((()()))))"
-print("Reversed Original string:", test_input)
-length, substring = find_max_balanced_parentheses(test_input)
+print("Original string:", test_input)
+length, substring = find_max_single_balanced_parentheses(test_input)
 print("Result .............................")
 print("Maximum Length:", length) 
 print("Balanced Substring:", substring)

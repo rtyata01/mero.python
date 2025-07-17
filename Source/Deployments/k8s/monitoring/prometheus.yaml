@@ -1,0 +1,11 @@
+apiVersion: monitoring.coreos.com/v1
+kind: Prometheus
+metadata:
+  name: prom-main
+  namespace: monitoring
+  labels: { env: production }
+spec:
+  serviceAccountName: prometheus
+  replicas: 1
+  serviceMonitorSelector:
+    matchLabels: { env: production }

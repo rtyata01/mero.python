@@ -1,3 +1,5 @@
+# Add binary strings.
+
 def add_binary(a: str, b: str) -> str:
     result = []
     carry = 0
