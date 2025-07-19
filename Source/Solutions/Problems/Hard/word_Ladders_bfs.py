@@ -1,3 +1,6 @@
+# Hard: Find all shortest transformation sequences from beginWord to endWord.
+# Transform one word to another by changing a letter at a time, using a dictionary.
+
 from collections import defaultdict, deque
 
 def findLadders(beginWord, endWord, wordList):

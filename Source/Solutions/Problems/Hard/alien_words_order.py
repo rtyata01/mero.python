@@ -1,4 +1,4 @@
-# Given sorted list of words in alien dictionary, find the correct character order in that language.
+# Hard: Given sorted list of words in alien dictionary, find the correct character order in that language.
 
 from collections import defaultdict, deque
 
