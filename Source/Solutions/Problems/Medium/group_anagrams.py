@@ -5,11 +5,11 @@ from collections import defaultdict
 def group_anagrams(strs):
     groups = defaultdict(list)
     for word in strs:
-        key = tuple(sorted(word))  # abc, bca ->  tuple: ('a','b','c')
+        key = tuple(sorted(word))  # abc, bca ->  tuple: ('a','b','c') # can also use key as ''.join(sorted(s))
         groups[key].append(word)
     return list(groups.values())
 
-# Time Complexity: O(n * k log k)
+# Time Complexity: O(n * k log k) where n is the number of strings, k is the max length of a string
 # sort = O(k log k)
 # loop = O(n * sort)
 # Space Complexity: O(n * k), each word * length of each word

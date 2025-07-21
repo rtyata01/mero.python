@@ -5,13 +5,12 @@ from collections import Counter
 import heapq
 
 def top_k_frequent(nums, k):
-    count = Counter(nums)
-    return [item for item, _ in heapq.nlargest(k, count.items(), key=lambda x: x[1])]
+    count = Counter(nums) # {'a': 3, 'b': 5, 'c': 2}
+    return [item for item, _ in heapq.nlargest(k, count.items(), key=lambda x: x[1])]  # heap [('b', 5), ('a', 3)], return # ['b', 'a']
 
-
-# count = {5: 3, 6: 1, 3: 2}  # Counter order reflects the order of first apperance.
-# max_heap = [(5, 3), (3, 2), (6,1)] # max_heap of 2 = [(5, 3), (3,2)]
-# 2 most frequent = [5, 3]
+def topKFrequent(nums: list[int], k: int) -> list[int]:
+    count = Counter(nums)  # {'a': 3, 'b': 5, 'c': 2}
+    return heapq.nlargest(k, count.keys(), key=count.get) # ['b', 'a']
 
 # Time Complexity: O(n + m log k)
 # Counter = O(n)

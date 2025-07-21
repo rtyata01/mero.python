@@ -1,4 +1,4 @@
-# Hard: Water trapped at a particular bar depends on the tallest bar to its left and tallest bar to its right. The trapped water at index i is:
+# Hard: Compute total water trapped at a particular bar depends on the tallest bar to its left and tallest bar to its right. The trapped water at index i is:
 # water_at_i = min(max_height_left, max_height_right) - height[i]
 
 # Use two pointers: one at the start (left), one at the end (right).
@@ -15,16 +15,18 @@ def trap(height):
     
     while left < right:
         if height[left] < height[right]:
-            left += 1
+            left += 1   # incrementing first as left boundary cannot hold water.
             left_max = max(left_max, height[left])
             trapped_water += max(0, left_max - height[left])
         else:
-            right -= 1
+            right -= 1 # decrementing first  as right boundary cannot hold water.
             right_max = max(right_max, height[right])
             trapped_water += max(0, right_max - height[right])
     
     return trapped_water
 
+# Time Complexity: O (n)
+# Space Complexity: O (1)
 
 heights = [0,1,0]
 print(f"Expected trapped water: 0, Computed trapped water: ", trap(heights))
@@ -41,7 +43,7 @@ heights = [3,0,2,0,4]
 # index 2 = min(3,4) - 2 = 1
 # index 3 = min(3,4) - 0 = 3
 # index 4 = 0
-print(f"Expected trapped water: 6, Computed trapped water: ", trap(heights))
+print(f"Expected trapped water: 7, Computed trapped water: ", trap(heights))
 
 heights = [4, 2, 0, 3, 2, 5]
 # index 0 = 0

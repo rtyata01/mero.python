@@ -38,6 +38,7 @@ def three_sum(nums):
 # Total Time Complexity: O(n²)
 # Sorting: O(n log n)
 # Looping and searching: O(n²)
+# Space Complexity: O(1) (excluding output)
 
 # Tests
 input1 = [-1, 0, 1, 2, -1, -4]
