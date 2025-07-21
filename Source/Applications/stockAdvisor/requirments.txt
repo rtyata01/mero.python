@@ -1,0 +1,12 @@
+fastapi==0.115.0
+uvicorn==0.31.0
+yfinance==0.2.44
+httpx==0.27.2
+
+cd D:\git\mero.python
+pip install -r requirements.txt
+
+# Run API
+uvicorn stock_data_api:app --reload
+
+# Run python stock_advisor_client.py on different terminal.
