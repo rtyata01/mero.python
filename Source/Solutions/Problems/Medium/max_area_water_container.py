@@ -47,3 +47,6 @@ print(f"Input: {nums}, max area of water container: {maxArea(nums)}")
 
 nums = [10000, 1, 10000]
 print(f"Input: {nums}, max area of water container: {maxArea(nums)}")
+
+nums = [2,1,5,6,2,3]
+print(f"Input: {nums}, max area of water container: {maxArea(nums)}")
