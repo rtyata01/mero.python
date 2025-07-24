@@ -17,6 +17,7 @@ class LFUCache:
 
     def _update_freq(self, key):
         val, freq = self.key_to_val_freq[key]
+        
         # Remove from current frequency
         del self.freq_to_keys[freq][key]
         if not self.freq_to_keys[freq]:
@@ -35,8 +36,12 @@ class LFUCache:
         return self.key_to_val_freq[key][0]
 
     def put(self, key: int, value: int) -> None:
+        if self.capacity == 0:
+            return
+
         if key in self.key_to_val_freq:
-            self.key_to_val_freq[key] = (value, self.key_to_val_freq[key][1])
+            _, freq = self.key_to_val_freq[key]
+            self.key_to_val_freq[key] = (value, freq)
             self._update_freq(key)
             return
 

@@ -51,9 +51,10 @@ def largest_connected_island(grid):
 
     return max_area
 
-
-# Time complexity= o(n^2)
-# Space complexity= o(n^2)
+# Time complexity= o(n * n), where n is number of rows and columns.
+    # dfs = o(L), where L is number of cells = 1s.
+    # nested loop (island area and fliping 0) = o(n * n)
+# Space complexity= o(n * n)
 
 # Before DFS
 grid = [

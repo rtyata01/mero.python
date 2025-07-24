@@ -11,18 +11,18 @@ def alien_order(words):
 
     # Step 2: Build graph by comparing adjacent words
     for i in range(len(words) - 1):
-        word1, word2 = words[i], words[i+1]
-        min_len = min(len(word1), len(word2))
+        c_word, n_word = words[i], words[i+1]
+        min_len = min(len(c_word), len(n_word))
         
         # Check for invalid ordering like ["abc", "ab"], where ab is expected to be first.
-        if len(word1) > len(word2) and word1[:min_len] == word2[:min_len]:
+        if len(c_word) > len(n_word) and c_word[:min_len] == n_word[:min_len]:
             return "invalid order detected in inputs."
 
         for j in range(min_len):
-            if word1[j] != word2[j]:
-                if word2[j] not in graph[word1[j]]:
-                    graph[word1[j]].add(word2[j])  # graph = {'t': {'f'}, 'w': {'e'},'r': {'t'},'e': {'r'}}
-                    in_degree[word2[j]] += 1       # in_degree = {'w': 0, 'r': 1, 't': 1, 'f': 1, 'e': 1} f depends on t, so degree 1.
+            if c_word[j] != n_word[j]:
+                if n_word[j] not in graph[c_word[j]]:
+                    graph[c_word[j]].add(n_word[j])  # graph = {'t': {'f'}, 'w': {'e'},'r': {'t'},'e': {'r'}}
+                    in_degree[n_word[j]] += 1       # in_degree = {'w': 0, 'r': 1, 't': 1, 'f': 1, 'e': 1} f depends on t, so degree 1.
                 break
 
     # Step 3: Topological sort (BFS using queue)
@@ -43,6 +43,17 @@ def alien_order(words):
         return "cannot find the error, cycle exists or gap exists"
 
     return "".join(order)
+
+
+# Time Complexity =	O(n + u + p)
+    # in_degree = O(n), where u is unique chars.
+    # graph = O(n), where n is total words.
+    # bfs = O(u + p), where p is number of precedence i.e. char dependencies.
+    
+# Space Complexity = O(u + p)
+    # in_degree = O(u), where u is unique chars.
+    # graph = O(u + p)
+    # queue, order =  o(u)
 
 
 words = ["x", "wrt", "wrf", "er", "ett", "rftt"]  # sorted list of words

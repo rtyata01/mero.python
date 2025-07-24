@@ -1,6 +1,6 @@
 # Hard: Serialization: Convert a binary tree into a string so it can be stored or transmitted.
 # Deserialization: Convert the string back into the original binary tree structure.
-# Use DFS for both serialization and deserialization, results better performance and consume low memory.
+# Use DFS for both compact serialization and deserialization, results better performance and consume low memory.
 
 from collections import deque
 
@@ -10,13 +10,13 @@ class TreeNode:
         self.left = left
         self.right = right
         
-class Codec:
+class TreeCodec:
     def serialize(self, root: TreeNode) -> str:
         """Encodes a tree to a single string."""
         def dfs(node):
             if not node:
                 return "null,"
-            return str(node.val) + ',' + dfs(node.left) + dfs(node.right)
+            return f"{node.val}," + dfs(node.left) + dfs(node.right)
         
         return dfs(root)
     
@@ -25,24 +25,16 @@ class Codec:
         if not data:
             return None
     
-        values = data.split(',')
-        self.index = 0
-
-        def dfs():
-            if self.index >= len(values):
+        def dfs() -> TreeNode:
+            val = next(values)
+            if val == "null":
                 return None
-            
-            value = values[self.index]
-            self.index += 1
-            
-            if value == "null":
-                return None
-            
-            node = TreeNode(int(value)) 
+            node = TreeNode(int(val)) 
             node.left = dfs()
             node.right = dfs()
             return node
         
+        values = iter(data.strip().split(','))  # Using iter() and next() avoids self.index tracking.
         return dfs()
 
 def inorder_tree(root):
@@ -52,9 +44,16 @@ def inorder_tree(root):
     inorder_tree(root.left)
     print(root.val, end="=>")
     inorder_tree(root.right)
-        
+    
+# Time Complexity	
+    # serialize() = O(n)
+    # deserialize() = O(n)
+# Space Complexity
+    # serialize() = O(n)
+    # deserialize() = O(n)
+    
 # Example Usage
-codec = Codec()
+codec = TreeCodec()
 root = TreeNode(4)
 root.left = TreeNode(2)
 root.right = TreeNode(5)

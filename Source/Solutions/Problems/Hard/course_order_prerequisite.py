@@ -8,8 +8,8 @@ def find_course_order(numCourses, prerequisites):
     
     # Build graph
     for course, prereq in prerequisites:
-        graph[prereq].append(course)
-        indegree[course] += 1
+        graph[prereq].append(course)  # prereq -> course
+        indegree[course] += 1         # course.
     
     # Initialize queue with courses having no prerequisites
     queue = deque([i for i in range(numCourses) if indegree[i] == 0])
@@ -25,8 +25,11 @@ def find_course_order(numCourses, prerequisites):
     
     return order if len(order) == numCourses else []
 
-# Time Complexity: o(C + P), where C is number of courses and P is number of prerequisites.
-# Space Complexity: o(C + P)
+# Time Complexity: O(C + P)
+    # graph = O(P), where p is number of prerequistes.
+    # in_degree = O(C), where c is number of courses.
+    # BFS = O(C + P)
+# Space Complexity: O(C + P)
 
 # Example usage:
 numCourses = 4

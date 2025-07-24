@@ -33,8 +33,10 @@ def count_island_size(grid):
 
     return island_area
 
-# Time complexity= o(m * n)
-# Space complexity= o(m * n)
+# Time complexity= o(n * n), where n is number of rows and columns.
+    # dfs = o(L), where L is number of cells = 1s.
+    # nested loop = o(n * n)
+# Space complexity= o(n * n)
 
 # Before DFS
 grid = [

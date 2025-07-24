@@ -31,18 +31,22 @@ def find_max_single_balanced_parentheses(s):
     
     return max_length, longest_balanced_substring
 
+# Time Complexity: O(n)
+# Space Complexity: O(n)
+
 # Test the function
-test_input = "(((()()))))(())"
-print("Original string:", test_input)
-length, substring = find_max_single_balanced_parentheses(test_input)
-print("Result .............................")
-print("Maximum Length:", length) 
-print("Balanced Substring:", substring)
+test_cases = [
+    "",
+    ")",
+    "(",
+    ")(",
+    "(())",
+    "(((()()))))(())",
+    "(())(((()()))))"
+]
 
-test_input = "(())(((()()))))"
-print("Original string:", test_input)
-length, substring = find_max_single_balanced_parentheses(test_input)
-print("Result .............................")
-print("Maximum Length:", length) 
-print("Balanced Substring:", substring)
-
+for input in test_cases:
+    print("\nOriginal string input:", input)
+    length, substring = find_max_single_balanced_parentheses(input)
+    print("Maximum Length:", length) 
+    print("Balanced Substring:", substring)

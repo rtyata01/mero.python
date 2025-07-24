@@ -1,6 +1,7 @@
 # Hard: Serialization: Convert a binary tree into a string so it can be stored or transmitted.
 # Deserialization: Convert the string back into the original binary tree structure.
 # Use BFS for both serialization and deserialization, results better integration, debugging and scalability.
+# BFS tends to produces many nulls entries during serialization, if the tree isn't complete or balanced.
 
 from collections import deque
 class TreeNode:
@@ -39,28 +40,29 @@ class Codec:
         if not data:
             return None
         
-        values = data.split(',')
-        if values[0] == "null":
+        values = data.strip().split(',')
+        index = 0
+        if values[index] == "null":
             return None
         
-        root = TreeNode(int(values[0]))
+        root = TreeNode(int(values[index]))
         queue = deque([root])
-        i = 1
+        index += 1
         
-        while queue and i < len(values):
+        while queue and index < len(values):
             node = queue.popleft()
             
             # Left child
-            if values[i] != "null":
-                node.left = TreeNode(int(values[i]))
+            if values[index] != "null":
+                node.left = TreeNode(int(values[index]))
                 queue.append(node.left)
-            i += 1
+            index += 1
             
             # Right child
-            if i < len(values) and values[i] != "null":
-                node.right = TreeNode(int(values[i]))
+            if index < len(values) and values[index] != "null":
+                node.right = TreeNode(int(values[index]))
                 queue.append(node.right)
-            i += 1
+            index += 1
         
         return root
 
@@ -72,6 +74,13 @@ def inorder_tree(root):
     print(root.val, end="=>")
     inorder_tree(root.right)
 
+# Time Complexity	
+    # serialize() = O(n)
+    # deserialize() = O(n)
+# Space Complexity
+    # serialize() = O(n)
+    # deserialize() = O(n)
+    
 # Example Usage
 codec = Codec()
 root = TreeNode(4)
