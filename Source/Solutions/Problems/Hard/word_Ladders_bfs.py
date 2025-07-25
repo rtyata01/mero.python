@@ -30,8 +30,9 @@ def findLadders(beginWord, endWord, wordList):
 
     return []
 
-# Time Complexity:
-# Total: O(N × L × 26 + P × N) , where N = words, L is lenght of each word, BFS path propagation is P * N.
+# Time Complexity: O(N × L + P × L)
+    # BFS Loop: O(N × L × 26), where w is number of unique words with Length L.
+    # Paths Loop: O(P × L) , where P is the total number of shortest paths, with Length L.
 
 beginWord = "hit"
 endWord = "cog"

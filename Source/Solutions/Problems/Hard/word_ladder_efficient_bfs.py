@@ -42,8 +42,12 @@ class Solution:
         
         return result
 
-# Time Complexity:
-# Total: O(N × L × K + P × N) , where N = words, L is length of each word, BFS path propagation is K + P * N, where K is neighbour, P is pattern.
+# Time Complexity: O(N * L * M)
+    # Dictionary: O(N * L), where N is the unique number of words and L is the length of each words.
+    # BFS Search: O(N * L * M), where M is the number of neighbors per pattern.
+# Space Complexity: O(N * L)
+    # visist set = O(N), where N is the unique number of words.
+    # queue and results = O (N * L), number of shortest paths and length of each paths.
 
 # Example Usage
 sol = Solution()

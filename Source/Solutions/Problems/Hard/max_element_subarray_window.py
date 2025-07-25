@@ -13,7 +13,7 @@ def max_sliding_window(arr, window_size):
     results = []
 
     for i in range(len(arr)):
-        # Remove elements out of the window i.e. from front of the queue.
+        # Remove elements out of the window i.e. from front of the queue
         while queue and queue[0] < i - window_size + 1:
             queue.popleft()
 
@@ -29,10 +29,27 @@ def max_sliding_window(arr, window_size):
 
     return results
 
+# Time Complexity: O(n)
+# Space Complexity: O(k) queue + O(n - k + 1) store in results.                                                                                                                             
+
+# without using queue
+def max_in_sliding_window_naive_less_efficient(arr, k):
+    if not arr or k == 0:
+        return []
+    
+    result = []
+    for i in range(len(arr) - k + 1):
+        result.append(max(arr[i:i + k]))
+
+    return result
+
+# Time Complexity: O(n * k) where n is the length of the array.
+
 # Example usage:
 arr = [1, 3, -1, -3, 5, 3, 6, 7]
 k = 3
 print(max_sliding_window(arr, k))  # Output: [3, 3, 5, 5, 6, 7]
+print(max_in_sliding_window_naive_less_efficient(arr, k))
 # i = 0, queue = [0],       result = []
 # i = 1, queue = [1],       result = []
 # i = 2, queue = [1,2],     result = [3]
@@ -42,5 +59,9 @@ print(max_sliding_window(arr, k))  # Output: [3, 3, 5, 5, 6, 7]
 # i = 6, queue = [6],       result = [3, 3, 5, 5, 6]
 # i = 7, queue = [7],       result = [3, 3, 5, 5, 6, 7]
 
-k = 5
-print(max_sliding_window(arr, k))  # Output: [5, 5, 6, 7]
+# Example usage:
+arr = [1, 3, -1, -2, -3, 5, 3, 6, 7]
+k = 3
+print(max_sliding_window(arr, k))  # Output: [3, 3, 5, 5, 6, 7]
+print(max_in_sliding_window_naive_less_efficient(arr, k))
+# i = 0, queue = [0],       result = []

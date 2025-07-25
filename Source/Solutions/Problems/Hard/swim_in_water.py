@@ -7,12 +7,12 @@ import heapq
 
 def swimInWater(grid):
     N = len(grid)
-    visited = [[False]*N for _ in range(N)]
-    heap = [(grid[0][0], 0, 0)]  # (elevation, row, col)
+    visited = [[False]*N for _ in range(N)]  # Note (rows, cols) = [False] * cols for _ in range(rows)
+    min_heap = [(grid[0][0], 0, 0)]  # (elevation, row, col)
     directions = [(-1, 0), (1, 0), (0, -1), (0, 1)]
 
-    while heap:
-        time, r, c = heapq.heappop(heap)
+    while min_heap:
+        time, r, c = heapq.heappop(min_heap)
         if r == N - 1 and c == N - 1:
             return time
         if visited[r][c]:
@@ -21,7 +21,13 @@ def swimInWater(grid):
         for dr, dc in directions:
             nr, nc = r + dr, c + dc
             if 0 <= nr < N and 0 <= nc < N and not visited[nr][nc]:
-                heapq.heappush(heap, (max(time, grid[nr][nc]), nr, nc))
+                heapq.heappush(min_heap, (max(time, grid[nr][nc]), nr, nc))
+                
+# Time Complexity: O (N * M * log (N * M)), where N is rows and M is columns.
+  # heap push and pop = O(log k), where k is number of elements in heap. in worse case k = (rows * cols)
+# Space Complexity: O (N * M)
+  # visited = O (N * M)
+  # heap = O (N * M)
 
 grid= [
     [0,2],

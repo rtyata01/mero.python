@@ -10,7 +10,7 @@ def shortest_substring(sentence, words):
     formed = 0
     left = 0
     min_len = float('inf')
-    min_window = (0, 0)
+    min_window = (0, 0)  # tuple
 
     for right, word in enumerate(sentence_words):
         if word in required_counts:
@@ -19,8 +19,9 @@ def shortest_substring(sentence, words):
                 formed += 1
 
         while formed == len(required_counts):
-            if right - left < min_len:
-                min_len = right - left
+            window_length = right - left + 1  # correct window size
+            if window_length < min_len:
+                min_len = window_length
                 min_window = (left, right)
 
             left_word = sentence_words[left]
