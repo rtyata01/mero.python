@@ -3,18 +3,18 @@
 
 def length_of_longest_substring_efficient(source):
     seen = {}
-    start = max_len = 0
-    longest_substring = ""
-    for i, char in enumerate(source):
-        if char in seen and seen[char] >= start:
-            start = seen[char] + 1
+    left = max_len = 0
+    max_start = 0
+    for right, char in enumerate(source):
+        if char in seen and seen[char] >= left:
+            left = seen[char] + 1
 
-        seen[char] = i
-        if i - start + 1 > max_len:
-            max_len = i - start + 1
-            longest_substring = source[start : i + 1]
+        seen[char] = right
+        if right - left + 1 > max_len:
+            max_len = right - left + 1
+            max_start = left
     
-    
+    longest_substring = source[max_start:max_start + max_len]
     print(f"Original string: {source}, Max Length: {max_len}, Longest Substring: {longest_substring}")    
     return max_len
 
@@ -24,7 +24,7 @@ def length_of_longest_substring_efficient(source):
 def length_of_longest_substring(source):
     char_set = set()
     left = max_len = 0
-    longest_substring = ""
+    max_start = 0
 
     for right, char in enumerate(source):
         while char in char_set:
@@ -35,8 +35,9 @@ def length_of_longest_substring(source):
         
         if right - left + 1 > max_len:
             max_len = right - left + 1
-            longest_substring = source[left : right + 1 ]
-            
+            max_start = left
+
+    longest_substring = source[max_start:max_start + max_len]            
     print(f"Original string: {source}, Max Length: {max_len}, Longest Substring: {longest_substring}")
     return max_len
 

@@ -2,7 +2,15 @@
 # The optimal meeting point is at the median of the x-coordinates and y-coordinates of the points.
 # The sum of absolute differences is minimized at the median.
 
+# Naive, less efficient solution
+# find min and max for x and y coordinates.
+# loop x from min_x, max_y + 1
+# inner loop y from min_y, max_y + 1
+# evaluate the total distance, for all points and find the min total.
+
 def min_total_manhattan_distance(points):
+    if not points:
+        return None, None
     
     # Separate x and y coordinates
     xs = sorted([x for x, y in points])

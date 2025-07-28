@@ -1,4 +1,5 @@
-# Given an array of integers, find the length of the longest subarray with at most N distinct numbers.
+# Given an array of integers, find the length of the longest subarray with N distinct numbers.
+# Use has map to count the unique or distinct numbers.
 
 from collections import defaultdict
 def longest_subarray_n_distinct(nums, unique_numbers):
@@ -7,8 +8,8 @@ def longest_subarray_n_distinct(nums, unique_numbers):
     
     count = defaultdict(int)
     max_length = 0
+    max_start = 0
     left = 0
-    result = []
     
     for right, num in enumerate(nums):
         count[num] +=1
@@ -23,9 +24,14 @@ def longest_subarray_n_distinct(nums, unique_numbers):
         
         if right - left + 1 > max_length:
             max_length = right - left + 1
-            result = nums[left: right + 1]
+            max_start = left
             
+    
+    result = nums[max_start: max_start + max_length]
     return result
+
+# Time Complexity: O(n)
+# Space Complexity: O(n)
 
 nums = [1, 2, 1, 2, 3, 2, 2, 1, 4]
 result = longest_subarray_n_distinct(nums, 2)

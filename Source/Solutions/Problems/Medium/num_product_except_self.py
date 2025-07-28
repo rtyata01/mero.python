@@ -23,8 +23,28 @@ def productExceptSelf(nums: list[int]) -> list[int]:
 # Time Complexity: O(n)
 # Space Complexity: O(1) (excluding output array)
 
+# For naive, less efficient solution
+def productExceptSelf_naive(nums: list[int]) -> list[int]:
+    if not nums or len(nums) < 2:
+        raise ValueError("Input array must have at least 2 elements")
+
+    n = len(nums)
+    result = []
+
+    for i in range(n):
+        product = 1
+        for j in range(n):
+            if i != j:
+                product *= nums[j]
+        result.append(product)
+
+    return result
+# Time complexity: O(n^2)
+
 # Tests
 nums = [1, 5, 10]
+# left product = [1, 1, 5]
+# right product = [50, 10, 5]
 print(f"Input: {nums}, Output: {productExceptSelf(nums)}") # output [50, 10, 5]
 
 nums = [5, 10]

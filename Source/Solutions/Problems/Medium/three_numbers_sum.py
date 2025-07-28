@@ -1,7 +1,7 @@
 # Problem: Given an array nums, return all triplets that sum up to zero.
 
-def three_sum(nums):
-    if not nums:
+def three_sum(nums, target=0):
+    if not nums or len(nums) < 3:
         return []
     
     nums.sort()
@@ -13,12 +13,13 @@ def three_sum(nums):
         if i > 0 and nums[i] == nums[i - 1]:
             continue
 
-        left, right = i + 1, n - 1
+        left = i + 1
+        right = n - 1
 
         while left < right:
             total = nums[i] + nums[left] + nums[right]
 
-            if total == 0:
+            if total == target: 
                 result.append([nums[i], nums[left], nums[right]])
 
                 # Move left and right pointers to the next unique values, to skip duplicates
@@ -28,7 +29,7 @@ def three_sum(nums):
                 while left < right and nums[right] == right_val:
                     right -= 1
 
-            elif total < 0:
+            elif total < target:
                 left += 1
             else:
                 right -= 1
@@ -36,13 +37,31 @@ def three_sum(nums):
     return result
 
 # Total Time Complexity: O(n²)
-# Sorting: O(n log n)
-# Looping and searching: O(n²)
+    # Sorting: O(n log n)
+    # Looping and searching: O(n²)
 # Space Complexity: O(1) (excluding output)
+
+def three_sum_unsorted(nums):
+    result = set()
+    n = len(nums)
+
+    for i in range(n):
+        seen = set()
+        for j in range(i + 1, n):
+            complement = - (nums[i] + nums[j])
+            if complement in seen:
+                triplet = tuple(sorted((nums[i], nums[j], complement)))  # sorted to avoid duplicates (1, -1, 0) and (0, 1, -1)
+                result.add(triplet)  # set will store unique.
+            seen.add(nums[j])
+
+    return [list(triplet) for triplet in result]
+
+# Total Time Complexity: O(n²)
+# Space Complexity: O(n²) - more space.
 
 # Tests
 input1 = [-1, 0, 1, 2, -1, -4]
-print("Input:", input1, "Sum zero Output:", three_sum(input1)) # Output: [[-1, -1, 2], [-1, 0, 1]]
+print("Input:", input1, "Sum zero Output:", three_sum_unsorted(input1)) # Output: [[-1, -1, 2], [-1, 0, 1]]
 
 input2 = []
 print("Input:", input2, "Sum zero Output:", three_sum(input2)) # Output: []

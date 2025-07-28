@@ -1,5 +1,9 @@
 # Problem: Given a list of intervals, merge all overlapping intervals.
 
+# For naive approach, use brute force i.e. compare each pair with all other pairs and merge.
+# for i in range(len(intervals)):
+    # for j in range(i+1, len(intervals)):
+
 def merge(intervals):
     if not intervals:
         return []
@@ -9,7 +13,7 @@ def merge(intervals):
     
     for curr in intervals[1:]:
         prev = merged[-1]
-        if curr[0] <= prev[1]:
+        if prev[1] > curr[0]:
             prev[1] = max(prev[1], curr[1])
         else:
             merged.append(curr)
@@ -21,7 +25,6 @@ def merge(intervals):
 # merge: O(n)
 # Space Complexity: O(n)
 
- 
 # Tests
  
 # Case 1: Basic overlapping intervals

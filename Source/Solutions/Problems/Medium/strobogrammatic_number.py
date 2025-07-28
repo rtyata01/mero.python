@@ -8,7 +8,8 @@
 def is_strobogrammatic(num: str) -> bool:
     mapping = {'0': '0', '1': '1', '6': '9', '8': '8', '9': '6'}
     
-    left, right = 0, len(num) - 1
+    left = 0
+    right = len(num) - 1
     
     while left <= right:
         if num[left] not in mapping or num[right] not in mapping:
@@ -43,9 +44,8 @@ def find_strobogrammatic(n: int) -> list:
     
     return build(n, n)
 
-# Time Complexity = 0(5^n/2)
+# Time Complexity = 0(5^n/2), where 5 refers the pairs and n is the length.
 # Space Complexity = 0(n * 5^n/2)
-
 
 # Test
 print(f"Expected: True, Output: ", is_strobogrammatic("69"))  # True

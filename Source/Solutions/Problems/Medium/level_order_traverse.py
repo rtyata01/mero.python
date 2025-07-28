@@ -12,8 +12,8 @@ def level_order_bfs(root): # Better solution, as BFS refers level order traversa
     if not root:
         return []
     
-    queue = deque([root])
     result = []
+    queue = deque([root])
     
     while queue:
         level = []
@@ -43,6 +43,21 @@ def level_order_traverse_dfs(root):  # using DFS, for level order while DFS is m
     
     traverse_nodes(root, 0)
     return list(cache.values())
+
+# Both algorithms have the same time and space complexity:
+# Time Complexity: O(n) — All nodes are visited once.
+# Space Complexity: O(n)
+# Use BFS for better clarity and alignment with standard definitions.
+
+# Use DFS
+    # when exploring all possible paths like maze, backtracking, recursive exploration, tree traversal in-order, pre-order
+    # when detecting cycles in a directed graph.
+    # You have memory constraints and your data is deep rather than wide.
+    
+# Use BFS
+    # when exploring the shortest path, tree level order traversal
+    # visit nodes in order of increasing distance.
+    # finding nearest resources like hospital in map.
 
 # Test 
 root = TreeNode(1)

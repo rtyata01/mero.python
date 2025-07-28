@@ -12,6 +12,38 @@ def topKFrequent(nums: list[int], k: int) -> list[int]:
     count = Counter(nums)  # {'a': 3, 'b': 5, 'c': 2}
     return heapq.nlargest(k, count.keys(), key=count.get) # ['b', 'a']
 
+def topKFrequent(nums: list[int], k: int) -> list[int]:
+    count = Counter(nums)    # → Counter({1: 3, 3: 1, 2: 2}), nums = [1,1,1,3,2,2]
+    sorted_items = sorted(count.items(), key=lambda item: item[1], reverse=True)  # [(1, 3), (2, 2), (3, 1)] # reverse=False, [(3, 1), (2, 2), (1, 3)]
+    top_k = list(dict(sorted_items).keys())[:k]
+    return top_k
+
+def topKFrequent(nums: list[int], k: int) -> list[int]:
+    count = Counter(nums)
+    min_heap = []
+
+    for num, freq in count.items():
+        heapq.heappush(min_heap, (freq, num))
+        if len(min_heap) > k:
+            heapq.heappop(min_heap)
+
+    return [num for freq, num in min_heap]
+
+
+def topKFrequent(nums: list[int], k: int) -> list[int]:
+    count = Counter(nums)  # → Counter({1: 3, 3: 1, 2: 2}), nums = [1,1,1,3,2,2]
+    freq_bucket = [[] for _ in range(len(nums) + 1)] # [[], [], [], [], [], [], []]
+    
+    for num, freq in count.items():    # highest frequecy will appear at higher index. [[], [3], [2], [1], [], [], []]
+        freq_bucket[freq].append(num)
+    
+    result = []
+    for i in range(len(freq_bucket) - 1, 0, -1):
+        for num in freq_bucket[i]:
+            result.append(num)
+            if len(result) == k:
+                return result
+
 # Time Complexity: O(n + m log k)
 # Counter = O(n)
 # heap = O(m log k), where m is unique elements and k is the min heap size.
