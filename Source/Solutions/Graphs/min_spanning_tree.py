@@ -1,26 +1,28 @@
-# A Minimum Spanning Tree is a subset of the edges of a graph that connects all the vertices together, without any cycles, 
-# and with the minimum possible total edge weight.
+# A Minimum Spanning Tree is 
+# A subset of the edges of a graph that connects all the vertices/nodes together, 
+    # without any cycles, 
+    # With the minimum possible total edge weight.
 
 import heapq
 from collections import defaultdict
 
 class Solution:
-    def min_spanning_tree_weight(self, n: int, edges: list) -> int:
-        if n == 0:
+    def min_spanning_tree_weight(self, nodes: int, edges: list) -> int:
+        if nodes == 0:
             return 0
         
         # Build adjacency list
-        adj = defaultdict(list)
+        adj = defaultdict(list) # {i: [] for i in range(n)}
         for u, v, w in edges:
             adj[u].append((v, w))
             adj[v].append((u, w))
         
-        visited = [False] * n
+        visited = [False] * nodes
         min_heap = [(0, 0)]  # Start with edge weight 0, from node 0.
         total_weight = 0
         nodes_visited = 0
         
-        while min_heap and nodes_visited < n:
+        while min_heap and nodes_visited < nodes:
             weight, node = heapq.heappop(min_heap)
             if visited[node]:
                 continue
@@ -34,12 +36,11 @@ class Solution:
                     heapq.heappush(min_heap, (w, neighbor))
         
         # Check if all nodes were visited (i.e., graph is connected)
-        return total_weight if nodes_visited == n else -1
+        return total_weight if nodes_visited == nodes else -1
 
 # Time Complexity
-# Building Graph = o(m) = m is number of edges, n is number of nodes
-# Heap operations: o(m log n) = m heap insertions with each o(log n)
-
+# Building Graph = o(e) = e is number of edges, n is number of nodes
+# Heap operations: o(e log n) = heap insertions for each edge e with o(log n)
 
 # Example Usage
 sol = Solution()

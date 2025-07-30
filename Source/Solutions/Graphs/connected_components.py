@@ -1,12 +1,18 @@
+
+# find the connected components, given a list of connected edges and total number of nodes.
+# Need bidirectional edges for your connected components algorithm i.e. u → v, and from v → u.
+# DFS/BFS wouldn't find all nodes that are truly reachable in an undirected (Directed) graph, u → v but not  v → u.
+
+from collections import defaultdict
 class Solution:
-    def numComponents(self, n: int, edges: list) -> int:
+    def numComponents(self, nodes: int, edges: list) -> int:
         # Create an adjacency list
-        adj = {i: [] for i in range(n)}
+        adj = defaultdict(list) # {i: [] for i in range(n)}
         for u, v in edges:
             adj[u].append(v)
             adj[v].append(u)
         
-        visited = [False] * n
+        visited = [False] * nodes
         
         def dfs(node):
             visited[node] = True
@@ -15,7 +21,7 @@ class Solution:
                     dfs(neighbor)
         
         components = 0
-        for i in range(n):
+        for i in range(nodes):
             if not visited[i]:
                 dfs(i)
                 components += 1

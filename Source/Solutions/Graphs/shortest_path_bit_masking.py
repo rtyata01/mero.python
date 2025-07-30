@@ -3,8 +3,13 @@
 
 from collections import deque
 
-def shortest_path_length(graph):
-    nodes = len(graph)
+def shortest_path_length(nodes, edges):
+    graph = {i: [] for i in range(nodes)}
+    
+    for u, v in edges:
+        graph[u].append(v)
+        graph[v].append(u)
+    
     all_visited = (1 << nodes) - 1  # Bitmask when all nodes are visited 1 << 4 = 0b10000 - 1 = 0b01111 where n = 4
     queue = deque()
     visited = set()
@@ -38,20 +43,24 @@ def shortest_path_length(graph):
     # worst case, all n × 2^n states can be queued.
 
 # Example usage
-graph = [
-    [1, 2, 3],  # Node 0 connects to 1, 2, 3
-    [0],        # Node 1 connects to 0
-    [0],        # Node 2 connects to 0
-    [0]         # Node 3 connects to 0
-]
-# 1 -> 0, 0 -> 1, 0 -> 2, 0 -> 3 = 4 steps
-print(f"Expected: 4, Shortest Path Length: {shortest_path_length(graph)}")
+nodes = 5
+edges = [[0, 1], [1, 2], [1, 3], [3, 4]]
 
-graph = [
-    [1, 2],    # Node 0 connects to 1 and 2
-    [0, 2, 3], # Node 1 connects to 0, 2, and 3
-    [0, 1],    # Node 2 connects to 0 and 1
-    [1]        # Node 3 connects to 1
-]
-# 0 -> 1, 1 -> 2, 1 -> 3 = 3 steps
-print(f"Expected: 3, Shortest Path Length: {shortest_path_length(graph)}")
+# 0 — 1 — 2
+#     |
+#     3 — 4
+
+# 0 -> 1 -> 2 -> 1 -> 3 -> 4
+print(f"Expected: 5, Shortest Path Length: {shortest_path_length(nodes, edges)}")
+
+nodes = 5
+edges = [[0, 1], [1, 2], [2, 3], [3, 4], [4, 0]]
+# 0 — 1 — 2
+#   \     |
+#     4 — 3
+# 0 -> 1 -> 2 -> 3 -> 4
+print(f"Expected: 4, Shortest Path Length: {shortest_path_length(nodes, edges)}")
+
+nodes = 7
+edges = [[0, 1], [1, 2], [1, 3], [3, 4], [5, 6]]
+print(f"Expected: -1, Shortest Path Length: {shortest_path_length(nodes, edges)}")

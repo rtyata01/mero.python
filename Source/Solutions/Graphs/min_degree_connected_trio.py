@@ -1,16 +1,16 @@
 # Find the minimum degree among all connected trios in the graph.
 # If no connected trio exists, return -1.
 
-# degree_of_trio= (deg(u) + deg(v) + deg(w)) −2 × (number of edges between u, v, w)
+# degree_of_trio= (deg(u) + deg(v) + deg(w)) −2 × ( 3 = number of edges between u, v, w)
 
 import math
 
-def min_trio_degree(n, edges):
+def min_trio_degree(nodes, edges):
     # Build adjacency matrix for fast edge lookup
-    graph = [[False] * (n + 1) for _ in range(n + 1)]
+    graph = [[False] * (nodes + 1) for _ in range(nodes + 1)]
     
     # Track node degrees
-    degree = [0] * (n + 1)
+    degree = [0] * (nodes + 1)
 
     for u, v in edges:
         graph[u][v] = True
@@ -21,11 +21,11 @@ def min_trio_degree(n, edges):
     min_trio = math.inf
 
     # Try all triplets (i, j, k)
-    for i in range(1, n + 1):
-        for j in range(i + 1, n + 1):
+    for i in range(1, nodes + 1):
+        for j in range(i + 1, nodes + 1):
             if not graph[i][j]:   # equivalent to (graph[i][j] == False)
                 continue
-            for k in range(j + 1, n + 1):
+            for k in range(j + 1, nodes + 1):
                 if graph[i][k] and graph[j][k]:  # equivalent to (graph[i][k] == True)
                     # Connected trio found
                     # Trio degree = sum of degrees - 6

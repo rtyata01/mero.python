@@ -4,8 +4,7 @@ class ListNode:
         self.next = next
 
 def has_cycle(head):
-    slow = head
-    fast = head
+    slow = fast = head
     while fast and fast.next:
         slow = slow.next          # Move slow pointer by 1 step
         fast = fast.next.next     # Move fast pointer by 2 steps

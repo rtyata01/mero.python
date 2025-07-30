@@ -1,3 +1,5 @@
+
+
 class ListNode:
     def __init__(self, val=0, next=None):
         self.val = val
@@ -26,18 +28,18 @@ def merge_sort(head):
 # merge the sorted halves
 def merge(left, right):
     dummy = ListNode()
-    current = dummy
+    tail = dummy
 
     while left and right:
         if left.val < right.val:
-            current.next = left
+            tail.next = left
             left = left.next
         else:
-            current.next = right
+            tail.next = right
             right = right.next
-        current = current.next
+        tail = tail.next
     
-    current.next = left or right # Assign the remaining nodes, which ever is longer.
+    tail.next = left or right # Assign the remaining nodes, which ever is longer.
     return dummy.next
 
 def create_linked_list(values):
