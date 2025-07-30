@@ -8,27 +8,29 @@ def majority_element(nums):
     for num in nums:
         if count == 0:
             candidate = num
-        count += 1 if num == candidate else -1
+        count += (1 if num == candidate else -1)
 
     return candidate if nums.count(candidate) > len(nums) // 2 else None
 
+from collections import Counter
+
+def majority_element_counter(nums):
+    counts = Counter(nums)
+    num, count = counts.most_common(1)[0]  ## (1) → [(3, 3)]  ## (1)[0] → (3, 3)
+    return num if count > len(nums) // 2 else None
+
 from collections import defaultdict
+
 def majority_element_one_pass_with_count(nums):
     count_map = defaultdict(int)
     majority_count = len(nums) // 2
-    
+        
     for num in nums:
         count_map[num] += 1
         if count_map[num] > majority_count:
             return num
     return None
 
-
-from collections import Counter
-def majority_element_counter(nums):
-    counts = Counter(nums)
-    num, count = counts.most_common(1)[0]  ## (1) → [(3, 3)]  ## (1)[0] → (3, 3)
-    return num if count > len(nums) // 2 else None
 
 arr = [2, 1, 1, 1, 1, 1, 2, 2, 3, 1]
 print(majority_element(arr))  # Output: 1

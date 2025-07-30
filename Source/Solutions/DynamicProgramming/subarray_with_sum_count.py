@@ -1,6 +1,6 @@
 from collections import defaultdict
 
-def subarray_sum(nums, k):
+def subarray_sum(nums, target_sum):
     count = 0
     prefix_sum = 0
     sum_freq = defaultdict(int)  # store the integer sum and its occurrence.
@@ -8,27 +8,33 @@ def subarray_sum(nums, k):
 
     for num in nums:
         prefix_sum += num
-        count += sum_freq[prefix_sum - k]  # num[j] - num[j-1] = k, num[j-1] = num[j] - k
+        count += sum_freq[prefix_sum - target_sum]  # num[j] - num[j-1] = k, num[j-1] = num[j] - k
         sum_freq[prefix_sum] += 1
 
     return count
 
-arr = [1, 2, 3]    
-# {0:1} 
-print(f"expected: 0, result: ", subarray_sum(arr, 10))
+# Time Complexity:  O(n) - Single pass through the array
+# Space	Complexity: O(n) - Stores prefix sums in hashmap
 
-arr = [1, 2, 3]    
+# Tests
+test_cases = [
+    ([1, 2, 3], 15),
+    ([1, 2, 3], 3),
+    ([1, 1, 1], 2),
+    ([1, -1, 0], 0),
+    ([1, -1, 0, -2 , 2], 0),
+]
+
+for arr, target_sum in test_cases:
+    result = subarray_sum(arr, target_sum)
+    print(f"Input: {arr} and sum: {target_sum}, subarray count: {result}")
+
+# Input: ([1, 2, 3], 3)
 # {0:1} 
 # {0:1, 1:1}
 # {0:1, 1:1, 3:1}
 # {0:1, 1:1, 3:2}  # sum, count
-print(f"expected: 2, result: ", subarray_sum(arr, 3))
+# sum=3, count=2
 
-arr = [1, 1, 1]    
-print(f"expected: 2, result: ", subarray_sum(arr, 2))
-
-arr = [1, -1, 0]   
-print(f"expected: 3, result: ", subarray_sum(arr, 0))
-
-arr = [1, -1, 0 , -2, 2]   
-print(f"expected: 3, result: ", subarray_sum(arr, 0))
+# ([1, -1, 0], 0),
+# sum=0, count=3, [1, -1], [0], [1, -1, 0]

@@ -1,4 +1,4 @@
-def nth_fibonacci(n):
+def find_nth_fibonacci(n):
     if n <= 0:
         return 0  # Handle zero or negative index
     elif n == 1:
@@ -9,10 +9,9 @@ def nth_fibonacci(n):
         f1, f2 = f2, f1 + f2
     return f2
 
-print(f"10Th Fibonacci Number: ", nth_fibonacci(10))
+print(f"10Th Fibonacci Number: ", find_nth_fibonacci(10))
 
-
-def nth_fibonacci(n):
+def print_nth_fibonacci_sequence(n):
     if n <= 0:
         return [0]
 
@@ -24,7 +23,7 @@ def nth_fibonacci(n):
     return result
 
 n = 10
-fib_sequence = nth_fibonacci(n)
+fib_sequence = print_nth_fibonacci_sequence(n)
 print(f"Fibonacci sequence up to {n}th number: {fib_sequence}")
 print(f"{n}th Fibonacci number: {fib_sequence[n]}")
 

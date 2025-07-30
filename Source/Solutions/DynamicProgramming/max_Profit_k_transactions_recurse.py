@@ -35,6 +35,16 @@ def maxProfit(k, prices):
     # Start at day 0, with k transactions left, and not holding a stock as, there is no stock and you need to buy first.
     return compute_max_profit(0, k, 0)
 
+# Time complexity:
+    # unlimited transactions: o(n), where k > n // 2
+    # limited transactions: o(nk), where n is the number of days and k is the transactions count.
+# Space Complexity: O(nk)
+
+prices = [3, 2, 6, 8, 0, 3]
+k = 1
+print(f"Max profit: ", maxProfit(k, prices))  # Output: 7 (Buy at 2, sell at 8, profit = 6)
+
 prices = [3, 2, 6, 8, 0, 3]
 k = 2
-print(maxProfit(k, prices))  # Output: 7 (Buy at 2, sell at 6, profit = 4; buy at 0, sell at 3, profit = 3)
+print(f"Max profit: ", maxProfit(k, prices))  # Output: 7 (Buy at 2, sell at 6, profit = 4; buy at 0, sell at 3, profit = 3)
+

@@ -1,32 +1,41 @@
+# Find the Largest Divisible Subset.
+
+# Can be solved using:
+    # recursive approach = top-down approach.
+    # dynamice programming approach = bottom-up approach.
+
+# dp[i] stores the size of largest subset
+# prev[i] stores the index of previous element in the subset.
+
 def largest_divisible_subset(nums):
     if not nums:
         return []
 
     nums.sort()
     n = len(nums)
-    dp = [1] * n           # dp[i] = size of largest subset ending with nums[i]
-    prev = [-1] * n        # to reconstruct path
+    dp = [1] * n         # dp[i] = size of largest subset ending at nums[i]
+    prev = [-1] * n      # prev[i] = index of previous element in the subset
 
-    max_size = 0
-    max_index = 0
+    max_index = 0        # Index of the largest element in the best subset
 
-    for i in range(1, n):
-        for j in range(i):
+    for i in range(n):
+        for j in range(i):  # Only consider elements before i
             if nums[i] % nums[j] == 0 and dp[j] + 1 > dp[i]:
                 dp[i] = dp[j] + 1
                 prev[i] = j
-        if dp[i] > max_size:
-            max_size = dp[i]
+        if dp[i] > dp[max_index]:
             max_index = i
 
-    # Reconstruct subset
-    result = []
-    current = max_index
-    while current != -1:
-        result.append(nums[current])
-        current = prev[current]
+    # Reconstruct the largest divisible subset
+    subset = []
+    while max_index != -1:
+        subset.append(nums[max_index])
+        max_index = prev[max_index]
 
-    return result[::-1]  # reverse to get correct order
+    return subset[::-1]  # Reverse to return in ascending order
+
+# Time Complexity: O(nlogn) + O(n^2) + O(n) = O(n^2)
+# Space Complexity: O(n)
 
 # Example usage:
 nums = [1, 2, 4, 8]

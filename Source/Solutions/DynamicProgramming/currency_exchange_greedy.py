@@ -50,7 +50,7 @@ amount = 12 # Amount in cents
 result = get_change_min_coins(denominations, amount)
 print(f"Change for {amount} cents:", result)
 
-denominations = [10, 8, 2, 1]
+denominations = [10, 5, 1]
 amount = 35
 result = get_change_min_coins(denominations, amount)
-print(f"[Not-optimal] Change for {amount} cents:", result) # 5 = 10 + 8*3 + 1 
+print(f"[Not-optimal] Change for {amount} cents:", result) 

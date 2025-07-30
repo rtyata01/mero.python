@@ -2,54 +2,73 @@
 # Works with negative number as well.
 
 from collections import defaultdict
+from typing import List
 
-def find_subarrays_with_sum(nums, target):
-    current_sum = 0
-    count = 0
+def find_subarrays_with_sum(nums: List[int], target: int) :
+    prefix_sum = 0
+    subarrays = []
+    sum_to_indices = defaultdict(list)
+    sum_to_indices[0].append(-1)  # Handles subarrays starting at index 0
+
+    for index, value in enumerate(nums):
+        prefix_sum += value
+        required_sum = prefix_sum - target
+
+        for start_index in sum_to_indices.get(required_sum, []):  # if required_sum in sum_to_indices: is not preferred.
+            subarrays.append(nums[start_index + 1 : index + 1])
+
+        sum_to_indices[prefix_sum].append(index)
+
+    return subarrays
+
+    # Time Complexity: 
+        # Best case : O(n)
+        # Worst case : O(n²), if there are many repeated prefix sums.
+    # Space Complexity: 
+        # worst	= O(n²)
+
+def find_subarrays_with_sum_brute_force(nums, target):
     result = []
-    sum_index = defaultdict(list)
-    sum_index[0].append(-1)  # Handles subarrays starting from index 0
+    n = len(nums)
 
-    for i, num in enumerate(nums):
-        current_sum += num
-        needed_sum = current_sum - target
-        
-        if needed_sum in sum_index:
-            for start in sum_index.get(needed_sum, []):
-                result.append(nums[start + 1:i + 1])
-                count += 1
+    for start in range(n):
+        current_sum = 0
+        subarray = []
 
-        sum_index[current_sum].append(i)
+        for end in range(start, n):
+            current_sum += nums[end]
+            subarray.append(nums[end])
 
-    return count, result
+            if current_sum == target:
+                result.append(subarray[:])  # Copy current subarray (O(k), but done only for matches)
 
-arr = [1, -1, 0, -2 , 2]
-# {0: [-1]}
+    return result
 
-# i=0, num=1,  {0: [-1], 1: [0]}
-# i=1, num=-1, {0: [-1, 1], 1: [0]}                     # [1, -1],
-# i=2, num=0,  {0: [-1, 1, 2], 1: [0]}                  # [1, -1, 0], [0]
-# i=3  num=-2, {0: [-1, 1, 2], 1: [0], -2: [3]}         
-# i=4  num=2,  {0: [-1, 1, 2], 1: [0], 2: [4]} sum and ending index   # [1, -1, 0, -2, 2], [0, -2, 2], [-2, 2]
-count, result = find_subarrays_with_sum(arr, 0)
-print(f"expected subarray count: 6, count: {count} and result: {result}")
+    # Time Complexity: O(n²)
+        # Loop: O(n²)
+        # Copying subarrays:  O(k) per matching subarray.
+    # Space Complexity: 
+        # worst	= O(n³)
 
-arr = [1, 2, 3]
-# {0: [-1]}
+# Tests
+test_cases = [
+    ([1, -1, 0, -2 , 2], 0),
+    ([1, 2, 3], 3),
+    ([1, 1, 1], 2),
+    ([3, 2, 1], 15)
+]
 
-# i=0, num=1, {0: [-1], 1: [0]}
-# i=1, num=2, {0: [-1], 1: [0], 3: [1]}
-# i=2, num=3, {0: [-1], 1: [0], 3: [1], 6: [2]}  # sum and ending index
-count, result = find_subarrays_with_sum(arr, 3)
-print(f"expected subarray count: 2, count: {count} and result: {result}")
+for arr, target_sum in test_cases:
+    result = find_subarrays_with_sum(arr, target_sum)
+    print(f"Input: {arr} and sum: {target_sum}, subarray count: {len(result)}, subarrays: {result}")
 
-arr = [1, 1, 1]
-# {0: [-1]}
+# sum_to_indices = {0: [-1]}
+# i=0, sum_to_indices = {0: [-1], 1: [0]}
+# i=1, sum_to_indices = {0: [-1, 1], 1: [0]}, Subarray: nums[0:2] = [1, -1] 
+# i=2, sum_to_indices = {0: [-1, 1, 2], 1: [0]}, Subarrays: nums[0:3] = [1, -1, 0], nums[2:3] = [0]
+# i=3, sum_to_indices = {0: [-1, 1, 2], 1: [0], -2: [3]}
+# i=4, sum_to_indices = {0: [-1, 1, 2, 4], 1: [0], -2: [3]}, subarrays: [1, -1, 0, -2, 2], [0, -2, 2], [-2, 2]
 
-# i=0, num=1, {0: [-1], 1: [0]}
-# i=1, num=1, {0: [-1], 1: [0], 2: [1]}
-# i=2, num=1, {0: [-1], 1: [0], 2: [1, 2]}  # sum and ending index
-count, result = find_subarrays_with_sum(arr, 2)
-print(f"expected subarray count: 2, count: {count} and result: {result}")
-
-
+for arr, target_sum in test_cases:
+    result = find_subarrays_with_sum_brute_force(arr, target_sum)
+    print(f"Brute force approach input: {arr} and sum: {target_sum}, subarray count: {len(result)}, subarrays: {result}")

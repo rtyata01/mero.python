@@ -1,9 +1,13 @@
 # use dynamic programming for finding minimum numbe rof coins, regardless of order or value.
 
+# steps:
+# initialize dp[i] = minimum number of coinds needed to make amount i, dp[0] = 0, zero coins to make zero.
+# prev[i] = last coin used ot make amount i optimally.
+
 def get_min_change(denominations, amount):
     dp = [float('inf')] * (amount + 1) # Start with "infinite" coins needed
-    prev = [-1] * (amount + 1)  # No coin used initially
     dp[0] = 0   # 0 coins needed to make amount 0
+    prev = [-1] * (amount + 1)  # No coin used initially
 
     for coin in denominations:
         for i in range(coin, amount + 1):

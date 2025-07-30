@@ -1,37 +1,36 @@
 # Hard: Design a data structure to find the median of a stream of numbers in O(1) time after adding numbers in O(log n) time.
 # Find the median, after n number of inserts into an array.
 
+# Use two heaps, 
+    # max heap, to track the negative numbers.
+    # min heap, to track small numbers.
+# insert into max heap.
+# move the largest from max heap to min heap.
+# if min heap size is greater that max heap size, then pushed the smallest from min heap to max heap.
 from heapq import heappush, heappop
 
 class MedianFinder:
     def __init__(self):
-        self.small = []  # max-heap (store negatives)
-        self.large = []  # min-heap
+        self.max_heap = []  # max-heap (invert sign)
+        self.min_heap = []  # min-heap
 
-    def addNum(self, num):
-        # Push onto small heap first (as negative for max-heap behavior)
-        heappush(self.small, -num)
+    def addNum(self, num: int) -> None:
+        heappush(self.max_heap, -num)
+        
+        # Move the largest from max-heap to min-heap
+        heappush(self.min_heap, -heappop(self.max_heap))
 
-        # Ensure every number in small is <= every number in large
-        if self.large and (-self.small[0] > self.large[0]):
-            val = -heappop(self.small)
-            heappush(self.large, val)
+        # Balance the heaps
+        if len(self.min_heap) > len(self.max_heap):
+            heappush(self.max_heap, -heappop(self.min_heap))
 
-        # Balance sizes: small can only have 1 more element than large
-        if len(self.small) > len(self.large) + 1:
-            val = -heappop(self.small)
-            heappush(self.large, val)
-        elif len(self.large) > len(self.small):
-            val = heappop(self.large)
-            heappush(self.small, -val)
+    def findMedian(self) -> float:
+        if len(self.max_heap) > len(self.min_heap):
+            return -self.max_heap[0]
+        return (-self.max_heap[0] + self.min_heap[0]) / 2
 
-    def findMedian(self):
-        if len(self.small) > len(self.large):
-            return -self.small[0]
-        return (-self.small[0] + self.large[0]) / 2
-
-# Time Complexity: addNum = o(logn) + findMedian = o(1)
-# Space Complexity: o(n)
+# Time Complexity: addNum = O(log n) + findMedian = O(1)
+# Space Complexity: O(n)
 
 mf = MedianFinder()
 mf.addNum(1)

@@ -1,5 +1,9 @@
 # Find the Largest Divisible Subset using DFS with memoization.
 
+# Can be solved using:
+    # recursive approach = top-down approach.
+    # dynamice programming approach = bottom-up approach.
+
 class Solution:
     def largest_divisible_subset(self, nums):
         if not nums:
@@ -31,6 +35,12 @@ class Solution:
                 largest_subset = subset
 
         return largest_subset
+    
+# Time Complexity: O(n log n) + O(n^2) = O(n^2)
+    # Sorting: O(n log n)
+    # DFS:   O(n^2)
+# Space Complexity: O(n^2)
+    # Cache: O(n^2)
 
 sol = Solution()
 nums = [1, 2, 4, 8]

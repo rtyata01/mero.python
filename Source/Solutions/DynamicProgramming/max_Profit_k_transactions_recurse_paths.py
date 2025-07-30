@@ -1,6 +1,9 @@
-def maxProfit(k, prices):
-    from functools import cache
+# Find the maximum profits, for at most K transactions. 
+# Each trasaction refers 1 buy and 1 sell activity.
 
+from functools import cache
+
+def maxProfit(k, prices):
     n = len(prices)
     if not prices or k == 0:
         return 0, []
@@ -16,17 +19,17 @@ def maxProfit(k, prices):
         return profit, transactions
 
     @cache
-    def dfs(day, transactions_left, holding):
+    def compute_max_profit(day, transactions_left, holding):
         if day == n or transactions_left == 0:
             return 0, []
 
         if holding:
             # Option 1: Sell today
-            sell_profit, sell_path = dfs(day + 1, transactions_left - 1, 0)
+            sell_profit, sell_path = compute_max_profit(day + 1, transactions_left - 1, 0)
             sell_profit += prices[day]
 
             # Option 2: Hold
-            hold_profit, hold_path = dfs(day + 1, transactions_left, 1)
+            hold_profit, hold_path = compute_max_profit(day + 1, transactions_left, 1)
 
             if sell_profit > hold_profit:
                 return sell_profit, [(None, prices[day])] + sell_path
@@ -35,19 +38,18 @@ def maxProfit(k, prices):
 
         else:
             # Option 1: Buy today
-            buy_profit, buy_path = dfs(day + 1, transactions_left, 1)
+            buy_profit, buy_path = compute_max_profit(day + 1, transactions_left, 1)
             buy_profit -= prices[day]
 
             # Option 2: Skip
-            skip_profit, skip_path = dfs(day + 1, transactions_left, 0)
+            skip_profit, skip_path = compute_max_profit(day + 1, transactions_left, 0)
 
             if buy_profit > skip_profit:
                 return buy_profit, [(prices[day], None)] + buy_path
             else:
                 return skip_profit, skip_path
 
-    profit, raw_path = dfs(0, k, 0)
-
+    profit, raw_path = compute_max_profit(0, k, 0)
     print(f"Raw Paths: {raw_path}")
 
     # Post-process raw_path to match buys with sells
@@ -69,4 +71,4 @@ profit, transactions = maxProfit(k, prices)
 
 print(f"Maximum Profit: {profit}")
 for buy, sell in transactions:
-    print(f"Buy at {buy}, Sell at {sell}, profit = {sell - buy}")
+    print(f"Buy at {buy}, Sell at {sell}, max profit = {sell - buy}")
