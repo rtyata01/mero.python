@@ -37,7 +37,9 @@ loss_fn = nn.CrossEntropyLoss()
 
 #Training Flow
 if __name__ == "__main__":
-    with open('model_state.pt', 'rb') as f:
+    script_dir = os.path.dirname(os.path.abspath(__file__))
+    model_state_file = os.path.join(script_dir, 'model_state.pt')
+    with open(model_state_file, 'rb') as f:
         clf.load_state_dict(load(f))
 
     script_dir = os.path.dirname(os.path.abspath(__file__))
@@ -45,9 +47,10 @@ if __name__ == "__main__":
     for filename in os.listdir(folder_path):
         if filename.endswith('.jpg'):
             file_path = os.path.join(folder_path, filename)
-            print(f'Loaded image: {file_path}')
+            print(f"Loaded image: {file_path}")
 
             img = Image.open(file_path)
             img_tensor = ToTensor()(img).unsqueeze(0).to('cuda')
+            predicated_digit = torch.argmax(clf(img_tensor)).item()
 
-            print(torch.argmax(clf(img_tensor)))
+            print(f"Predicted digit:", predicated_digit)

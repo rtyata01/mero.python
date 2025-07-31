@@ -1,9 +1,14 @@
+# Sample Model - Build, Train and Evaluate.
+# MNIST digit classifier example with CNN (Convolution Neural Network) using PyTorch and CUDA.
+# MNIST stands for Modified National Institute of Standards and Technology database.
+
 # Import Dependencies
 from torch import nn, save, load
 from torch.optim import Adam
 from torch.utils.data import DataLoader
 from torchvision import datasets
 from torchvision.transforms import ToTensor
+import os
 
 # Download datasets
 train = datasets.MNIST(root="Data", download=True, train=True, transform=ToTensor())
@@ -47,5 +52,7 @@ if __name__ == "__main__":
 
         print(f"Epoch:{epoch} loss is: {loss.item()}")
 
-    with open('model_state.pt', 'wb') as f:
+    script_dir = os.path.dirname(os.path.abspath(__file__))
+    model_state_file = os.path.join(script_dir, 'model_state.pt')
+    with open(model_state_file, 'wb') as f:
         save(clf.state_dict(), f)
