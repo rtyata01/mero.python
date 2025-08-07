@@ -14,9 +14,7 @@ DB_NAME = "stock_data_cache.db"
 DB_PATH = Path(__file__).resolve().parent / DATA_DIR / DB_NAME
 
 MAX_WORKERS = 10
-WEEKS_BACK = 52  # Store last 1 year data
-VOLUME_LOOKBACK_DAYS = 10
-VOLUME_THRESHOLD = 1.25
+MAINTAIN_WEEKS_BACK = 52  # Store last 1 year data
 DATE_FORMAT = "%Y-%m-%d"
 
 # -------------------- Logging Setup -------------------- #
@@ -141,7 +139,7 @@ def save_stock_history(ticker: str, df: pd.DataFrame) -> None:
             logger.info(f"Cached {len(new_data)} new records for {ticker}.")
 
         # Cleanup old records
-        cutoff_date = (datetime.now() - timedelta(weeks=WEEKS_BACK)).strftime(DATE_FORMAT)
+        cutoff_date = (datetime.now() - timedelta(weeks=MAINTAIN_WEEKS_BACK)).strftime(DATE_FORMAT)
         deleted = conn.execute(
             "DELETE FROM stock_history WHERE date < ?", (cutoff_date,)
         ).rowcount

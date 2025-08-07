@@ -1,5 +1,10 @@
-# Screen the high volume stocks and find stock with higher average monthly price for last 3 months.
-#   is_increasing = all(monthly_averages[i] < monthly_averages[i + 1] for i in range(len(monthly_averages) - 1))
+# Screen the high volume stocks and find stock with higher average monthly price for last 12 Weeks i.e. ~3 months.
+# latest price > price 12 weeks before
+# is_increasing_percent = count consecutive price increments (day[i] > day[i-1]) / total number of days > 0.75 
+# Noisy signal = 50%  
+# Balanced signal = 66.67%
+# High signal = 75%
+
 import time
 import random
 import logging
@@ -18,9 +23,8 @@ from screener_utils import init_cache_db, get_stock_history, save_stock_history
 DATA_DIR = "data"
 DB_NAME = "stock_data_cache.db"
 MAX_WORKERS = 3
-WEEKS_BACK = 8
-WEEKS_PER_MONTH = 4
-MONTHS = 3
+LOOKBACK_DAYS = 60
+HIGH_CONFIDENCE_PERCENT = 0.75
 
 # --- Logging ---
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
@@ -57,22 +61,26 @@ def save_increasing_price_tickers(tickers_data: List[Tuple[str, str, float, int,
     try:
         with db_connection() as conn:
             cursor = conn.cursor()
-            count = 0
-            for symbol, name, price, volume, is_rising in tickers_data:
-                if is_rising:
-                    cursor.execute("""
-                        UPDATE eligible_stocks
-                        SET stock_name = ?, latest_price = ?, latest_volume = ?, has_rising_price = ?
-                        WHERE symbol = ?
-                    """, (name, price, volume, int(is_rising), symbol))
-                    count += 1
-            conn.commit()
-            logger.info(f"Updated {count} tickers with rising prices.")
+            
+             # Prepare data for batch update (only symbols with rising prices)
+            updates = [(1, symbol) for symbol, name, price, volume, is_rising in tickers_data if is_rising]
+
+            if updates:
+                cursor.executemany("""
+                    UPDATE eligible_stocks
+                    SET has_rising_price = ?
+                    WHERE symbol = ?
+                """, updates)
+                
+                conn.commit()
+                logger.info(f"Updated {len(updates)} tickers with rising prices.")
+            else:
+                logger.info("No tickers with rising prices to update.")
     except Exception as e:
         logger.error(f"Error saving tickers: {e}")
         raise
 
-def sleep_with_jitter(min_delay=1, max_delay=3):
+def sleep_with_jitter(min_delay=0.5, max_delay=1.5):
     """Add delay with jitter to avoid triggering rate limits."""
     time.sleep(random.uniform(min_delay, max_delay))
 
@@ -92,7 +100,7 @@ def safe_fetch_stock_data(stock: yf.Ticker, start, end):
 def has_increasing_monthly_prices(ticker: str) -> Tuple[bool, str, Optional[float], Optional[int]]:
     try:
         end = datetime.now()
-        start = end - timedelta(weeks=WEEKS_BACK)
+        start = end - timedelta(days=LOOKBACK_DAYS)
         hist = get_stock_history(ticker, start, end)
         
         stock = yf.Ticker(ticker)
@@ -111,24 +119,38 @@ def has_increasing_monthly_prices(ticker: str) -> Tuple[bool, str, Optional[floa
                 logger.debug(f"{ticker} fetch failed: {e}")
                 return False, stock_name, None, None
 
-        if hist.empty or len(hist) < WEEKS_BACK * 5:
+        if hist.empty or len(hist) < int(LOOKBACK_DAYS * 0.6): # considering 70% trading days per week.
+            logger.info(f"{ticker} do not have sufficient historic data and its below {LOOKBACK_DAYS * 0.6} days!")
             return False, stock_name, None, None
 
-        # Weekly to monthly
-        weekly = hist['Close'].resample('W-MON').mean()
-        if len(weekly) < MONTHS * WEEKS_PER_MONTH:
+        # Ensure we're working with the 'Close' prices
+        close_prices = hist['Close'].dropna()
+        if close_prices.empty:
+            logger.info(f"{ticker} is missing the latest price!")
             return False, stock_name, None, None
 
-        monthly_averages = [
-            weekly[-(i + 1) * WEEKS_PER_MONTH : -i * WEEKS_PER_MONTH if i > 0 else None].mean()
-            for i in reversed(range(MONTHS))
-        ]
-
-        is_increasing = all(a < b for a, b in zip(monthly_averages, monthly_averages[1:]))
-        latest_price = hist['Close'].iloc[-1]
+        # Compare start vs end price
+        start_price = close_prices.iloc[0]
+        latest_price = close_prices.iloc[-1]
         latest_volume = hist['Volume'].iloc[-1] if 'Volume' in hist else None
 
-        return is_increasing, stock_name, latest_price, latest_volume
+        if latest_price <= start_price:
+            logger.info(f"{ticker} latest price: {latest_price} is lower than starting price {start_price}!")
+            return False, stock_name, latest_price, latest_volume
+
+        # Count daily increases
+        daily_increases = sum(
+            1 for i in range(1, len(close_prices)) if close_prices.iloc[i] > close_prices.iloc[i - 1]
+        )
+
+        percent_increase_days = daily_increases / (len(close_prices) - 1)
+        is_increasing = percent_increase_days > HIGH_CONFIDENCE_PERCENT
+
+        if is_increasing:
+            logger.info(f"{ticker} has increasing price!")
+            return is_increasing, stock_name, latest_price, latest_volume
+        else:
+            return False, stock_name, latest_price, latest_volume
 
     except Exception as e:
         logger.warning(f"{ticker} processing error: {e}")
@@ -167,7 +189,7 @@ if __name__ == "__main__":
         count = len(rising_stocks)
         symbols = [t[0] for t in rising_stocks]
         logger.info(f"Completed: {count} rising-price tickers found.")
-        print(f"Tickers with rising 3-month average prices ({count}): {symbols}")
+        print(f"Tickers with rising-prices ({count}): {symbols}")
 
     except Exception as e:
         logger.error(f"Execution error: {e}")

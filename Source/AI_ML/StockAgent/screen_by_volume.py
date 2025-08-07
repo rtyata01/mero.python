@@ -1,5 +1,7 @@
 # Screen the high volume stocks
-# has_high_volume = latest_volume > avg_volume * threshold (25%)
+# The average volume exceeds the baseline (e.g., 25th percentile of history)
+# The latest volume exceeds mean + N × std_dev (statistically significant), where N = 2 (95% confidence) or N = 3 (99.7% confidence)
+# The latest volume exceeds the percentile threshold (80th Percentile)
 
 import time
 import random
@@ -7,6 +9,7 @@ import logging
 import backoff
 import sqlite3
 import pandas as pd
+import numpy as np
 import yfinance as yf
 from ftplib import FTP
 from io import BytesIO
@@ -22,14 +25,16 @@ from screener_utils import init_cache_db, get_stock_history, save_stock_history
 DATA_DIR = "data"
 DB_NAME = "stock_data_cache.db"
 MAX_WORKERS = 3
-VOLUME_LOOKBACK_DAYS = 10
-VOLUME_THRESHOLD = 1.25
+LOOKBACK_DAYS = 60
+VOLUME_PERCENTILE_THRESHOLD = 80.0    # e.g. today's volume must exceed the 80th percentile
+MIN_AVERAGE_PERCENTILE = 25.0         # e.g. filter out lowest 25% volume days dynamically
+STD_DEV_MULTIPLIER = 2.0              # require volume > mean + 2·std_dev
 DATE_FORMAT = "%Y-%m-%d"
+DEFAULT_TRENDING_STOCKS = ["NIO","TSLA","NVDA","AMD","PLTR", "SOFI", "SMCI", "MSFT", "GOOGL", "AMZN", "AAPL"]
 
 # --- Logging ---
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 logger = logging.getLogger(__name__)
-
 
 # --- Context Managers ---
 
@@ -68,20 +73,39 @@ def get_active_tickers() -> List[str]:
                 for row in reader
                 if row.get("Test Issue") == "N" and row.get("Financial Status") == "N"
             ]
+            
+            # Append the default trending stocks
+            tickers.extend(DEFAULT_TRENDING_STOCKS)
+            
             return sorted(set(tickers))
     except Exception as e:
         msg = f"FTP connection failed: {e}"
         logger.error(msg)
         raise ConnectionError(msg)
 
-
-def calculate_volume_stats(hist: pd.DataFrame) -> Tuple[Optional[int], Optional[float]]:
-    """Calculate latest and average volume from history."""
+def has_high_confidence_spike(hist: pd.DataFrame) -> Tuple[Optional[int], Optional[float]]:
+    """Calculate high confidence spike from volume history."""
     if hist.empty or len(hist) < 2:
-        return None, None
-    latest_volume = hist['Volume'].iloc[-1]
-    avg_volume = hist['Volume'].iloc[:-1].mean()
-    return int(latest_volume), avg_volume
+        return None, False
+    
+    # Exclude the latest day for historical stats
+    historical_volumes = hist['Volume'].iloc[:-1]
+    latest_volume = int(hist['Volume'].iloc[-1])
+    avg_volume = historical_volumes.mean()
+    std_volume = historical_volumes.std()
+    
+     # Calculate min_avg_volume_default dynamically as the percentile of past volumes
+    min_avg_volume = np.percentile(historical_volumes, MIN_AVERAGE_PERCENTILE)  # 25%
+    if avg_volume < min_avg_volume:
+        return None, False  # Stock is too illiquid for confident spike detection
+    
+    percentile_volume = np.percentile(historical_volumes, VOLUME_PERCENTILE_THRESHOLD)  # 80%
+    
+    is_above_std_threshold  = latest_volume > avg_volume + STD_DEV_MULTIPLIER * std_volume
+    is_above_percentile_threshold  = latest_volume > percentile_volume
+    has_high_volume = is_above_std_threshold and is_above_percentile_threshold
+    
+    return latest_volume, has_high_volume
 
 def sleep_with_jitter(min_delay=1, max_delay=3):
     """Add delay with jitter to avoid triggering rate limits."""
@@ -99,10 +123,9 @@ def safe_fetch_stock_data(stock: yf.Ticker, start, end):
     """Safe wrapper to fetch stock data with retries."""
     return stock.history(start=start, end=end, interval="1d", auto_adjust=True)
 
-def has_increasing_average_volume(
+def has_increasing_volume(
     ticker: str,
-    lookback_days: int = VOLUME_LOOKBACK_DAYS,
-    threshold: float = VOLUME_THRESHOLD
+    lookback_days: int = LOOKBACK_DAYS,
 ) -> Tuple[bool, Optional[str], Optional[float], Optional[int]]:
 
     try:
@@ -130,17 +153,15 @@ def has_increasing_average_volume(
                 logger.debug(f"{ticker} fetch failed: {e}")
                 return False, stock_name, None, None
 
-        latest_volume, avg_volume = calculate_volume_stats(hist)
+        latest_volume, has_high_volume = has_high_confidence_spike(hist)
         latest_price = hist['Close'].iloc[-1] if not hist.empty else None
 
-        if not latest_volume or not avg_volume or avg_volume == 0:
+        if not latest_volume or not has_high_volume:
             logger.debug(f"Invalid or insufficient volume data for {ticker}")
             return False, stock_name, latest_price, None
 
-        has_high_volume = latest_volume > avg_volume * threshold
-
         if has_high_volume:
-            logger.debug(f"{ticker}: {latest_volume} > {avg_volume * threshold:.0f} (avg × {threshold})")
+            logger.debug(f"{ticker}: has higher volume spike: {latest_volume} ")
 
         return has_high_volume, stock_name, latest_price, latest_volume
 
@@ -155,7 +176,7 @@ def find_high_volume_stocks(max_workers: int = MAX_WORKERS) -> List[Tuple[str, s
     results = []
 
     with ThreadPoolExecutor(max_workers=max_workers) as executor:
-        futures = {executor.submit(has_increasing_average_volume, ticker): ticker for ticker in tickers}
+        futures = {executor.submit(has_increasing_volume, ticker): ticker for ticker in tickers}
         for future in as_completed(futures):
             ticker = futures[future]
             try:
@@ -173,16 +194,29 @@ def save_volume_tickers_to_db(ticker_data: List[Tuple[str, str, Optional[float],
     """Insert or update high-volume tickers in DB."""
     try:
         with db_connection() as conn:
-            inserted = 0
-            for symbol, name, price, volume, rising in ticker_data:
-                if rising:
-                    conn.execute("""
-                        INSERT OR REPLACE INTO eligible_stocks (symbol, stock_name, price, volume, has_rising_volume)
-                        VALUES (?, ?, ?, ?, ?)
-                    """, (symbol, name, price, volume, 1))
-                    inserted += 1
-            conn.commit()
-            logger.info(f"{inserted} stocks saved to database")
+            cursor = conn.cursor()
+        
+            # Reset the has_rising_volume field for all stocks
+            cursor.execute("UPDATE eligible_stocks SET has_rising_volume = CAST(0 AS INTEGER)")
+            
+            # Prepare data for bulk insert (only those with rising volume)
+            data_to_insert = [
+                (symbol, name, price, volume, 1)
+                for symbol, name, price, volume, rising in ticker_data if rising
+            ]
+            
+            if data_to_insert:
+                # Bulk insert using executemany
+                cursor.executemany("""
+                    INSERT OR REPLACE INTO eligible_stocks (symbol, stock_name, price, volume, has_rising_volume)
+                    VALUES (?, ?, ?, ?, ?)
+                """, data_to_insert)
+                
+                # Commit all changes in one transaction
+                conn.commit()
+                logger.info(f"{len(data_to_insert)} stocks with rising volume saved to database.")
+            else:
+                logger.info("No stocks with rising volume to insert.")
     except Exception as e:
         logger.error(f"Database insert failed: {e}")
         raise RuntimeError("DB insert failed") from e
