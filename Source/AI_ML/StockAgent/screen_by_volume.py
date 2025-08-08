@@ -11,9 +11,6 @@ import sqlite3
 import pandas as pd
 import numpy as np
 import yfinance as yf
-from ftplib import FTP
-from io import BytesIO
-from csv import DictReader
 from typing import List, Tuple, Optional
 from contextlib import contextmanager
 from pathlib import Path
@@ -24,30 +21,18 @@ from screener_utils import init_cache_db, get_stock_history, save_stock_history
 # --- Configuration ---
 DATA_DIR = "data"
 DB_NAME = "stock_data_cache.db"
-MAX_WORKERS = 3
+MAX_WORKERS = 5
 LOOKBACK_DAYS = 60
 VOLUME_PERCENTILE_THRESHOLD = 80.0    # e.g. today's volume must exceed the 80th percentile
 MIN_AVERAGE_PERCENTILE = 25.0         # e.g. filter out lowest 25% volume days dynamically
 STD_DEV_MULTIPLIER = 2.0              # require volume > mean + 2·std_dev
 DATE_FORMAT = "%Y-%m-%d"
-DEFAULT_TRENDING_STOCKS = ["NIO","TSLA","NVDA","AMD","PLTR", "SOFI", "SMCI", "MSFT", "GOOGL", "AMZN", "AAPL"]
 
 # --- Logging ---
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 logger = logging.getLogger(__name__)
 
-# --- Context Managers ---
-
-@contextmanager
-def ftp_connection(host: str) -> FTP:
-    ftp = FTP(host)
-    try:
-        ftp.login()
-        yield ftp
-    finally:
-        ftp.quit()
-
-
+# --- DB Connection ---
 @contextmanager
 def db_connection():
     db_path = Path(__file__).resolve().parent / DATA_DIR / DB_NAME
@@ -57,31 +42,49 @@ def db_connection():
     finally:
         conn.close()
 
-
-# --- Helper Functions ---
-
-def get_active_tickers() -> List[str]:
-    """Fetch list of active NASDAQ tickers."""
+# --- Load Trending Tickers ---
+def load_trending_tickers() -> List[str]:
     try:
-        with ftp_connection('ftp.nasdaqtrader.com') as ftp:
-            buffer = BytesIO()
-            ftp.retrbinary('RETR SymbolDirectory/nasdaqlisted.txt', buffer.write)
-            buffer.seek(0)
-            reader = DictReader(buffer.read().decode('utf-8').splitlines(), delimiter='|')
-            tickers = [
-                row["Symbol"].upper().strip()
-                for row in reader
-                if row.get("Test Issue") == "N" and row.get("Financial Status") == "N"
-            ]
-            
-            # Append the default trending stocks
-            tickers.extend(DEFAULT_TRENDING_STOCKS)
-            
-            return sorted(set(tickers))
+        with db_connection() as conn:
+            query = "SELECT symbol FROM eligible_stocks WHERE CAST(fundamental_score AS INTEGER) >= 4"
+            df = pd.read_sql_query(query, conn)
+            if df.empty:
+                logger.warning("No trending tickers found.")
+                return []
+            tickers = df["symbol"].dropna().str.upper().str.strip().unique().tolist()
+            logger.info(f"Loaded {len(tickers)} trending tickers.")
+            return sorted(tickers)
     except Exception as e:
-        msg = f"FTP connection failed: {e}"
-        logger.error(msg)
-        raise ConnectionError(msg)
+        logger.error(f"Error loading tickers: {e}")
+        raise
+
+# --- Save Ticker Data ---
+def save_volume_tickers_to_db(tickers_data: List[Tuple[str, str, Optional[float], Optional[int], bool]]):
+    """Insert or update high-volume tickers in DB."""
+    try:
+        with db_connection() as conn:
+            cursor = conn.cursor()
+            
+             # Reset the has_rising_volume field for all stocks
+            cursor.execute("UPDATE eligible_stocks SET has_rising_volume = CAST(0 AS INTEGER)")
+            
+             # Prepare data for batch update (only symbols with rising prices)
+            updates = [(1, symbol) for symbol, _, _, _, is_rising in tickers_data if is_rising]
+
+            if updates:
+                cursor.executemany("""
+                    UPDATE eligible_stocks
+                    SET has_rising_volume = ?
+                    WHERE symbol = ?
+                """, updates)
+                
+                conn.commit()
+                logger.info(f"Updated {len(updates)} tickers with rising volume.")
+            else:
+                logger.info("No tickers with rising volume to update.")
+    except Exception as e:
+        logger.error(f"Database insert failed: {e}")
+        raise RuntimeError("DB insert failed") from e
 
 def has_high_confidence_spike(hist: pd.DataFrame) -> Tuple[Optional[int], Optional[float]]:
     """Calculate high confidence spike from volume history."""
@@ -107,7 +110,7 @@ def has_high_confidence_spike(hist: pd.DataFrame) -> Tuple[Optional[int], Option
     
     return latest_volume, has_high_volume
 
-def sleep_with_jitter(min_delay=1, max_delay=3):
+def sleep_with_jitter(min_delay=0.5, max_delay=1.5):
     """Add delay with jitter to avoid triggering rate limits."""
     time.sleep(random.uniform(min_delay, max_delay))
 
@@ -172,7 +175,7 @@ def has_increasing_volume(
 
 def find_high_volume_stocks(max_workers: int = MAX_WORKERS) -> List[Tuple[str, str, Optional[float], Optional[int], bool]]:
     """Find stocks with volume surge based on moving average."""
-    tickers = get_active_tickers()
+    tickers = load_trending_tickers()
     results = []
 
     with ThreadPoolExecutor(max_workers=max_workers) as executor:
@@ -189,41 +192,7 @@ def find_high_volume_stocks(max_workers: int = MAX_WORKERS) -> List[Tuple[str, s
     logger.info(f"Found {len(results)} high-volume stocks")
     return sorted(results, key=lambda x: x[0])
 
-
-def save_volume_tickers_to_db(ticker_data: List[Tuple[str, str, Optional[float], Optional[int], bool]]):
-    """Insert or update high-volume tickers in DB."""
-    try:
-        with db_connection() as conn:
-            cursor = conn.cursor()
-        
-            # Reset the has_rising_volume field for all stocks
-            cursor.execute("UPDATE eligible_stocks SET has_rising_volume = CAST(0 AS INTEGER)")
-            
-            # Prepare data for bulk insert (only those with rising volume)
-            data_to_insert = [
-                (symbol, name, price, volume, 1)
-                for symbol, name, price, volume, rising in ticker_data if rising
-            ]
-            
-            if data_to_insert:
-                # Bulk insert using executemany
-                cursor.executemany("""
-                    INSERT OR REPLACE INTO eligible_stocks (symbol, stock_name, price, volume, has_rising_volume)
-                    VALUES (?, ?, ?, ?, ?)
-                """, data_to_insert)
-                
-                # Commit all changes in one transaction
-                conn.commit()
-                logger.info(f"{len(data_to_insert)} stocks with rising volume saved to database.")
-            else:
-                logger.info("No stocks with rising volume to insert.")
-    except Exception as e:
-        logger.error(f"Database insert failed: {e}")
-        raise RuntimeError("DB insert failed") from e
-
-
-# --- Main Execution ---
-
+# --- Main Entry ---
 if __name__ == "__main__":
     try:
         init_cache_db()

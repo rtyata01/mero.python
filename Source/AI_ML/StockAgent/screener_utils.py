@@ -14,7 +14,7 @@ DB_NAME = "stock_data_cache.db"
 DB_PATH = Path(__file__).resolve().parent / DATA_DIR / DB_NAME
 
 MAX_WORKERS = 10
-MAINTAIN_WEEKS_BACK = 52  # Store last 1 year data
+MAINTAIN_WEEKS_BACK = 26  # Store last six months data (2 * 26 = 52 weeks) (1 Year)
 DATE_FORMAT = "%Y-%m-%d"
 
 # -------------------- Logging Setup -------------------- #
@@ -66,7 +66,8 @@ def init_cache_db() -> None:
                 price REAL,
                 volume INTEGER,
                 has_rising_volume BOOLEAN,
-                has_rising_price BOOLEAN
+                has_rising_price BOOLEAN,
+                fundamental_score INTEGER
             );
         """)
         conn.commit()

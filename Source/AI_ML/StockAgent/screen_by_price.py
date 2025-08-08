@@ -22,7 +22,7 @@ from screener_utils import init_cache_db, get_stock_history, save_stock_history
 # --- Configuration ---
 DATA_DIR = "data"
 DB_NAME = "stock_data_cache.db"
-MAX_WORKERS = 3
+MAX_WORKERS = 5
 LOOKBACK_DAYS = 60
 HIGH_CONFIDENCE_PERCENT = 0.75
 
@@ -40,30 +40,33 @@ def db_connection():
     finally:
         conn.close()
 
-# --- Load High Volume Tickers ---
-def load_high_volume_tickers() -> List[str]:
+# --- Load Trending Tickers ---
+def load_trending_tickers() -> List[str]:
     try:
         with db_connection() as conn:
-            query = "SELECT symbol FROM eligible_stocks WHERE CAST(has_rising_volume AS INTEGER) = 1"
+            query = "SELECT symbol FROM eligible_stocks WHERE CAST(fundamental_score AS INTEGER) >= 4"
             df = pd.read_sql_query(query, conn)
             if df.empty:
-                logger.warning("No high-volume tickers found.")
+                logger.warning("No trending tickers found.")
                 return []
             tickers = df["symbol"].dropna().str.upper().str.strip().unique().tolist()
-            logger.info(f"Loaded {len(tickers)} tickers with rising volume.")
+            logger.info(f"Loaded {len(tickers)} trending tickers.")
             return sorted(tickers)
     except Exception as e:
         logger.error(f"Error loading tickers: {e}")
         raise
 
 # --- Save Ticker Data ---
-def save_increasing_price_tickers(tickers_data: List[Tuple[str, str, float, int, bool]]):
+def save_price_tickers_to_db(tickers_data: List[Tuple[str, str, float, int, bool]]):
     try:
         with db_connection() as conn:
             cursor = conn.cursor()
             
+             # Reset the has_rising_volume field for all stocks
+            cursor.execute("UPDATE eligible_stocks SET has_rising_price = CAST(0 AS INTEGER)")
+            
              # Prepare data for batch update (only symbols with rising prices)
-            updates = [(1, symbol) for symbol, name, price, volume, is_rising in tickers_data if is_rising]
+            updates = [(1, symbol) for symbol, _, _, _, is_rising in tickers_data if is_rising]
 
             if updates:
                 cursor.executemany("""
@@ -157,9 +160,9 @@ def has_increasing_monthly_prices(ticker: str) -> Tuple[bool, str, Optional[floa
         return False, ticker, None, None
 
 # --- Main Processing Function ---
-def find_stocks_with_rising_prices() -> List[Tuple[str, str, float, int, bool]]:
+def find_increasing_price_stocks() -> List[Tuple[str, str, float, int, bool]]:
     try:
-        tickers = load_high_volume_tickers()
+        tickers = load_trending_tickers()
         results = []
 
         with ThreadPoolExecutor(max_workers=MAX_WORKERS) as executor:
@@ -183,8 +186,8 @@ def find_stocks_with_rising_prices() -> List[Tuple[str, str, float, int, bool]]:
 if __name__ == "__main__":
     try:
         init_cache_db()
-        rising_stocks = find_stocks_with_rising_prices()
-        save_increasing_price_tickers(rising_stocks)
+        rising_stocks = find_increasing_price_stocks()
+        save_price_tickers_to_db(rising_stocks)
 
         count = len(rising_stocks)
         symbols = [t[0] for t in rising_stocks]
