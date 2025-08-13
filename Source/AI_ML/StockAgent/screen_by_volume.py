@@ -16,7 +16,7 @@ from contextlib import contextmanager
 from pathlib import Path
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from datetime import datetime, timedelta
-from screener_utils import init_cache_db, get_stock_history, save_stock_history
+from screener_utils import init_cache_db, get_stock_history, save_stock_history, load_trending_tickers
 
 # --- Configuration ---
 DATA_DIR = "data"
@@ -41,22 +41,6 @@ def db_connection():
         yield conn
     finally:
         conn.close()
-
-# --- Load Trending Tickers ---
-def load_trending_tickers() -> List[str]:
-    try:
-        with db_connection() as conn:
-            query = "SELECT symbol FROM eligible_stocks WHERE CAST(fundamental_score AS INTEGER) >= 4"
-            df = pd.read_sql_query(query, conn)
-            if df.empty:
-                logger.warning("No trending tickers found.")
-                return []
-            tickers = df["symbol"].dropna().str.upper().str.strip().unique().tolist()
-            logger.info(f"Loaded {len(tickers)} trending tickers.")
-            return sorted(tickers)
-    except Exception as e:
-        logger.error(f"Error loading tickers: {e}")
-        raise
 
 # --- Save Ticker Data ---
 def save_volume_tickers_to_db(tickers_data: List[Tuple[str, str, Optional[float], Optional[int], bool]]):
@@ -171,7 +155,6 @@ def has_increasing_volume(
     except Exception as e:
         logger.warning(f"Error checking {ticker}: {e}")
         return False, ticker, None, None
-
 
 def find_high_volume_stocks(max_workers: int = MAX_WORKERS) -> List[Tuple[str, str, Optional[float], Optional[int], bool]]:
     """Find stocks with volume surge based on moving average."""

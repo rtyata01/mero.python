@@ -26,7 +26,7 @@ from contextlib import contextmanager
 from pathlib import Path
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from datetime import datetime, timedelta
-from screener_utils import init_cache_db, get_stock_history, save_stock_history
+from screener_utils import init_cache_db, get_stock_history, save_stock_history, load_trending_tickers
 
 # --- Configuration ---
 DATA_DIR = "data"
@@ -51,21 +51,6 @@ def db_connection():
         conn.close()
 
 # --- Indicators ---
-
-def load_trending_tickers() -> List[str]:
-    try:
-        with db_connection() as conn:
-            query = "SELECT symbol FROM eligible_stocks WHERE CAST(fundamental_score AS INTEGER) >= 4"
-            df = pd.read_sql_query(query, conn)
-            if df.empty:
-                logger.warning("No trending tickers found.")
-                return []
-            tickers = df["symbol"].dropna().str.upper().str.strip().unique().tolist()
-            logger.info(f"Loaded {len(tickers)} trending tickers.")
-            return sorted(tickers)
-    except Exception as e:
-        logger.error(f"Error loading tickers: {e}")
-        raise
 
 def calculate_rsi(hist, short: int = 14):
     """Calculate 14-day RSI for the stock."""
@@ -126,18 +111,49 @@ def calculate_revenue_growth(stock: yf.Ticker) -> float:
         logger.warning(f"Error calculating revenue growth: {str(e)}")
         return None
     
-def check_earnings_surprise(stock: yf.Ticker) -> bool:
+def check_earnings_surprise(ticker: str, stock: yf.Ticker, min_surprise_pct: float = 5.0, quarters: int = 1) -> bool:
+    """
+    Checks if the latest EPS actual was significantly greater than the EPS estimate (positive surprise).
+    Returns:
+        bool: True if the stock has a significant positive earnings surprise in the specified quarters.
+    """
     try:
-        earnings = stock.earnings_history
-        if earnings.empty or len(earnings) < 1:
+        earnings_df = stock.earnings_dates
+        if earnings_df is None or earnings_df.empty or len(earnings_df) < quarters:
+            logger.warning(f"No or insufficient earnings data for {ticker}")
             return False
-        latest_surprise = earnings["epsDifference"].iloc[0]
-        return latest_surprise > 0  # Positive earnings surprise
+
+        # Check the most recent 'quarters' rows
+        for i in range(min(quarters, len(earnings_df))):
+            latest = earnings_df.iloc[i]
+            if "EPS Estimate" not in latest or "Reported EPS" not in latest:
+                logger.warning(f"Missing EPS data for {ticker} in quarter {i+1}")
+                return False
+
+            eps_estimate = latest["EPS Estimate"]
+            eps_actual = latest["Reported EPS"]
+
+            if pd.isna(eps_estimate) or pd.isna(eps_actual):
+                logger.warning(f"Null EPS data for {ticker} in quarter {i+1}")
+                return False
+
+            if eps_estimate <= 0:  # Avoid division by zero or negative estimates
+                logger.warning(f"Invalid EPS estimate ({eps_estimate}) for {ticker}")
+                return False
+
+            surprise_pct = (eps_actual - eps_estimate) / eps_estimate * 100
+            if surprise_pct <= min_surprise_pct:
+                logger.info(f"Earnings surprise for {ticker} ({surprise_pct:.2f}%) below threshold ({min_surprise_pct}%)")
+                return False
+
+        logger.info(f"Positive earnings surprise for {ticker}: {surprise_pct:.2f}%")
+        return True
+
     except Exception as e:
-        logger.warning(f"Error checking earnings surprise: {str(e)}")
+        logger.warning(f"Error checking earnings surprise for {ticker}: {str(e)}")
         return False
     
-def sleep_with_jitter(min_delay=0.5, max_delay=1.5):
+def sleep_with_jitter(min_delay=1, max_delay=3):
     """Add delay with jitter to avoid triggering rate limits."""
     time.sleep(random.uniform(min_delay, max_delay))
 
@@ -161,7 +177,7 @@ def compute_quality_score(ticker, hist, stock: yf.Ticker):
     if isinstance(revenue_growth, (int, float)) and revenue_growth > 0.1:
         score += 1
 
-    earnings_surprise = check_earnings_surprise(stock)
+    earnings_surprise = check_earnings_surprise(ticker, stock)
     if earnings_surprise:
         score += 1
 
@@ -219,9 +235,9 @@ def get_quality_stocks(
         logger.warning(f"Error checking {ticker}: {e}")
         return False, ticker, None, None
 
-def find_quality_stocks(tickers = None, max_workers: int = MAX_WORKERS, monthly_screen: bool = False) -> List[Tuple[str, str, Optional[float], Optional[int], bool]]:
+def find_quality_stocks(max_workers: int = MAX_WORKERS, monthly_screen: bool = False) -> List[Tuple[str, str, Optional[float], Optional[int], bool]]:
     """Find stocks with better quality."""
-    tickers_to_screen = tickers if tickers else load_trending_tickers()
+    tickers_to_screen = load_trending_tickers()
     results = []
     
     with ThreadPoolExecutor(max_workers=max_workers) as executor:
@@ -275,7 +291,7 @@ if __name__ == "__main__":
     try:
         init_cache_db()
         logger.info("Screening quality stocks ...")
-        tickers = find_quality_stocks(tickers=DEFAULT_TRENDING_STOCKS)
+        tickers = find_quality_stocks()
         save_quality_tickers_to_db(tickers)
         logger.info(f"Found {len(tickers)} quality stocks.")
     except Exception as main_err:

@@ -17,7 +17,7 @@ from datetime import datetime, timedelta
 from contextlib import contextmanager
 from typing import List, Tuple, Optional
 from concurrent.futures import ThreadPoolExecutor, as_completed
-from screener_utils import init_cache_db, get_stock_history, save_stock_history
+from screener_utils import init_cache_db, get_stock_history, save_stock_history, load_trending_tickers
 
 # --- Configuration ---
 DATA_DIR = "data"
@@ -39,22 +39,6 @@ def db_connection():
         yield conn
     finally:
         conn.close()
-
-# --- Load Trending Tickers ---
-def load_trending_tickers() -> List[str]:
-    try:
-        with db_connection() as conn:
-            query = "SELECT symbol FROM eligible_stocks WHERE CAST(fundamental_score AS INTEGER) >= 4"
-            df = pd.read_sql_query(query, conn)
-            if df.empty:
-                logger.warning("No trending tickers found.")
-                return []
-            tickers = df["symbol"].dropna().str.upper().str.strip().unique().tolist()
-            logger.info(f"Loaded {len(tickers)} trending tickers.")
-            return sorted(tickers)
-    except Exception as e:
-        logger.error(f"Error loading tickers: {e}")
-        raise
 
 # --- Save Ticker Data ---
 def save_price_tickers_to_db(tickers_data: List[Tuple[str, str, float, int, bool]]):

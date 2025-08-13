@@ -1,81 +1,88 @@
-# Find stocks with greater fundamentals with rising price and volume.
+# Screen stocks for short term gains, with better fundamentals, price, volume and quality.
 
 import os
 import time
-from datetime import datetime, timedelta
 import logging
+import pandas as pd
+from datetime import datetime
+from pathlib import Path
 from screener_utils import init_cache_db
 from screen_by_fundamental import find_trending_stocks, save_trending_tickers_to_db
 from screen_by_volume import find_high_volume_stocks, save_volume_tickers_to_db
 from screen_by_price import find_increasing_price_stocks, save_price_tickers_to_db
 from screen_by_quality import find_quality_stocks, save_quality_tickers_to_db
-from stock_data_utils import update_local_data
+from model_train_predict_quality import train_predict_quality_stocks, save_predicted_tickers_to_db
 
 # -------------------- Configuration --------------------
+DATE_FORMAT = "%Y%m%d"
 DATA_DIR = "data"
-TOP20_SCREEN_STOCKS = "top20_screened_stocks.csv"
 
 # -------------------- Logging --------------------
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 logger = logging.getLogger(__name__)
 
+# -------------------- CSV Save Utility --------------------
+def save_lists_to_csv(column_names, *lists):
+    """Save multiple lists into a CSV file with custom column names."""
+    if len(column_names) != len(lists):
+        raise ValueError("Number of column names must match number of lists.")
+
+    max_len = max(len(lst) for lst in lists)
+    padded_lists = [list(lst) + [None] * (max_len - len(lst)) for lst in lists]
+    df = pd.DataFrame({name: data for name, data in zip(column_names, padded_lists)})
+    
+    date_str = datetime.today().strftime(DATE_FORMAT)
+    filename_with_date = f"screened_stocks_{date_str}.csv"
+    file_name = os.path.join(Path(__file__).resolve().parent, DATA_DIR, filename_with_date)
+    os.makedirs(os.path.dirname(file_name), exist_ok=True)
+    
+    df.to_csv(file_name, index=False)
+    logger.info(f"CSV saved as {filename_with_date}")
+
 # -------------------- Main --------------------
 def main():
-    
     start_time = time.time()
-    logger.info(f"Screening trending stocks ...")
-    
-    # Step A: Screen by increasing volume.
-    init_cache_db()
-    tickers = find_trending_stocks(monthly_screen=False)  # use monthly_screen = True, to screen all tickers.
-    save_trending_tickers_to_db(tickers)
-    logger.info(f"Completed screening {len(tickers)} trending stocks.")
-    
-    # Step B Screen by increasing volume.
-    filtered_by_volume = find_high_volume_stocks()
-    save_volume_tickers_to_db(filtered_by_volume)
-    logger.info(f"Completed screening {len(filtered_by_volume)} high-volume stocks")
-    
-    # Step B: Screen by increasing price.
-    filtered_by_price = find_increasing_price_stocks()
-    save_price_tickers_to_db(filtered_by_price)
-    logger.info(f"Completed screening {len(filtered_by_price)} high-price stocks")
-    
-    # Step B: Screen by increasing quality.
-    filtered_by_quality = find_quality_stocks()
-    save_quality_tickers_to_db(filtered_by_quality)
-    logger.info(f"Completed screening {len(filtered_by_quality)} high-price stocks")
-    
-    # Step C: Select top 20 stocks
-    # (symbol, stock_name, price, volume, has_increasing_price)
-    price_symbols = {row[0] for row in filtered_by_price if row[4] == True}
-    volume_symbols = {row[0] for row in filtered_by_volume if row[4] == True}
-    quality_symbols = {row[0] for row in filtered_by_quality}
-    common_symbols = price_symbols & volume_symbols & quality_symbols
-    filtered_stocks = [row for row in tickers if row[0] in common_symbols]
+    today_str = datetime.today().strftime(DATE_FORMAT)
 
-    # Sort by volume (index 3), then price (index 2, Optional[float])
-    sorted_data = sorted(
-        filtered_stocks,
-        key=lambda x: (x[3], x[2] if x[2] is not None else float('inf'))
+    logger.info("Starting stock screening process...")
+    init_cache_db()
+
+    # Step A: Trending stocks
+    trending_stocks = find_trending_stocks(monthly_screen=False)
+    save_trending_tickers_to_db(trending_stocks)
+    logger.info(f"Trending stocks found: {len(trending_stocks)}")
+
+    # Step B1: High volume
+    high_volume = find_high_volume_stocks()
+    save_volume_tickers_to_db(high_volume)
+    logger.info(f"High volume stocks: {len(high_volume)}")
+
+    # Step B2: Rising price
+    rising_price = find_increasing_price_stocks()
+    save_price_tickers_to_db(rising_price)
+    logger.info(f"Rising price stocks: {len(rising_price)}")
+
+    # Step B3: High quality
+    high_quality = find_quality_stocks()
+    save_quality_tickers_to_db(high_quality)
+    logger.info(f"High quality stocks: {len(high_quality)}")
+
+    # Step C: Predict quality
+    predicted_quality = train_predict_quality_stocks()
+    save_predicted_tickers_to_db(predicted_quality)
+    logger.info(f"Predicted quality stocks: {len(predicted_quality)}")
+
+    # Step D: Save results to CSV
+    save_lists_to_csv(
+        ["Rising Volume ", "Rising Price ", "Short-Term Profit ", "Predicted Short-Term Profit "],
+        {row[0] for row in high_volume},
+        {row[0] for row in rising_price},
+        {row[0] for row in high_quality},
+        {row[0] for row in predicted_quality}
     )
 
-    screened = sorted_data[:20]
-    print(f"Screened {len(screened)} tickers: {screened}")
-    endtime = time.time()
-    elapsed_str = time.strftime("%H:%M:%S", time.gmtime(endtime - start_time))
-    logger.info(f"Completed stock screener:  {endtime}. Elapsed time: {elapsed_str}")
-
-    script_dir = os.path.dirname(os.path.abspath(__file__))
-    top20_screened_file = os.path.join(script_dir, DATA_DIR, TOP20_SCREEN_STOCKS)
-    import pandas as pd
-    pd.DataFrame({"symbol": screened}).to_csv(top20_screened_file)
-    
-    # Step D: For each screened ticker, update local data
-    #for sym in screened:
-     #   csvf = os.path.join(script_dir, DATA_DIR, f"{sym}_1d.csv")
-     #   df = update_local_data(symbol=sym, file_path=csvf, interval="1d")
-        # Future: call feature engineering / train here
+    elapsed_str = time.strftime("%H:%M:%S", time.gmtime(time.time() - start_time))
+    logger.info(f"Completed stock screening in {elapsed_str}")
 
 if __name__ == "__main__":
     main()

@@ -19,7 +19,7 @@ from contextlib import contextmanager
 from pathlib import Path
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from datetime import datetime, timedelta
-from screener_utils import init_cache_db, get_stock_history, save_stock_history
+from screener_utils import init_cache_db, get_stock_history, save_stock_history, load_trending_tickers
 
 # --- Configuration ---
 DATA_DIR = "data"
@@ -57,21 +57,6 @@ def db_connection():
         conn.close()
 
 # --- Helper Functions ---
-
-def load_trending_tickers() -> List[str]:
-    try:
-        with db_connection() as conn:
-            query = "SELECT symbol FROM eligible_stocks WHERE CAST(fundamental_score AS INTEGER) >= 4"
-            df = pd.read_sql_query(query, conn)
-            if df.empty:
-                logger.warning("No trending tickers found.")
-                return []
-            tickers = df["symbol"].dropna().str.upper().str.strip().unique().tolist()
-            logger.info(f"Loaded {len(tickers)} trending tickers.")
-            return sorted(tickers)
-    except Exception as e:
-        logger.error(f"Error loading tickers: {e}")
-        raise
 
 def get_tickers_to_screen_monthly() -> List[str]:
     """Fetch list of active NASDAQ tickers."""
@@ -269,7 +254,7 @@ if __name__ == "__main__":
     try:
         init_cache_db()
         logger.info("Screening trending stocks ...")
-        tickers = find_trending_stocks(tickers=DEFAULT_TRENDING_STOCKS)
+        tickers = find_trending_stocks(monthly_screen=False)
         save_trending_tickers_to_db(tickers)
         logger.info(f"Found {len(tickers)} trending stocks.")
     except Exception as main_err:

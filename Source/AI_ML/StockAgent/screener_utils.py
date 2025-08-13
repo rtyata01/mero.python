@@ -5,7 +5,7 @@ from pathlib import Path
 from datetime import datetime, timedelta
 from ftplib import FTP
 from contextlib import contextmanager
-from typing import Generator
+from typing import List, Generator
 
 # -------------------- Configuration -------------------- #
 
@@ -68,11 +68,13 @@ def init_cache_db() -> None:
                 has_rising_volume BOOLEAN,
                 has_rising_price BOOLEAN,
                 fundamental_score INTEGER,
-                quality_score INTEGER
+                quality_score INTEGER,
+                predicted_quality_score INTEGER
             );
         """)
         # conn.execute("ALTER TABLE eligible_stocks ADD COLUMN fundamental_score INTEGER DEFAULT 0;")
         # conn.execute("ALTER TABLE eligible_stocks ADD COLUMN quality_score INTEGER DEFAULT 0;")
+        # conn.execute("ALTER TABLE eligible_stocks ADD COLUMN predicted_quality_score INTEGER DEFAULT 0;")
         conn.commit()
     logger.info("Database initialized with required tables.")
     
@@ -153,3 +155,19 @@ def save_stock_history(ticker: str, df: pd.DataFrame) -> None:
         if deleted:
             logger.info(f"Deleted {deleted} outdated records from cache for {ticker}.")
 
+# --- Helper Functions ---
+
+def load_trending_tickers() -> List[str]:
+    try:
+        with db_connection() as conn:
+            query = "SELECT symbol FROM eligible_stocks WHERE CAST(fundamental_score AS INTEGER) >= 4"
+            df = pd.read_sql_query(query, conn)
+            if df.empty:
+                logger.warning("No trending tickers found.")
+                return []
+            tickers = df["symbol"].dropna().str.upper().str.strip().unique().tolist()
+            logger.info(f"Loaded {len(tickers)} trending tickers.")
+            return sorted(tickers)
+    except Exception as e:
+        logger.error(f"Error loading tickers: {e}")
+        raise
