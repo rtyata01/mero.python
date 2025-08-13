@@ -8,6 +8,7 @@ from screener_utils import init_cache_db
 from screen_by_fundamental import find_trending_stocks, save_trending_tickers_to_db
 from screen_by_volume import find_high_volume_stocks, save_volume_tickers_to_db
 from screen_by_price import find_increasing_price_stocks, save_price_tickers_to_db
+from screen_by_quality import find_quality_stocks, save_quality_tickers_to_db
 from stock_data_utils import update_local_data
 
 # -------------------- Configuration --------------------
@@ -26,7 +27,7 @@ def main():
     
     # Step A: Screen by increasing volume.
     init_cache_db()
-    tickers = find_trending_stocks()
+    tickers = find_trending_stocks(monthly_screen=False)  # use monthly_screen = True, to screen all tickers.
     save_trending_tickers_to_db(tickers)
     logger.info(f"Completed screening {len(tickers)} trending stocks.")
     
@@ -40,11 +41,17 @@ def main():
     save_price_tickers_to_db(filtered_by_price)
     logger.info(f"Completed screening {len(filtered_by_price)} high-price stocks")
     
+    # Step B: Screen by increasing quality.
+    filtered_by_quality = find_quality_stocks()
+    save_quality_tickers_to_db(filtered_by_quality)
+    logger.info(f"Completed screening {len(filtered_by_quality)} high-price stocks")
+    
     # Step C: Select top 20 stocks
     # (symbol, stock_name, price, volume, has_increasing_price)
     price_symbols = {row[0] for row in filtered_by_price if row[4] == True}
     volume_symbols = {row[0] for row in filtered_by_volume if row[4] == True}
-    common_symbols = price_symbols & volume_symbols
+    quality_symbols = {row[0] for row in filtered_by_quality}
+    common_symbols = price_symbols & volume_symbols & quality_symbols
     filtered_stocks = [row for row in tickers if row[0] in common_symbols]
 
     # Sort by volume (index 3), then price (index 2, Optional[float])

@@ -1,8 +1,18 @@
-# Screen the high volume stocks
-# The average volume exceeds the baseline (e.g., 25th percentile of history)
-# The latest volume exceeds mean + N × std_dev (statistically significant), where N = 2 (95% confidence) or N = 3 (99.7% confidence)
-# The latest volume exceeds the percentile threshold (80th Percentile)
-
+# Screen the high quality stocks (short term gains)
+# 1. Technical Indicators
+    # Measures overbought (RSI > 70) or oversold (RSI < 30) conditions to predict short-term price reversals or continuations.
+    # RSI 30–70 (neutral, indicating potential for growth without overbought risk).
+    # Avoid overbought stocks (RSI > 70) to reduce risk of corrections in long-term holdings.
+# 2. Moving Average Convergence Divergence (MACD)
+    # A bullish crossover (MACD line crosses above signal line) signals a buy for short-term gains.
+    # Confirms uptrends for sustained growth when MACD remains above zero.
+# 3. Bollinger Bands:
+    # Prices touching the upper band with rising volume suggest a breakout.
+# 4. Revenue Growth:
+    # Consistent revenue growth > 10%
+# 5. Earnings Quality
+    # Consistently beat earnings expectations
+    
 import time
 import random
 import logging
@@ -11,9 +21,6 @@ import sqlite3
 import pandas as pd
 import numpy as np
 import yfinance as yf
-from ftplib import FTP
-from io import BytesIO
-from csv import DictReader
 from typing import List, Tuple, Optional
 from contextlib import contextmanager
 from pathlib import Path
@@ -26,9 +33,6 @@ DATA_DIR = "data"
 DB_NAME = "stock_data_cache.db"
 MAX_WORKERS = 5
 LOOKBACK_DAYS = 60
-VOLUME_PERCENTILE_THRESHOLD = 80.0    # e.g. today's volume must exceed the 80th percentile
-MIN_AVERAGE_PERCENTILE = 25.0         # e.g. filter out lowest 25% volume days dynamically
-STD_DEV_MULTIPLIER = 2.0              # require volume > mean + 2·std_dev
 DATE_FORMAT = "%Y-%m-%d"
 DEFAULT_TRENDING_STOCKS = ["NIO","TSLA","NVDA","AMD","PLTR", "SOFI", "SMCI", "MSFT", "GOOGL", "AMZN", "AAPL"]
 
@@ -37,16 +41,6 @@ logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(
 logger = logging.getLogger(__name__)
 
 # --- Context Managers ---
-
-@contextmanager
-def ftp_connection(host: str) -> FTP:
-    ftp = FTP(host)
-    try:
-        ftp.login()
-        yield ftp
-    finally:
-        ftp.quit()
-
 @contextmanager
 def db_connection():
     db_path = Path(__file__).resolve().parent / DATA_DIR / DB_NAME
@@ -56,7 +50,7 @@ def db_connection():
     finally:
         conn.close()
 
-# --- Helper Functions ---
+# --- Indicators ---
 
 def load_trending_tickers() -> List[str]:
     try:
@@ -73,50 +67,74 @@ def load_trending_tickers() -> List[str]:
         logger.error(f"Error loading tickers: {e}")
         raise
 
-def get_tickers_to_screen_monthly() -> List[str]:
-    """Fetch list of active NASDAQ tickers."""
-    try:
-        with ftp_connection('ftp.nasdaqtrader.com') as ftp:
-            buffer = BytesIO()
-            ftp.retrbinary('RETR SymbolDirectory/nasdaqlisted.txt', buffer.write)
-            buffer.seek(0)
-            reader = DictReader(buffer.read().decode('utf-8').splitlines(), delimiter='|')
-            tickers = [
-                row["Symbol"].upper().strip()
-                for row in reader
-                if row.get("Test Issue") == "N" and row.get("Financial Status") == "N"
-            ]
-            
-            # Append the default trending stocks
-            tickers.extend(DEFAULT_TRENDING_STOCKS)
-            return sorted(set(tickers))
-    except Exception as e:
-        msg = f"FTP connection failed: {e}"
-        logger.error(msg)
-        raise ConnectionError(msg)
-
-
-def has_incrementing_monthly_prices(hist):
-    """Check if monthly average prices are increasing."""
+def calculate_rsi(hist, short: int = 14):
+    """Calculate 14-day RSI for the stock."""
     if not isinstance(hist, pd.DataFrame) or hist.empty:
+        return None
+    try:
+        close_prices = hist['Close']
+        deltas = close_prices.diff().dropna()
+        gains = deltas.where(deltas > 0, 0).rolling(short).mean()
+        losses = -deltas.where(deltas < 0, 0).rolling(short).mean()
+        rs = gains / losses
+        rsi = 100 - (100 / (1 + rs))
+        return rsi.iloc[-1]
+    except Exception as e:
+        logger.warning(f"Error calculating RSI: {str(e)}")
+        return None
+    
+def calculate_macd(hist, short: int = 12, long: int = 26, signal: int = 9) -> bool:
+    """Check if MACD indicates a bullish crossover."""
+    if not isinstance(hist, pd.DataFrame) or hist.empty or len(hist) < long + signal:
         return False
     try:
-        monthly_prices = hist['Close'].resample('ME').mean()
-        prices = monthly_prices.values
-        return all(prices[i] < prices[i + 1] for i in range(len(prices) - 1))
-    except Exception:
+        close_prices = hist['Close']
+        short_ema = close_prices.ewm(span=short, adjust=False).mean()
+        long_ema = close_prices.ewm(span=long, adjust=False).mean()
+        macd = short_ema - long_ema
+        signal = macd.ewm(span=signal, adjust=False).mean()
+        return macd.iloc[-1] > signal.iloc[-1] and macd.iloc[-2] <= signal.iloc[-2]  # Bullish crossover
+    except Exception as e:
+        logger.warning(f"Error calculating MACD: {str(e)}")
         return False
-
-def has_high_volume_trend(hist):
-    """Check if trading volume is increasing or high."""
-    if not isinstance(hist, pd.DataFrame) or hist.empty or hist['Volume'].isnull().all():
+    
+def calculate_bollinger_bands(hist: pd.DataFrame, period: int = 20, std_dev: float = 2.0) -> bool:
+    """Check if price is above upper Bollinger Band for breakout."""
+    if not isinstance(hist, pd.DataFrame) or hist.empty or len(hist) < period:
         return False
     try:
-        weekly_volume = hist['Volume'].resample('W').mean()
-        avg_volume = weekly_volume.mean()
-        recent_volume = weekly_volume[-4:].mean()
-        return recent_volume > avg_volume * 1.2
-    except Exception:
+        close_prices = hist['Close']
+        sma = close_prices.rolling(window=period).mean()
+        std = close_prices.rolling(window=period).std()
+        upper_band = sma + (std * std_dev)
+        return close_prices.iloc[-1] > upper_band.iloc[-1]
+    except Exception as e:
+        logger.warning(f"Error calculating Bollinger Bands: {str(e)}")
+        return False
+    
+def calculate_revenue_growth(stock: yf.Ticker) -> float:
+    try:
+        financials = stock.quarterly_financials
+        if financials.empty or len(financials.index) < 4:
+            return None
+        latest_revenue = financials.loc["Total Revenue"].iloc[0]
+        yoy_revenue = financials.loc["Total Revenue"].iloc[4]
+        if latest_revenue and yoy_revenue and yoy_revenue > 0:
+            return (latest_revenue - yoy_revenue) / yoy_revenue * 100
+        return None
+    except Exception as e:
+        logger.warning(f"Error calculating revenue growth: {str(e)}")
+        return None
+    
+def check_earnings_surprise(stock: yf.Ticker) -> bool:
+    try:
+        earnings = stock.earnings_history
+        if earnings.empty or len(earnings) < 1:
+            return False
+        latest_surprise = earnings["epsDifference"].iloc[0]
+        return latest_surprise > 0  # Positive earnings surprise
+    except Exception as e:
+        logger.warning(f"Error checking earnings surprise: {str(e)}")
         return False
     
 def sleep_with_jitter(min_delay=0.5, max_delay=1.5):
@@ -135,38 +153,33 @@ def safe_fetch_stock_data(stock: yf.Ticker, start, end):
     """Safe wrapper to fetch stock data with retries."""
     return stock.history(start=start, end=end, interval="1d", auto_adjust=True)
 
-def get_fundamental_score(ticker, hist, stock: yf.Ticker):
+def compute_quality_score(ticker, hist, stock: yf.Ticker):
     """Predict fundamental score greater than 4 out of 6, will be likely good"""
     score = 0
-    industry_avg_roe = 0.15
-    industry_avg_debt_to_equity = 1.0
-    industry_avg_pe = 25
 
-    eps = stock.info.get("trailingEps", None)
-    if isinstance(eps, (int, float)) and eps > 0:
+    revenue_growth = calculate_revenue_growth(stock)
+    if isinstance(revenue_growth, (int, float)) and revenue_growth > 0.1:
         score += 1
 
-    roe = stock.info.get("returnOnEquity", None)
-    if isinstance(roe, (int, float)) and roe > industry_avg_roe:
+    earnings_surprise = check_earnings_surprise(stock)
+    if earnings_surprise:
         score += 1
 
-    debt_to_equity = stock.info.get("debtToEquity", None)
-    if isinstance(debt_to_equity, (int, float)) and (debt_to_equity * 0.01) < industry_avg_debt_to_equity:
+    rsi_value = calculate_rsi(hist)
+    if 30 < rsi_value < 70:
         score += 1
 
-    pe_ratio = stock.info.get("trailingPE", None)
-    if isinstance(pe_ratio, (int, float)) and pe_ratio < industry_avg_pe:
+    bullish_crossover = calculate_macd(hist)
+    if bullish_crossover:
         score += 1
-
-    if has_incrementing_monthly_prices(hist):
-        score += 1
-
-    if has_high_volume_trend(hist):
+        
+    breakout_signals = calculate_bollinger_bands(hist)
+    if breakout_signals:
         score += 1
 
     return score
 
-def get_trending_stocks(
+def get_quality_stocks(
     ticker: str,
     lookback_days: int = LOOKBACK_DAYS,
 ) -> Tuple[bool, Optional[str], Optional[float], Optional[int]]:
@@ -198,28 +211,21 @@ def get_trending_stocks(
 
         latest_volume = int(hist['Volume'].iloc[-1]) if not hist.empty else None
         latest_price = hist['Close'].iloc[-1] if not hist.empty else None
-        fundamental_score = get_fundamental_score(ticker, hist, stock)
+        quality_score = compute_quality_score(ticker, hist, stock)
         
-        return fundamental_score, stock_name, latest_price, latest_volume
+        return quality_score, stock_name, latest_price, latest_volume
 
     except Exception as e:
         logger.warning(f"Error checking {ticker}: {e}")
         return False, ticker, None, None
 
-def find_trending_stocks(tickers = None, max_workers: int = MAX_WORKERS, monthly_screen: bool = False) -> List[Tuple[str, str, Optional[float], Optional[int], bool]]:
-    """Find stocks with volume surge based on moving average."""
-    tickers_to_screen = []
+def find_quality_stocks(tickers = None, max_workers: int = MAX_WORKERS, monthly_screen: bool = False) -> List[Tuple[str, str, Optional[float], Optional[int], bool]]:
+    """Find stocks with better quality."""
+    tickers_to_screen = tickers if tickers else load_trending_tickers()
     results = []
     
-    if tickers:
-        tickers_to_screen = tickers
-    elif monthly_screen:
-        tickers_to_screen = get_tickers_to_screen_monthly()
-    else:
-        tickers_to_screen = load_trending_tickers()
-    
     with ThreadPoolExecutor(max_workers=max_workers) as executor:
-        futures = {executor.submit(get_trending_stocks, ticker): ticker for ticker in tickers_to_screen}
+        futures = {executor.submit(get_quality_stocks, ticker): ticker for ticker in tickers_to_screen}
         for future in as_completed(futures):
             ticker = futures[future]
             try:
@@ -232,14 +238,14 @@ def find_trending_stocks(tickers = None, max_workers: int = MAX_WORKERS, monthly
     logger.info(f"Found {len(results)} trending stocks")
     return sorted(results, key=lambda x: x[0])
 
-def save_trending_tickers_to_db(ticker_data: List[Tuple[str, str, Optional[float], Optional[int], bool]]):
+def save_quality_tickers_to_db(ticker_data: List[Tuple[str, str, Optional[float], Optional[int], bool]]):
     """Insert or update high-volume tickers in DB."""
     try:
         with db_connection() as conn:
             cursor = conn.cursor()
         
             # Reset the has_rising_volume field for all stocks
-            cursor.execute("UPDATE eligible_stocks SET fundamental_score = CAST(0 AS INTEGER)")
+            cursor.execute("UPDATE eligible_stocks SET quality_score = CAST(0 AS INTEGER)")
             
             # Prepare data for bulk insert (only those with rising volume)
             data_to_insert = [
@@ -250,15 +256,15 @@ def save_trending_tickers_to_db(ticker_data: List[Tuple[str, str, Optional[float
             if data_to_insert:
                 # Bulk insert using executemany
                 cursor.executemany("""
-                    INSERT OR REPLACE INTO eligible_stocks (symbol, stock_name, price, volume, fundamental_score)
+                    INSERT OR REPLACE INTO eligible_stocks (symbol, stock_name, price, volume, quality_score)
                     VALUES (?, ?, ?, ?, ?)
                 """, data_to_insert)
                 
                 # Commit all changes in one transaction
                 conn.commit()
-                logger.info(f"{len(data_to_insert)} stocks with rising volume saved to database.")
+                logger.info(f"{len(data_to_insert)} stocks with quality stockes saved to database.")
             else:
-                logger.info("No stocks with rising volume to insert.")
+                logger.info("No stocks with better quality to insert.")
     except Exception as e:
         logger.error(f"Database insert failed: {e}")
         raise RuntimeError("DB insert failed") from e
@@ -268,10 +274,10 @@ def save_trending_tickers_to_db(ticker_data: List[Tuple[str, str, Optional[float
 if __name__ == "__main__":
     try:
         init_cache_db()
-        logger.info("Screening trending stocks ...")
-        tickers = find_trending_stocks(tickers=DEFAULT_TRENDING_STOCKS)
-        save_trending_tickers_to_db(tickers)
-        logger.info(f"Found {len(tickers)} trending stocks.")
+        logger.info("Screening quality stocks ...")
+        tickers = find_quality_stocks(tickers=DEFAULT_TRENDING_STOCKS)
+        save_quality_tickers_to_db(tickers)
+        logger.info(f"Found {len(tickers)} quality stocks.")
     except Exception as main_err:
         logger.error(f"Fatal error: {main_err}")
         print(f"Error: {main_err}")

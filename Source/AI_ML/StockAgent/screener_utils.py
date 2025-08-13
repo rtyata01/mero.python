@@ -67,11 +67,15 @@ def init_cache_db() -> None:
                 volume INTEGER,
                 has_rising_volume BOOLEAN,
                 has_rising_price BOOLEAN,
-                fundamental_score INTEGER
+                fundamental_score INTEGER,
+                quality_score INTEGER
             );
         """)
+        # conn.execute("ALTER TABLE eligible_stocks ADD COLUMN fundamental_score INTEGER DEFAULT 0;")
+        # conn.execute("ALTER TABLE eligible_stocks ADD COLUMN quality_score INTEGER DEFAULT 0;")
         conn.commit()
     logger.info("Database initialized with required tables.")
+    
 
 # -------------------- Stock Data Retrieval -------------------- #
 
