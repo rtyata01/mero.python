@@ -74,7 +74,7 @@ def main():
 
     # Step D: Save results to CSV
     save_lists_to_csv(
-        ["Rising Volume ", "Rising Price ", "Short-Term Profit ", "Predicted Short-Term Profit "],
+        ["Rising Volume", " Rising Price", " Short-Term Profit", " Predicted Short-Term Profit"],
         {row[0] for row in high_volume},
         {row[0] for row in rising_price},
         {row[0] for row in high_quality},
