@@ -28,7 +28,7 @@ def save_lists_to_csv(column_names, *lists):
         raise ValueError("Number of column names must match number of lists.")
 
     max_len = max(len(lst) for lst in lists)
-    padded_lists = [list(lst) + [None] * (max_len - len(lst)) for lst in lists]
+    padded_lists = [sorted(list(lst)) + [None] * (max_len - len(lst)) for lst in lists]
     df = pd.DataFrame({name: data for name, data in zip(column_names, padded_lists)})
     
     date_str = datetime.today().strftime(DATE_FORMAT)
@@ -42,32 +42,36 @@ def save_lists_to_csv(column_names, *lists):
 # -------------------- Main --------------------
 def main():
     start_time = time.time()
-    today_str = datetime.today().strftime(DATE_FORMAT)
 
     logger.info("Starting stock screening process...")
     init_cache_db()
 
     # Step A: Trending stocks
+    logger.info("Screening trending stocks...")
     trending_stocks = find_trending_stocks(monthly_screen=False)
     save_trending_tickers_to_db(trending_stocks)
     logger.info(f"Trending stocks found: {len(trending_stocks)}")
 
     # Step B1: High volume
+    logger.info("Screening high volume stocks...")
     high_volume = find_high_volume_stocks()
     save_volume_tickers_to_db(high_volume)
     logger.info(f"High volume stocks: {len(high_volume)}")
 
     # Step B2: Rising price
+    logger.info("Screening rising price stocks...")
     rising_price = find_increasing_price_stocks()
     save_price_tickers_to_db(rising_price)
     logger.info(f"Rising price stocks: {len(rising_price)}")
 
     # Step B3: High quality
+    logger.info("Screening high quality stocks...")
     high_quality = find_quality_stocks()
     save_quality_tickers_to_db(high_quality)
     logger.info(f"High quality stocks: {len(high_quality)}")
 
     # Step C: Predict quality
+    logger.info("Predicting high quality stocks...")
     predicted_quality = train_predict_quality_stocks()
     save_predicted_tickers_to_db(predicted_quality)
     logger.info(f"Predicted quality stocks: {len(predicted_quality)}")

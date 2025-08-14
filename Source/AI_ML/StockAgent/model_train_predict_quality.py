@@ -245,7 +245,7 @@ def train_predict_quality_stocks(max_workers: int = MAX_WORKERS, monthly_screen:
             except Exception as err:
                 logger.warning(f"Error processing {ticker}: {err}")
 
-    logger.info(f"Found {len(results)} quality stocks")
+    logger.info(f"Found {len(results)} predicted high quality stocks.")
     return sorted(results, key=lambda x: x[0])
 
 def save_predicted_tickers_to_db(ticker_data: List[Tuple[str, str, Optional[float], Optional[int], bool]]):

@@ -127,18 +127,18 @@ def check_earnings_surprise(ticker: str, stock: yf.Ticker, min_surprise_pct: flo
         for i in range(min(quarters, len(earnings_df))):
             latest = earnings_df.iloc[i]
             if "EPS Estimate" not in latest or "Reported EPS" not in latest:
-                logger.warning(f"Missing EPS data for {ticker} in quarter {i+1}")
+                logger.debug(f"Missing EPS data for {ticker} in quarter {i+1}")
                 return False
 
             eps_estimate = latest["EPS Estimate"]
             eps_actual = latest["Reported EPS"]
 
             if pd.isna(eps_estimate) or pd.isna(eps_actual):
-                logger.warning(f"Null EPS data for {ticker} in quarter {i+1}")
+                logger.debug(f"Null EPS data for {ticker} in quarter {i+1}")
                 return False
 
             if eps_estimate <= 0:  # Avoid division by zero or negative estimates
-                logger.warning(f"Invalid EPS estimate ({eps_estimate}) for {ticker}")
+                logger.debug(f"Invalid EPS estimate ({eps_estimate}) for {ticker}")
                 return False
 
             surprise_pct = (eps_actual - eps_estimate) / eps_estimate * 100
@@ -251,7 +251,7 @@ def find_quality_stocks(max_workers: int = MAX_WORKERS, monthly_screen: bool = F
             except Exception as err:
                 logger.warning(f"Error processing {ticker}: {err}")
 
-    logger.info(f"Found {len(results)} trending stocks")
+    logger.info(f"Found {len(results)} high quality stocks")
     return sorted(results, key=lambda x: x[0])
 
 def save_quality_tickers_to_db(ticker_data: List[Tuple[str, str, Optional[float], Optional[int], bool]]):
