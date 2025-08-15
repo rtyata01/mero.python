@@ -48,7 +48,7 @@ def main():
 
     # Step A: Trending stocks
     logger.info("Screening trending stocks...")
-    trending_stocks = find_trending_stocks(monthly_screen=False)
+    trending_stocks = find_trending_stocks(monthly_screen=True)
     save_trending_tickers_to_db(trending_stocks)
     logger.info(f"Trending stocks found: {len(trending_stocks)}")
 
