@@ -14,7 +14,6 @@ class ListNode:
 class Solution:
     def mergeKLists(self, lists: List[Optional[ListNode]]) -> Optional[ListNode]: # Optional refers None or LinkedListNode
         heap = []
-        
         for node in lists:
             if node:
                 heapq.heappush(heap, (node.val, id(node), node))  # insert 3 heads (node.va, node.id, node) from each linked list to heap.
@@ -22,7 +21,6 @@ class Solution:
                 
         head = ListNode()
         current = head
-        
         while heap:
             val, _, node = heapq.heappop(heap)
             current.next = node

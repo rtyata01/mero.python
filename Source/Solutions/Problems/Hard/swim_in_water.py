@@ -2,6 +2,7 @@
 # You start at (0, 0) and want to reach (N-1, N-1).
 # At time t, you can enter any square with elevation ≤ t.
 # You can move up/down/left/right to adjacent cells.
+# Find the path where the maximum elevation along the path is minimized.
 
 import heapq
 

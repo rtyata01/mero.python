@@ -13,12 +13,19 @@ class TreeNode:
 class TreeCodec:
     def serialize(self, root: TreeNode) -> str:
         """Encodes a tree to a single string."""
+        values = []
+
         def dfs(node):
             if not node:
-                return "null,"
-            return f"{node.val}," + dfs(node.left) + dfs(node.right)
-        
-        return dfs(root)
+                values.append("null")
+                return
+            
+            values.append(str(node.val))
+            dfs(node.left)
+            dfs(node.right)
+
+        dfs(root)
+        return ",".join(values)
     
     def deserialize_dfs(self, data: str) -> TreeNode: 
         """Decodes your encoded data to tree."""

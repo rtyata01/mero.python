@@ -10,7 +10,7 @@ def shortest_substring(sentence, words):
     formed = 0
     left = 0
     min_len = float('inf')
-    min_window = (0, 0)  # tuple
+    min_start = 0  
 
     for right, word in enumerate(sentence_words):
         if word in required_counts:
@@ -22,7 +22,7 @@ def shortest_substring(sentence, words):
             window_length = right - left + 1  # correct window size
             if window_length < min_len:
                 min_len = window_length
-                min_window = (left, right)
+                min_start = left
 
             left_word = sentence_words[left]
             if left_word in required_counts:
@@ -34,9 +34,12 @@ def shortest_substring(sentence, words):
     if min_len == float('inf'):
         return ""
     
-    start, end = min_window
-    return " ".join(sentence_words[start:end+1])
+    return " ".join(sentence_words[min_start: min_start + min_len])
 
-sentence = "this is one ok you the frog ok one the you is not frog"
-words = ["is", "you", "frog"]
+sentence = "one frog ask another Aren't you okay frog you would better be okay frog"
+words = ["you", "okay", "frog"]
+print(shortest_substring(sentence, words))
+
+sentence = "the quick brown fox jumps over the lazy dog"
+words = ["quick", "dog"]
 print(shortest_substring(sentence, words))

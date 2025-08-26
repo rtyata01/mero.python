@@ -1,6 +1,9 @@
-# Hard: Compute total water trapped at a particular bar depends on the tallest bar to its left and tallest bar to its right. The trapped water at index i is:
+# Hard: Compute total trapped water. 
+# The trapped water at index i is: dependes upon the tallest bar to its left and tallest bar to its right. 
+
 # For naive and less efficient approach
     # water_at_index = min(max_left, max_right) - height[i]
+    
 # Efficient approach, Use two pointers: one at the start (left), one at the end (right).
     # trapped water = min(0, max_left - height[left]) from left.
     # trapped water = min(0, max_right - height[right]) from right.
@@ -8,7 +11,7 @@
 # Move the pointers inward, calculating trapped water as you go.
 # Left and Right boundary will not collect any water.
 
-def trap(height):
+def find_trapped_water(height):
     if not height:
         return 0
     
@@ -32,7 +35,7 @@ def trap(height):
 # Time Complexity: O (n)
 # Space Complexity: O (1)
 
-def trap(height):
+def find_trapped_water_naive(height):
     n = len(height)
     trapped_water = 0
     
@@ -49,16 +52,16 @@ def trap(height):
 # Space Complexity: O (1)
 
 heights = [0,1,0]
-print(f"Expected trapped water: 0, Computed trapped water: ", trap(heights))
+print(f"Expected trapped water: 0, Computed trapped water: ", find_trapped_water(heights))
 
 heights = [3,0,2]  
 # index 0 = 0 (no left boundary)
 # index 1 = min(3, 2) - 0 = 2
 # index 2 = 0 (no right boundary)
-print(f"Expected trapped water: 2, Computed trapped water: ", trap(heights))
+print(f"Expected trapped water: 2, Computed trapped water: ", find_trapped_water(heights))
 
 heights = [3,0,2,0,4] 
-print(f"Expected trapped water: 7, Computed trapped water: ", trap(heights))
+print(f"Expected trapped water: 7, Computed trapped water: ", find_trapped_water(heights))
 
 heights = [4, 2, 6, 3, 2, 5]
-print(f"Expected trapped water: 7, Computed trapped water: ", trap(heights))
+print(f"Expected trapped water: 7, Computed trapped water: ", find_trapped_water(heights))

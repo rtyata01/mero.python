@@ -1,5 +1,5 @@
 # Hard: Given two sorted arrays A and B, with lengths m and n, find the median of the combined sorted array in O(log(min(m, n))) time.
-# The median is the middle value in a sorted list of numbers.
+# When odd, the median is the middle value in a sorted list of numbers.
 # When even, the median is the midpoint between the two center values.
 
 def find_median_sorted_arrays(nums1, nums2):
@@ -49,6 +49,7 @@ def find_median_sorted_arrays_naive(nums1, nums2):
         mid1 = merged[n // 2 - 1]
         mid2 = merged[n // 2]
         return (mid1 + mid2) / 2
+    
 # Naive merging approaches (O(m + n) log(m + n)), where you merge both arrays and then find medium.
     # merge = O(m + n) 
     # sort = o(N log N), where N = m + n.
@@ -56,8 +57,13 @@ def find_median_sorted_arrays_naive(nums1, nums2):
 print(f"Expected median: 2, Computed median: {find_median_sorted_arrays([1, 3], [2])}") 
 print(f"Expected median: 4, Computed median: {find_median_sorted_arrays([1, 5, 6], [2, 4])}") 
 print(f"Expected median: 4, Computed median: {find_median_sorted_arrays([1, 3, 5, 6], [2, 4])}") 
+
+# [2 | 4]
+# [1, 3 | 5, 6]
+# max(left) + min(right) / 2 = 3 + 4 / 2 = 3.5
+
 # i=(0+2)/2 = 1, 
 # j= (2+4+1)/2 - i = 3-2= 2
 # nums1: left = 2, right = 4
 # nums2: left = [1,3] right = [5,6]
-# 2+4 % 2==0, even, so median = max(2,3) + min(4, 5) / 2 = 3+4/2 = 3.5
+# 2 + 4 % 2==0, even, so median = max(2,3) + min(4, 5) / 2 = 3+4/2 = 3.5

@@ -11,7 +11,7 @@ class LFUCache:
             raise ValueError("Capacity must be a positive integer")
     
         self.capacity = capacity
-        self.key_to_val_freq = {}  # key: (value, frequency)
+        self.key_to_val_freq = {}  # defaultdict(lambda: (None, 0)) # key: (value, frequency)  
         self.freq_to_keys = defaultdict(OrderedDict)  # OrderedDiction within default dictionary.
         self.min_freq = 0
 

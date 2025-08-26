@@ -30,15 +30,32 @@ def min_sliding_window(arr, window_size):
     return results
 
 # Time Complexity: O(n)
-# Space Complexity: O(k) queue + O(n - k + 1) store in results.                                                                                                                             
+# Space Complexity: O(k) queue + O(n - k + 1) store in results.         
+
+
+# without using queue
+def man_in_sliding_window_naive_less_efficient(arr, k):
+    if not arr or k == 0:
+        return []
+    
+    result = []
+    for i in range(len(arr) - k + 1):
+        result.append(min(arr[i:i + k]))
+
+    return result
+
+# Time Complexity: O(n * k) where n is the length of the array.
+                                                                                                                    
 
 # Example usage:
 arr = [1, 3, -1, -3, 5, 3, 6, 7]
 k = 3
 print(min_sliding_window(arr, k))  # Output: [-1, -3, -3, -3, 3, 3]
+print(man_in_sliding_window_naive_less_efficient(arr, k))
 
 # Example usage:
 arr = [1, 3, -1, -2, -3, 5, 3, 6, 7]
 k = 3
 print(min_sliding_window(arr, k))  # Output: [-1, -2, -3, -3, -3, 3, 3] 
+print(man_in_sliding_window_naive_less_efficient(arr, k))
 

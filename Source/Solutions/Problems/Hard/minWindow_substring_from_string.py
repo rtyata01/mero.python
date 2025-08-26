@@ -10,9 +10,9 @@ def shortest_substring(source, target):
     window_freq = defaultdict(int)
     
     min_len = float('inf')
-    left = 0
-    start = 0
+    min_start = 0
     formed = 0
+    left = 0
 
     for right, char in enumerate(source):
         if char in target_freq:
@@ -25,7 +25,7 @@ def shortest_substring(source, target):
             window_size = right - left + 1 
             if window_size < min_len:
                 min_len = window_size
-                start = left
+                min_start = left
                                     
             # Shrink from left
             left_char = source[left]
@@ -35,7 +35,7 @@ def shortest_substring(source, target):
                     formed -= 1
             left += 1
             
-    return source[start:start + min_len] if min_len != float('inf') else ""
+    return source[min_start:min_start + min_len] if min_len != float('inf') else ""
 
 # Time Complexity: O(n + m), where n is souce length and m is target lenght.
 # Space Complexity: O(m) for the hash maps.

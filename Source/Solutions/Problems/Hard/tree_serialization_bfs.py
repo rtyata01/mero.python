@@ -16,24 +16,23 @@ class Codec:
         if not root:
             return ""
 
-        result = []
+        values = []
         queue = deque([root])
 
         while queue:
             node = queue.popleft()
 
             if node:
-                result.append(str(node.val))
-                queue.append(node.left)
-                queue.append(node.right)
+                values.append(str(node.val))
+                queue.extend([node.left, node.right]) 
             else:
-                result.append("null")
+                values.append("null")
 
         # Optional: trim trailing "null"s
-        while result and result[-1] == "null":
-            result.pop()
+        while values and values[-1] == "null":
+            values.pop()
 
-        return ','.join(result)
+        return ','.join(values)
 
     def deserialize(self, data: str) -> TreeNode:
         """Decodes level-order encoded data to tree using BFS."""
