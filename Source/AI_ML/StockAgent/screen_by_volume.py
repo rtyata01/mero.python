@@ -22,7 +22,7 @@ from screener_utils import init_cache_db, get_stock_history, save_stock_history,
 DATA_DIR = "data"
 DB_NAME = "stock_data_cache.db"
 MAX_WORKERS = 5
-LOOKBACK_DAYS = 60
+LOOKBACK_DAYS = 90
 VOLUME_PERCENTILE_THRESHOLD = 80.0    # e.g. today's volume must exceed the 80th percentile
 MIN_AVERAGE_PERCENTILE = 25.0         # e.g. filter out lowest 25% volume days dynamically
 STD_DEV_MULTIPLIER = 2.0              # require volume > mean + 2·std_dev

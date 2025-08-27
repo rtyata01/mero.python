@@ -19,18 +19,17 @@ from contextlib import contextmanager
 from pathlib import Path
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from datetime import datetime, timedelta
-from screener_utils import init_cache_db, get_stock_history, save_stock_history, load_trending_tickers
+from screener_utils import init_cache_db, get_stock_history, save_stock_history, load_trending_tickers, DEFAULT_TRENDING_STOCKS
 
 # --- Configuration ---
 DATA_DIR = "data"
 DB_NAME = "stock_data_cache.db"
 MAX_WORKERS = 5
-LOOKBACK_DAYS = 60
+LOOKBACK_DAYS = 90
 VOLUME_PERCENTILE_THRESHOLD = 80.0    # e.g. today's volume must exceed the 80th percentile
 MIN_AVERAGE_PERCENTILE = 25.0         # e.g. filter out lowest 25% volume days dynamically
 STD_DEV_MULTIPLIER = 2.0              # require volume > mean + 2·std_dev
 DATE_FORMAT = "%Y-%m-%d"
-DEFAULT_TRENDING_STOCKS = ["NIO","TSLA","NVDA","AMD","PLTR", "SOFI", "SMCI", "MSFT", "GOOGL", "AMZN", "AAPL"]
 
 # --- Logging ---
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')

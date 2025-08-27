@@ -21,7 +21,7 @@ from sklearn.ensemble import RandomForestRegressor
 from sklearn.model_selection import TimeSeriesSplit
 from sklearn.metrics import mean_squared_error
 from contextlib import contextmanager
-from screener_utils import init_cache_db, get_stock_history, save_stock_history
+from screener_utils import init_cache_db, get_stock_history, save_stock_history, load_quality_tickers, DEFAULT_TRENDING_STOCKS
 
 # -------------------- Configuration -------------------- #
 
@@ -51,21 +51,6 @@ def db_connection() -> Generator[sqlite3.Connection, None, None]:
         yield conn
     finally:
         conn.close()
-
-def load_quality_tickers() -> List[str]:
-    try:
-        with db_connection() as conn:
-            query = "SELECT symbol FROM eligible_stocks WHERE CAST(quality_score AS INTEGER) >= 4"
-            df = pd.read_sql_query(query, conn)
-            if df.empty:
-                logger.warning("No quality tickers found.")
-                return []
-            tickers = df["symbol"].dropna().str.upper().str.strip().unique().tolist()
-            logger.info(f"Loaded {len(tickers)} quality tickers.")
-            return sorted(tickers)
-    except Exception as e:
-        logger.error(f"Error loading tickers: {e}")
-        raise
     
 # -------------------- Machine Learning Functions -------------------- #
 

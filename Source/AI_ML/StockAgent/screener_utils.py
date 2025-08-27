@@ -16,6 +16,7 @@ DB_PATH = Path(__file__).resolve().parent / DATA_DIR / DB_NAME
 MAX_WORKERS = 10
 MAINTAIN_WEEKS_BACK = 26  # Store last six months data (2 * 26 = 52 weeks) (1 Year)
 DATE_FORMAT = "%Y-%m-%d"
+DEFAULT_TRENDING_STOCKS = ["NIO","TSLA","NVDA","AMD","PLTR", "SOFI", "SMCI", "MSFT", "GOOGL", "AMZN", "AAPL"]
 
 # -------------------- Logging Setup -------------------- #
 
@@ -69,12 +70,14 @@ def init_cache_db() -> None:
                 has_rising_price BOOLEAN,
                 fundamental_score INTEGER,
                 quality_score INTEGER,
-                predicted_quality_score INTEGER
+                predicted_quality_score INTEGER,
+                predicted_signal TEXT
             );
         """)
         # conn.execute("ALTER TABLE eligible_stocks ADD COLUMN fundamental_score INTEGER DEFAULT 0;")
         # conn.execute("ALTER TABLE eligible_stocks ADD COLUMN quality_score INTEGER DEFAULT 0;")
         # conn.execute("ALTER TABLE eligible_stocks ADD COLUMN predicted_quality_score INTEGER DEFAULT 0;")
+        # conn.execute("ALTER TABLE eligible_stocks ADD COLUMN predicted_signal TEXT;")
         conn.commit()
     logger.info("Database initialized with required tables.")
     
@@ -166,7 +169,31 @@ def load_trending_tickers() -> List[str]:
                 logger.warning("No trending tickers found.")
                 return []
             tickers = df["symbol"].dropna().str.upper().str.strip().unique().tolist()
+            
+            # Append the default trending stocks
+            tickers.extend(DEFAULT_TRENDING_STOCKS)
             logger.info(f"Loaded {len(tickers)} trending tickers.")
+            
+            return sorted(tickers)
+    except Exception as e:
+        logger.error(f"Error loading tickers: {e}")
+        raise
+
+
+def load_quality_tickers() -> List[str]:
+    try:
+        with db_connection() as conn:
+            query = "SELECT symbol FROM eligible_stocks WHERE CAST(quality_score AS INTEGER) >= 4"
+            df = pd.read_sql_query(query, conn)
+            if df.empty:
+                logger.warning("No quality tickers found.")
+                return []
+            tickers = df["symbol"].dropna().str.upper().str.strip().unique().tolist()
+            
+            # Append the default trending stocks
+            tickers.extend(DEFAULT_TRENDING_STOCKS)
+            logger.info(f"Loaded {len(tickers)} quality tickers.")
+            
             return sorted(tickers)
     except Exception as e:
         logger.error(f"Error loading tickers: {e}")

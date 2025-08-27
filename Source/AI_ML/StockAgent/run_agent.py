@@ -12,6 +12,7 @@ from screen_by_volume import find_high_volume_stocks, save_volume_tickers_to_db
 from screen_by_price import find_increasing_price_stocks, save_price_tickers_to_db
 from screen_by_quality import find_quality_stocks, save_quality_tickers_to_db
 from model_train_predict_quality import train_predict_quality_stocks, save_predicted_tickers_to_db
+from model_train_predict_signals import train_predict_stock_signals, save_predicted_signals_to_db
 
 # -------------------- Configuration --------------------
 DATE_FORMAT = "%Y%m%d"
@@ -48,7 +49,7 @@ def main():
 
     # Step A: Trending stocks
     logger.info("Screening trending stocks...")
-    trending_stocks = find_trending_stocks(monthly_screen=False)
+    trending_stocks = find_trending_stocks(monthly_screen=True)
     save_trending_tickers_to_db(trending_stocks)
     logger.info(f"Trending stocks found: {len(trending_stocks)}")
 
@@ -71,6 +72,12 @@ def main():
     logger.info(f"High quality stocks: {len(high_quality)}")
 
     # Step C: Predict quality
+    logger.info("Predicting stocks signal...")
+    predicted_signal = train_predict_stock_signals()
+    save_predicted_signals_to_db(predicted_signal)
+    logger.info(f"Predicted stocks signal: {len(predicted_signal)}")
+    
+    # Step C: Predict quality
     logger.info("Predicting high quality stocks...")
     predicted_quality = train_predict_quality_stocks()
     save_predicted_tickers_to_db(predicted_quality)
@@ -78,11 +85,12 @@ def main():
 
     # Step D: Save results to CSV
     save_lists_to_csv(
-        ["Rising Volume", " Rising Price", " Short-Term Profit", " Predicted Short-Term Profit"],
+        ["Rising Volume", " Rising Price", " Short-Term Profit", " Short-Term Signal", " Predicted Short-Term Profit"],
         {row[0] for row in high_volume},
         {row[0] for row in rising_price},
-        {row[0] for row in high_quality},
-        {row[0] for row in predicted_quality}
+        {f"{row[0]}-{row[4]}" for row in high_quality},
+        {f"{row[0]}-{row[4]}" for row in predicted_signal},
+        {f"{row[0]}-{row[4]}" for row in predicted_quality}
     )
 
     elapsed_str = time.strftime("%H:%M:%S", time.gmtime(time.time() - start_time))

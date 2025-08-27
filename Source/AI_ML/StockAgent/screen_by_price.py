@@ -17,13 +17,13 @@ from datetime import datetime, timedelta
 from contextlib import contextmanager
 from typing import List, Tuple, Optional
 from concurrent.futures import ThreadPoolExecutor, as_completed
-from screener_utils import init_cache_db, get_stock_history, save_stock_history, load_trending_tickers
+from screener_utils import init_cache_db, get_stock_history, save_stock_history, load_trending_tickers, DEFAULT_TRENDING_STOCKS
 
 # --- Configuration ---
 DATA_DIR = "data"
 DB_NAME = "stock_data_cache.db"
 MAX_WORKERS = 5
-LOOKBACK_DAYS = 60
+LOOKBACK_DAYS = 90
 HIGH_CONFIDENCE_PERCENT = 0.75
 
 # --- Logging ---
