@@ -49,7 +49,7 @@ def main():
 
     # Step A: Trending stocks
     logger.info("Screening trending stocks...")
-    trending_stocks = find_trending_stocks(monthly_screen=True)
+    trending_stocks = find_trending_stocks(monthly_screen=False)
     save_trending_tickers_to_db(trending_stocks)
     logger.info(f"Trending stocks found: {len(trending_stocks)}")
 
@@ -71,7 +71,7 @@ def main():
     save_quality_tickers_to_db(high_quality)
     logger.info(f"High quality stocks: {len(high_quality)}")
 
-    # Step C: Predict quality
+    # Step C: Predict (buy\hold\sale) signal
     logger.info("Predicting stocks signal...")
     predicted_signal = train_predict_stock_signals()
     save_predicted_signals_to_db(predicted_signal)
