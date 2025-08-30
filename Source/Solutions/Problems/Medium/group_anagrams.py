@@ -2,9 +2,9 @@
 
 from collections import defaultdict
 
-def group_anagrams(strs):
+def group_anagrams(words):
     groups = defaultdict(list)
-    for word in strs:
+    for word in words:
         key = tuple(sorted(word))  # abc, bca ->  tuple: ('a','b','c') # can also use key as ''.join(sorted(s))
         groups[key].append(word)
     return list(groups.values())
@@ -24,7 +24,7 @@ print("Input:", input2, "Output:", group_anagrams(input2))
 input3 = ["a"]
 print("Input:", input3, "Output:", group_anagrams(input3))
 
-input4 = ["abc", "cba", "bac", "bca", "cab"]
+input4 = ["abc", "cbd", "bac", "bca", "dcb"]
 print("Input:", input4, "Output:", group_anagrams(input4))
 
 input5 = ["eat", "tea", "tan", "ate", "nat", "bat"]

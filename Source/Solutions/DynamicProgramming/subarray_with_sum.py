@@ -4,7 +4,7 @@
 from collections import defaultdict
 from typing import List
 
-def find_subarrays_with_sum(nums: List[int], target: int) :
+def find_contiguous_subarrays_with_sum(nums: List[int], target: int) :
     prefix_sum = 0
     subarrays = []
     sum_to_indices = defaultdict(list)
@@ -27,40 +27,40 @@ def find_subarrays_with_sum(nums: List[int], target: int) :
     # Space Complexity: 
         # worst	= O(n²)
 
-def find_subarrays_with_sum_brute_force(nums, target):
+def find_subsets_with_sum(nums: List[int], target: int) -> List[List[int]]:
+    """Find all subsets of any size whose sum equals the target."""
+    
     result = []
-    n = len(nums)
 
-    for start in range(n):
-        current_sum = 0
-        subarray = []
+    def backtrack(start: int, path: List[int], current_sum: int):
+        # Check if current subset matches the target
+        if current_sum == target:
+            result.append(path.copy())
+            # Continue searching for other subsets
+        # Explore remaining elements
+        for i in range(start, len(nums)):
+            # Include nums[i] in the subset
+            path.append(nums[i])
+            backtrack(i + 1, path, current_sum + nums[i])
+            path.pop()  # backtrack
 
-        for end in range(start, n):
-            current_sum += nums[end]
-            subarray.append(nums[end])
-
-            if current_sum == target:
-                result.append(subarray[:])  # Copy current subarray (O(k), but done only for matches)
-
+    backtrack(0, [], 0)
+    
+    # Remove empty subset(s)
+    result = [subset for subset in result if subset]
     return result
-
-    # Time Complexity: O(n²)
-        # Loop: O(n²)
-        # Copying subarrays:  O(k) per matching subarray.
-    # Space Complexity: 
-        # worst	= O(n³)
 
 # Tests
 test_cases = [
     ([1, -1, 0, -2 , 2], 0),
-    ([1, 2, 3], 3),
+    ([1, 2, 0, 3, -1], 3),
     ([1, 1, 1], 2),
     ([3, 2, 1], 15)
 ]
 
 for arr, target_sum in test_cases:
-    result = find_subarrays_with_sum(arr, target_sum)
-    print(f"Input: {arr} and sum: {target_sum}, subarray count: {len(result)}, subarrays: {result}")
+    result = find_contiguous_subarrays_with_sum(arr, target_sum)
+    print(f"Contiguous Subarray - Input: {arr} and sum: {target_sum}, subarray count: {len(result)}, subarrays: {result}")
 
 # sum_to_indices = {0: [-1]}
 # i=0, sum_to_indices = {0: [-1], 1: [0]}
@@ -70,5 +70,5 @@ for arr, target_sum in test_cases:
 # i=4, sum_to_indices = {0: [-1, 1, 2, 4], 1: [0], -2: [3]}, subarrays: [1, -1, 0, -2, 2], [0, -2, 2], [-2, 2]
 
 for arr, target_sum in test_cases:
-    result = find_subarrays_with_sum_brute_force(arr, target_sum)
-    print(f"Brute force approach input: {arr} and sum: {target_sum}, subarray count: {len(result)}, subarrays: {result}")
+    result = find_subsets_with_sum(arr, target_sum)
+    print(f"Subsets - input: {arr} and sum: {target_sum}, subarray count: {len(result)}, subarrays: {result}")

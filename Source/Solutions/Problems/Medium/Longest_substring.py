@@ -44,6 +44,30 @@ def length_of_longest_substring(source):
 # Time Complexity: O (n)
 # Space Complexity: O (min(n, m)) where m is unique characters, worste case n=m, so O(n)
 
+
+def length_of_longest_substring_naive(source: str) -> int:
+    n = len(source)
+    max_len = 0
+    max_start = 0
+
+    # Check all substrings
+    for i in range(n):
+        seen = set()
+        for j in range(i, n):
+            if source[j] in seen:  # Duplicate found → stop expanding
+                break
+            seen.add(source[j])
+            if j - i + 1 > max_len:
+                max_len = j - i + 1
+                max_start = i
+
+    longest_substring = source[max_start:max_start + max_len]
+    print(f"Original string: {source}, Max Length: {max_len}, Longest Substring: {longest_substring}")
+    return max_len
+
+# Time Complexity: O(n^2)
+# Space Complexity: O(n)
+
 # Tests
 length_of_longest_substring_efficient("")
 length_of_longest_substring_efficient("aaaaa")

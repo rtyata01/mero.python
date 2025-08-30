@@ -38,23 +38,22 @@ class Tree:
         return self.diameter  # This returns the diameter in terms of the number of edges
 
 def get_tree_longest_path(root: TreeNode) -> int:
-    def longest_path(node: TreeNode, diameter: int) -> int:
-        if not node:
-            return 0, diameter # Return both depth and current diameter
-        
-        # Recursively calculate the depth of the left and right subtrees
-        left_depth, diameter = longest_path(node.left, diameter)
-        right_depth, diameter = longest_path(node.right, diameter)
-        
-        # Calculate the diameter at the current node
-        diameter = max(diameter, left_depth + right_depth)
-        
-        # Return the height of the current node and the updated maxLength
-        return max(left_depth, right_depth) + 1, diameter
-    
-    diameter = 0
-    return longest_path(root, diameter)[1]
+    """Returns the diameter (longest path) of the binary tree."""
 
+    def dfs(node: TreeNode, max_path: int) -> int:
+        if not node:
+            return 0, max_path  # depth of empty subtree
+
+        left_depth, max_path = dfs(node.left, max_path)
+        right_depth, max_path = dfs(node.right, max_path)
+
+        # Update diameter: longest path through current node
+        max_path = max(max_path, left_depth + right_depth)
+
+        # Return depth of current node
+        return max(left_depth, right_depth) + 1, max_path
+
+    return dfs(root, 0)[1]
 
 # Example tree
 #       1

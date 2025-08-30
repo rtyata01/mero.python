@@ -12,7 +12,8 @@ def is_valid_bst(root):
             return True
         if not (min_val < node.val < max_val):
             return False
-        return validate(node.left, min_val, node.val) and validate(node.right, node.val, max_val)
+        else:
+            return validate(node.left, min_val, node.val) and validate(node.right, node.val, max_val)
     
     return validate(root)
 # Time Comlexity: o(n)

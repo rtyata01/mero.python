@@ -40,6 +40,9 @@ def find_duplicate(nums):
 # Space: O(1) (if in-place sort allowed).
 
 # Tests
+input = [3, 1, 5, 3, 4, 2]
+print("Input:", input, "Output:", find_duplicate(input))
+
 input1 = [1, 1]
 print("Input:", input1, "Output:", find_duplicate(input1))
 

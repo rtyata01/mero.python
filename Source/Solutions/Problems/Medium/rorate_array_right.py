@@ -10,9 +10,9 @@ def rotate_right_reverse(nums, k):
     k %= n  # Normalize k
     
     # Helper function to reverse a portion of the list
-    def reverse(sub_nums, start, end):
+    def reverse(nums, start, end):
         while start < end:
-            sub_nums[start], sub_nums[end] = sub_nums[end], sub_nums[start]
+            nums[start], nums[end] = nums[end], nums[start]
             start += 1
             end -= 1
     

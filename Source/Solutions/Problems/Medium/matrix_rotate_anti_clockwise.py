@@ -5,7 +5,7 @@
 def rotate_anti_clockwise(matrix: list[list[int]]):
     n = len(matrix)
     
-    # Transpose (i,j) ->  (j, i)
+    # Transpose (i, j) ->  (j, i)
     for i in range(n):
         for j in range(i, n):
             matrix[i][j], matrix[j][i] = matrix[j][i], matrix[i][j]
@@ -45,7 +45,7 @@ matrix = [
 
 # [[1, 2, 3], [4, 5, 6], [7, 8, 9]]
 # [[1, 4, 7], [2, 5, 8], [3, 6, 9]] ← Transposed
-# [[3, 6, 9], [2, 5, 8], [1, 4, 7]] ← Rotated
+# [[3, 6, 9], [2, 5, 8], [1, 4, 7]] ← Rotated Column
 
 print(f"Input:", matrix)
 matrix_90 = rotate_anti_clockwise(matrix)
@@ -61,6 +61,24 @@ print(f"Rotate 360:", matrix_360)
 matrix = [
     [1, 2, 3],
     [4, 5, 6]
+]
+
+
+print(f"Input:", matrix)
+matrix_90 = rotate_anti_clockwise_brute_force(matrix)
+print(f"Rotate 90:", matrix_90)
+matrix_180 = rotate_anti_clockwise_brute_force(matrix_90)
+print(f"Rotate 180:", matrix_180)
+matrix_270 = rotate_anti_clockwise_brute_force(matrix_180)
+print(f"Rotate 270:", matrix_270)
+matrix_360 = rotate_anti_clockwise_brute_force(matrix_270)
+print(f"Rotate 360:", matrix_360)
+
+
+matrix = [
+    [1, 2, 3],
+    [4, 5, 6],
+    [7, 8, 9]
 ]
 print(f"Input:", matrix)
 matrix_90 = rotate_anti_clockwise_brute_force(matrix)

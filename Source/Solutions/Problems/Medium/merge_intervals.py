@@ -25,32 +25,35 @@ def merge(intervals):
 # merge: O(n)
 # Space Complexity: O(n)
 
+def merge_inplace(intervals):
+    if not intervals:
+        return []
+    
+    intervals.sort(key=lambda x: x[0])
+    i = 0
+    for j in range(1, len(intervals)):
+        if intervals[i][1] >= intervals[j][0]:
+            intervals[i][1] = max(intervals[i][1], intervals[j][1])
+        else:
+            i += 1
+            intervals[i] = intervals[j]
+    
+    return intervals[:i+1]
+
+# Time Complexity: O(n log n)
+# Space Complexity: O(1)
+
 # Tests
- 
-# Case 1: Basic overlapping intervals
-intervals1 = [[1, 3], [2, 6], [8, 10], [15, 18]]
-print(merge(intervals1))  # Expected: [[1, 6], [8, 10], [15, 18]]
 
-# Case 2: No overlapping intervals
-intervals2 = [[1, 2], [3, 4], [5, 6]]
-print(merge(intervals2))  # Expected: [[1, 2], [3, 4], [5, 6]]
+test_cases = [
+    [[1, 3], [2, 6], [8, 10], [15, 18]], # Basic overlapping intervals [[1, 6], [8, 10], [15, 18]]
+    [[1, 2], [3, 4], [5, 6]], # No overlapping intervals [[1, 2], [3, 4], [5, 6]]
+    [[1, 10], [2, 3], [4, 8]], # Fully nested intervals [[1, 10]]
+    [[1, 2], [2, 3], [3, 4]], # Adjacent intervals (end meets start) [[1, 4]]
+    [[5, 7]], # Single interval [[5, 7]]
+    [[-10, -1], [-5, 0], [1, 5]] # Intervals with negative values  [[-10, 0], [1, 5]]
+]
 
-# Case 3: Fully nested intervals
-intervals3 = [[1, 10], [2, 3], [4, 8]]
-print(merge(intervals3))  # Expected: [[1, 10]]
-
-# Case 4: Adjacent intervals (end meets start)
-intervals4 = [[1, 2], [2, 3], [3, 4]]
-print(merge(intervals4))  # Expected: [[1, 4]]
-
-# Case 5: Single interval
-intervals5 = [[5, 7]]
-print(merge(intervals5))  # Expected: [[5, 7]]
-
-# Case 6: Empty input
-intervals6 = []
-print(merge(intervals6))  # Expected: []
-
-# Case 7: Intervals with negative values
-intervals7 = [[-10, -1], [-5, 0], [1, 5]]
-print(merge(intervals7))  # Expected: [[-10, 0], [1, 5]]
+for input in test_cases:
+     print(merge(input))
+     print(merge_inplace(input)) 

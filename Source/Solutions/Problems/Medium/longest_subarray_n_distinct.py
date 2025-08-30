@@ -33,6 +33,24 @@ def longest_subarray_n_distinct(nums, unique_numbers):
 # Time Complexity: O(n)
 # Space Complexity: O(n)
 
+def longest_subarray_naive(nums, N):
+    max_len = 0
+    n = len(nums)
+
+    for i in range(n):
+        seen = set()
+        for j in range(i, n):
+            seen.add(nums[j])
+            if len(seen) > N:
+                break
+            if len(seen) == N:
+                max_len = max(max_len, j - i + 1)
+
+    return max_len
+
+# Time Complexity: O(n^2)
+# Space Complexity: O(n)
+
 nums = [1, 2, 1, 2, 3, 2, 2, 1, 4]
 result = longest_subarray_n_distinct(nums, 2)
 print(f"longest subarray with [2] unique element is: {result} with length: {len(result)}")

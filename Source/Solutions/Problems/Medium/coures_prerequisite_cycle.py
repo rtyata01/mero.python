@@ -31,9 +31,9 @@ def can_finish(num_courses, prerequisites):
     return True
 
 # Time and Space Complexity: O(num_courses + len(prerequisites))
-# Creating adj graph: O(num_courses)
-# Adding edges: O(len(prerequisites))
-# DFS traversal cost: O(num_courses + len(prerequisites))
+    # Creating adj graph: O(num_courses)
+    # Adding edges: O(len(prerequisites))
+    # DFS traversal cost: O(num_courses + len(prerequisites))
 
 from collections import deque
 
@@ -58,6 +58,7 @@ def can_finish_bfs(num_courses, prerequisites):
 
     return visited == num_courses
 
+# Time and Space Complexity: O(num_courses + len(prerequisites))
 
 test_cases = [
     (2, []), # No prerequisites

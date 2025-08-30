@@ -48,7 +48,7 @@ def three_sum_unsorted(nums):
     for i in range(n):
         seen = set()
         for j in range(i + 1, n):
-            complement = - (nums[i] + nums[j])
+            complement = - (nums[i] + nums[j])  # nums[i] + nums[j] + complement = 0
             if complement in seen:
                 triplet = tuple(sorted((nums[i], nums[j], complement)))  # sorted to avoid duplicates (1, -1, 0) and (0, 1, -1)
                 result.add(triplet)  # set will store unique.

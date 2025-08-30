@@ -1,6 +1,6 @@
 # Given an array of heights representing vertical lines, find two lines that form a container with the maximum water volume.
-# water area at each cell.
-# area = min(height[left], height[right]) * (right - left)
+# Water area at each cell.
+    # area = min(height[left], height[right]) * (right - left)
 
 def maxArea(height: list[int]) -> int:
     left, right = 0, len(height) - 1

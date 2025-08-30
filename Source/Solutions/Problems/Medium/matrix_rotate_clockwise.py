@@ -41,7 +41,7 @@ matrix = [
 
 # [[1, 2, 3], [4, 5, 6], [7, 8, 9]]
 # [[1, 4, 7], [2, 5, 8], [3, 6, 9]] ← Transposed
-# [[7, 4, 1], [8, 5, 2], [9, 6, 3]] ← Rotated
+# [[7, 4, 1], [8, 5, 2], [9, 6, 3]] ← Rotated Rows
 
 print(f"Input:", matrix)
 matrix_90 = rotate_clockwise(matrix)
@@ -61,6 +61,22 @@ matrix = [
 # [4, 1]
 # [5, 2]
 # [6, 3]
+
+print(f"Input:", matrix)
+matrix_90 = rotate_clockwise_brute_force(matrix)
+print(f"Rotate 90:", matrix_90)
+matrix_180 = rotate_clockwise_brute_force(matrix_90)
+print(f"Rotate 180:", matrix_180)
+matrix_270 = rotate_clockwise_brute_force(matrix_180)
+print(f"Rotate 270:", matrix_270)
+matrix_360 = rotate_clockwise_brute_force(matrix_270)
+print(f"Rotate 360:", matrix_360)
+
+matrix = [
+    [1, 2, 3],
+    [4, 5, 6],
+    [7, 8, 9]
+]
 
 print(f"Input:", matrix)
 matrix_90 = rotate_clockwise_brute_force(matrix)

@@ -8,17 +8,17 @@ def top_k_frequent(nums, k):
     count = Counter(nums) # {'a': 3, 'b': 5, 'c': 2}
     return [item for item, _ in heapq.nlargest(k, count.items(), key=lambda x: x[1])]  # heap [('b', 5), ('a', 3)], return # ['b', 'a']
 
-def topKFrequent(nums: list[int], k: int) -> list[int]:
+def topKFrequent(nums, k):
     count = Counter(nums)  # {'a': 3, 'b': 5, 'c': 2}
     return heapq.nlargest(k, count.keys(), key=count.get) # ['b', 'a']
 
-def topKFrequent(nums: list[int], k: int) -> list[int]:
+def topKFrequent(nums, k):
     count = Counter(nums)    # → Counter({1: 3, 3: 1, 2: 2}), nums = [1,1,1,3,2,2]
     sorted_items = sorted(count.items(), key=lambda item: item[1], reverse=True)  # [(1, 3), (2, 2), (3, 1)] # reverse=False, [(3, 1), (2, 2), (1, 3)]
     top_k = list(dict(sorted_items).keys())[:k]
     return top_k
 
-def topKFrequent(nums: list[int], k: int) -> list[int]:
+def topKFrequent(nums, k):
     count = Counter(nums)
     min_heap = []
 
@@ -27,8 +27,10 @@ def topKFrequent(nums: list[int], k: int) -> list[int]:
         if len(min_heap) > k:
             heapq.heappop(min_heap)
 
-    return [num for freq, num in min_heap]
+    return [num for _, num in min_heap]
 
+# Time Complexity:	O(n + m log k) → counting + heap operations
+# Space	Complextiy: O(m + k) → frequency map + heap
 
 def topKFrequent(nums: list[int], k: int) -> list[int]:
     count = Counter(nums)  # → Counter({1: 3, 3: 1, 2: 2}), nums = [1,1,1,3,2,2]
@@ -44,9 +46,10 @@ def topKFrequent(nums: list[int], k: int) -> list[int]:
             if len(result) == k:
                 return result
 
-# Time Complexity: O(n + m log k)
-# Counter = O(n)
-# heap = O(m log k), where m is unique elements and k is the min heap size.
+# Time Complexity: O(n)
+    # Counter = O(n), FillBuckets = O(m)
+    # Collect Top K = O(n)
+# Space	Complextiy: O(m + k) → fill bucket + collect top k
 
 # Test 1 - Basic input with clear top frequency
 print("Expected: [5, 3],", "Output:", top_k_frequent([5, 5, 5, 6, 3, 3], 2))
