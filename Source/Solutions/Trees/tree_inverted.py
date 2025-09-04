@@ -22,6 +22,13 @@ def invert_tree(root):
     dfs(root)
     return root
 
+def invert_tree(root):
+    if not root:
+        return None
+    
+    root.left, root.right = invert_tree(root.right), invert_tree(root.left)
+    return root
+
 def create_bst(values):
     if not values:
         return None

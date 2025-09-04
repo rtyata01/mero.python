@@ -19,8 +19,8 @@ class Solution:
                 heapq.heappush(heap, (node.val, id(node), node))  # insert 3 heads (node.va, node.id, node) from each linked list to heap.
                 # id(node) in the tuple. it will prevent TypeError when pushing nodes with same value.
                 
-        head = ListNode()
-        current = head
+        dummy = ListNode()
+        current = dummy
         while heap:
             val, _, node = heapq.heappop(heap)
             current.next = node
@@ -28,16 +28,16 @@ class Solution:
             if node.next:
                 heapq.heappush(heap, (node.next.val, id(node.next), node.next))
         
-        return head.next
+        return dummy.next
     
 def create_linked_list(arr):
-    head = ListNode()
-    current = head
+    dummy = ListNode()
+    current = dummy
     for num in arr:
         current.next = ListNode(num)
         current = current.next
         
-    return head.next
+    return dummy.next
 
 def print_linked_list(node : ListNode):
     result = []

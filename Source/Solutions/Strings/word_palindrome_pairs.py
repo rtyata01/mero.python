@@ -33,7 +33,6 @@ print(palindrome_pairs(words)) # Output: [(1, 0), (0, 1)]
 # j=0: prefix "" is palindrome, reversed(suffix)="tab" → exists in word_map → pair: (1, 0) => "bat" + "tab" = "battab"
 # j=0: prefix "" is palindrome, reversed(suffix)="bat" → exists → pair: (0, 1) => "tab" + "bat" => "tabbat"
 
-
 words = ["lls", "s", "sssll"]
 print(palindrome_pairs(words)) 
 

@@ -6,10 +6,10 @@ def multiply(num1: str, num2: str) -> str:
     res = [0] * (m + n)  # create array with fixed size with 0 values [0, 0, 0, 0, 0]
     
     # Multiply from back to front
-    for i in reversed(range(m)):
-        for j in reversed(range(n)):
+    for i in range(m - 1, -1, -1):
+        for j in range(n - 1, -1, -1):
             product = int(num1[i]) * int(num2[j])
-            p_low, p_high = i + j, i + j + 1  # low will store the result, high is the carry
+            p_low, p_high = i + j, i + j + 1  # postion low = result, position high = carry
             
             # Add mul to the position
             total = product + res[p_high]  # add existing value.

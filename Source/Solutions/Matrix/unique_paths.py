@@ -30,12 +30,21 @@ grid = [
     [1, 1, 1]
 ]
 
-print("Unique paths :", unique_paths_with_obstacles(grid))  # Output: 2
+print("Unique paths:", unique_paths_with_obstacles(grid))  # Output: 2
 
 # 1 = free, 0 = obstacle
 grid = [
     [1, 1, 1],
     [1, 0, 0],
+    [1, 1, 1]
+]
+
+print("Unique paths:", unique_paths_with_obstacles(grid))  # Output: 1
+
+# 1 = free, 0 = obstacle
+grid = [
+    [1, 1, 1],
+    [0, 0, 0],
     [1, 1, 1]
 ]
 

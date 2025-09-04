@@ -4,10 +4,10 @@
 
 from collections import Counter
 
-def can_form_palindrome(x):
-    digit_counts = Counter(str(x))
-    odd_counts = sum (1 for count in digit_counts.values() if count % 2 != 0)
-    return odd_counts <= 1  # At most one odd count is allowed
+def can_form_palindrome(num):
+    digit_counts = Counter(str(num))
+    odd_counts = sum(v % 2 for v in digit_counts.values())
+    return odd_counts <= 1
 
 def is_rearranged_k_palindromic(num, k):
     return num % k == 0 and can_form_palindrome(num)

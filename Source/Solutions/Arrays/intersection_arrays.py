@@ -4,6 +4,9 @@ def intersection(arr1, arr2):
 def union(arr1, arr2):
     return list(set(arr1 + arr2))
 
+def difference(arr1, arr2):
+    return list(set(arr1) - set(arr2))
+
 from collections import Counter
 
 def intersection_with_duplicates(arr1, arr2):

@@ -12,16 +12,13 @@ def letterCombinations(digits):
 
     def backtrack(index, path):
         if index == len(digits):
-            res.append("".join(path))
+            res.append(path)
             return
         
-        possible_letters = phone_map[digits[index]]
-        for letter in possible_letters:
-            path.append(letter)
-            backtrack(index + 1, path)
-            path.pop()  # backtrack
-
-    backtrack(0, [])
+        for letter in phone_map[digits[index]]:
+           backtrack(index + 1, path + letter)
+           
+    backtrack(0, "")
     return res
 
 print(letterCombinations("3"))
@@ -30,3 +27,4 @@ print(letterCombinations("3"))
 print(letterCombinations("23"))
 # Output: ['ad', 'ae', 'af', 'bd', 'be', 'bf', 'cd', 'ce', 'cf']
 
+print(letterCombinations("43"))

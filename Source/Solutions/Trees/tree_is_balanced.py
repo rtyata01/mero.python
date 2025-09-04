@@ -30,7 +30,6 @@ def is_balanced(root):
     return is_balanced
     # return dfs(root)[0]
     
-
 def is_balanced(root):
     """Check if a binary tree is height-balanced."""
 
@@ -38,21 +37,20 @@ def is_balanced(root):
         if not node:
             return 0  # height of empty subtree = 0
         
-        left = dfs(node.left)
-        if left == -1:
+        left_height = dfs(node.left)
+        if left_height == -1:
             return -1  # left subtree not balanced
 
-        right = dfs(node.right)
-        if right == -1:
+        right_height = dfs(node.right)
+        if right_height == -1:
             return -1  # right subtree not balanced
 
-        if abs(left - right) > 1:
+        if abs(left_height - right_height) > 1:
             return -1  # current node not balanced
 
-        return max(left, right) + 1  # return subtree height
+        return max(left_height, right_height) + 1  # return subtree height
 
     return dfs(root) != -1
-
 
 def create_bst(values):
     if not values:

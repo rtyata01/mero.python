@@ -17,6 +17,11 @@ def generate_palindromes(n):
         palindromes.append(full)
     return palindromes
 
+# [:-2] → everything except the last two characters, in order.
+# [-2:] → just the last two characters.
+# [-2::-1] → reverse from the second-to-last character to the start.
+# [::-1] → reverse the entire string
+
 def count_good_numbers(n, k):
     palindromes = generate_palindromes(n)
     good_number_set = set()
@@ -33,7 +38,7 @@ def count_good_numbers(n, k):
             candidate = ''.join(perm)    
             good_number_set.add(candidate)
             print(f"Good Number: {candidate}")
-        
+       
     return len(good_number_set)
 
 # Example

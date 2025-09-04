@@ -5,6 +5,10 @@ def is_subsequence(s: str, t: str) -> bool:
             i += 1
     return i == len(s)
 
+def is_subsequence(s: str, t: str) -> bool:
+    it = iter(t)
+    return all(char in it for char in s)
+
 print(f"Expected: True, Computed: ", is_subsequence("abc", "ahbgdc"))   # True
 print(f"Expected: True, Computed: ", is_subsequence("", "abc"))         # True (empty string is subsequence of any string)
 print(f"Expected: True, Computed: ", is_subsequence("abc", "ahbgdcab"))   # True

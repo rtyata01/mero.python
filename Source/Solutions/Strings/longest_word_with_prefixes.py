@@ -7,7 +7,7 @@ def longest_word_with_prefixes(words):
     longest = ""
     
     for word in words:
-        if len(word) == 1 or word[:-1] in valid_words:
+        if len(word) == 1 or word[:-1] in valid_words:  # [:-1] word, excep the last character.
             valid_words.add(word)
             if len(word) > len(longest):
                 longest = word

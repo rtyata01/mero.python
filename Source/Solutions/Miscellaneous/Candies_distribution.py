@@ -13,7 +13,7 @@ def candy(ratings):
             candies[i] = candies[i-1] + 1
 
     # Right to left pass
-    for i in range(n-2, -1, -1):  # if n =3, then n-2 = 1, loop through 1, 0 and reduce by -1
+    for i in range(n-2, -1, -1):  # if n=3, then n-2 = 1, loop through 1, 0 and reduce by -1
         if ratings[i] > ratings[i+1]:
             candies[i] = max(candies[i], candies[i+1] + 1)
 
@@ -33,6 +33,9 @@ print(candy(ratings))  # Output: 4
 
 
 ratings = [1, 2, 3]
+print(candy(ratings))  # Output: 6
+
+ratings = [3, 2, 1]
 print(candy(ratings))  # Output: 6
 
 # Left to right:

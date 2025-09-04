@@ -38,19 +38,12 @@ def custom_sort_relative_order(input_str, order):
 
 
 # Example usage
-input_str = "bbabac"
-order = "abc"
-print(f"Expected output: aabbbc", custom_sort_relative_order(input_str, order)) 
+test_cases = [
+    ("bbabac","abc"),
+    ("dbbaebacf","abc"),
+]
 
-input_str = "dbbaebacf"
-order = "abc"
-print(f"Expected output: aabbbcdef", custom_sort_relative_order(input_str, order)) 
-
-# Example usage
-input_str = "bbabac"
-order = "abc"
-print(f"Expected output: aabbbc", custom_sort(input_str, order)) 
-
-input_str = "dbbaebacf"
-order = "abc"
-print(f"Expected output: aabbbcdef", custom_sort(input_str, order)) 
+for test_case in test_cases:
+    input_str, order_str = test_case
+    print(f"Expected order: {order_str},  input: {input_str}, output: {custom_sort_relative_order(input_str, order_str)}") 
+    print(f"Expected order: {order_str},  input: {input_str}, output: {custom_sort(input_str, order_str)}") 

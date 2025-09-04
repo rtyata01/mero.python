@@ -1,5 +1,11 @@
 import heapq
 
+def find_kth_nlargest(nums, k):
+    return heapq.nlargest(k, nums)[-1]  # [5, 4, 3] # result[-1] = 3
+
+def find_kth_nsmallest(nums, k):
+    return heapq.nsmallest(k, nums)[-1]  # [1, 2] # result[-1] = 2
+
 def find_kth_largest(nums, k):
     min_heap = nums[:k]
     heapq.heapify(min_heap) # list is rearranged into a valid min-heap tree, where parent nodes is smaller than 2 child nodes.

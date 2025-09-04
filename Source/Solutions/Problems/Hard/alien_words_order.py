@@ -8,7 +8,6 @@ def alien_order(words):
     in_degree = {char: 0 for word in words for char in word} # outer loop # followed by inner loop
     # {'w': 0, 'r': 0, 't': 0, 'f': 0, 'e': 0 }
 
-
     # Step 2: Build graph by comparing adjacent words
     for i in range(len(words) - 1):
         c_word, n_word = words[i], words[i+1]

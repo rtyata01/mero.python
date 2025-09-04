@@ -64,9 +64,11 @@ start_level = 0
 height, levels = get_tree_level_nodes(root, start_level, cache_levels)
 
 print(f"Tree height: {height}")
+print (f"Tree nodes: {list(levels.values())}")
 for key, value in levels.items():
     print("Levels:", key, "Nodes:", value)
 
 sol = Solution()
 result = sol.get_tree_nodes(root)
 print(result)
+print (f"Tree nodes: {list(result.values())}")

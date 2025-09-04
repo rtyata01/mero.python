@@ -17,14 +17,11 @@ class SinglyLinkedList:
         self.head = None
         self.tail = None
         
-        if root is None:
-            return None
-        
-        def traverse_tree(root: TreeNode):
-            if root is None:
+        def inorder_traverse(root: TreeNode):
+            if not root:
                 return
             
-            traverse_tree(root.left)
+            inorder_traverse(root.left)
             new_node = SinglyLinkedListNode(root.val)
             
             if self.tail:
@@ -34,9 +31,9 @@ class SinglyLinkedList:
                 
             self.tail = new_node  # New node will be the new tail.
             
-            traverse_tree(root.right)
+            inorder_traverse(root.right)
         
-        traverse_tree(root)
+        inorder_traverse(root)
         return self.head
            
 

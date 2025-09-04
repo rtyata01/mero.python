@@ -38,3 +38,7 @@ head = create_linked_list(values)
 k = 2
 result = find_kth_from_end(head, k)
 print(f"The {k}th nearest element from the end is: {result}")
+
+k = 1
+result = find_kth_from_end(head, k)
+print(f"The {k}th nearest element from the end is: {result}")

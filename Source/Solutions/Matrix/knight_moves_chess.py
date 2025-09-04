@@ -13,6 +13,7 @@ def min_knight_moves(start, target, blocked):
 
     if start == target:
         return 0
+    
     if (sx, sy) in blocked or (tx, ty) in blocked:
         return -1  # impossible if start or target is blocked
 

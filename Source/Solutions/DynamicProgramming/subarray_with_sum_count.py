@@ -1,3 +1,8 @@
+# Count how many contiguous subarrays of nums, whose sum is exactly equal to k.
+
+# subarray_sum for nums[i+1...j] = prefix_sum[j] - prefix_sum[i]
+# prefix_sum[i] = prefix_sum[j] - target
+
 from collections import defaultdict
 
 def subarray_sum(nums, target_sum):
@@ -8,7 +13,7 @@ def subarray_sum(nums, target_sum):
 
     for num in nums:
         prefix_sum += num
-        count += sum_freq[prefix_sum - target_sum]  # num[j] - num[j-1] = k, num[j-1] = num[j] - k
+        count += sum_freq[prefix_sum - target_sum]  # sum[j] - (sum[i] + sum[i+1]..... sum[i+n]) = k, sum[i] = sum[j] - k
         sum_freq[prefix_sum] += 1
 
     return count

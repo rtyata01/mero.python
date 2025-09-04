@@ -13,15 +13,15 @@ def subtree_with_all_deepest(root: TreeNode) -> TreeNode:
         if not node:
             return 0, None # depth, sub tree node.
                 
-        left_depth, left_node = dfs(node.left)
-        right_depth, right_node = dfs(node.right)
+        left_depth, left_sub = dfs(node.left)
+        right_depth, right_sub = dfs(node.right)
         
         if left_depth > right_depth:
-            return (left_depth + 1, left_node)
+            return (left_depth + 1, left_sub)
         if right_depth > left_depth:
-            return (right_depth + 1, right_node)
+            return (right_depth + 1, right_sub)
         else:
-            return (left_depth + 1, node)
+            return (left_depth + 1, node) # or (right_depth + 1, node) as, left_depth = right_depth here.
     
     _, node = dfs(root)
     return node

@@ -1,4 +1,4 @@
-# A Minimum Spanning Tree is 
+# A Minimum Spanning Tree is, refers minimal weight visiting all nodes. 
 # A subset of the edges of a graph that connects all the vertices/nodes together, 
     # without any cycles, 
     # With the minimum possible total edge weight.

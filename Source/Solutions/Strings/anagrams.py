@@ -2,14 +2,22 @@ from collections import Counter
 
 class Solution:
     def is_anagram(self, source: str, target: str) -> bool:
-        counter_s = Counter(source)
-        counter_t = Counter(target)
-        return counter_s == counter_t
+        return Counter(source) == Counter(target)
 
     def is_anagram_sort(self, source: str, target: str) -> bool:
-        s = sorted(source)
-        t = sorted(target)
-        return s == t
+        return sorted(source) == sorted(target)
+
+    def is_anagram(self, source: str, target: str) -> bool:
+        if len(source) != len(target):
+            return False
+        
+        counts = [0] * 26
+        for s, t in zip(source, target):   #zip combines multiple iterables into pairs or tuple.
+            counts[ord(s) - 97] += 1    # ord converts char to unicode.
+            counts[ord(t) - 97] -= 1
+        
+        return all(c == 0 for c in counts)
+
 
 sol = Solution()
 

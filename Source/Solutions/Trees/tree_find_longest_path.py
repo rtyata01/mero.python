@@ -40,20 +40,21 @@ class Tree:
 def get_tree_longest_path(root: TreeNode) -> int:
     """Returns the diameter (longest path) of the binary tree."""
 
-    def dfs(node: TreeNode, max_path: int) -> int:
+    def dfs(node: TreeNode, longest_path: int) -> int:
         if not node:
-            return 0, max_path  # depth of empty subtree
+            return 0, longest_path  # depth, longest_path
 
-        left_depth, max_path = dfs(node.left, max_path)
-        right_depth, max_path = dfs(node.right, max_path)
+        left_depth, longest_path = dfs(node.left, longest_path)
+        right_depth, longest_path = dfs(node.right, longest_path)
 
         # Update diameter: longest path through current node
-        max_path = max(max_path, left_depth + right_depth)
+        longest_path = max(longest_path, left_depth + right_depth)
 
         # Return depth of current node
-        return max(left_depth, right_depth) + 1, max_path
+        return max(left_depth, right_depth) + 1, longest_path
 
-    return dfs(root, 0)[1]
+    _, longest_path = dfs(root, 0)
+    return longest_path
 
 # Example tree
 #       1

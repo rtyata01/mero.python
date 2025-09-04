@@ -7,11 +7,8 @@ class TreeNode:
         self.left = left
         self.right = right
 
-
 def lowest_common_ancestor_efficient(root: TreeNode, first: TreeNode, second: TreeNode):
-    if not root:
-        return None
-    
+    # ensure, first <= second
     if first.val > second.val:
         first, second = second, first  # switch first and second, to make sure that first lower than second.
     

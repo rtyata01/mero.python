@@ -53,7 +53,7 @@ class Solution:
 # Space complexity = o(w)
 
 sol = Solution()
-print(sol.longestWord(["a", "ap", "app", "appl", "apple", "apply"]))  # "apple"
+print(sol.longestWord(["a", "ap", "app", "appl", "apple", "apply"]))  # "apple" both apple and apply have prefix appl, however e comes before y in order.
 print(sol.longestWord(["w", "wo", "wor", "worl", "world", "banana"]))  # "world"
 print(sol.longestWord(["a", "ap", "app", "appl", "apple", "apples", "applied", "apply"]))  # "apples"
 print(sol.longestWord(["a", "ab", "abd", "abc"]))  # "abc"

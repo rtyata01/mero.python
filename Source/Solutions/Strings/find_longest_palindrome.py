@@ -24,7 +24,6 @@ def find_longest_palindrome(s: str):
             longest = even_palindrome
             # print(f"Found even palindrome: {longest}")
         
-
     return longest
 
 input = "a"

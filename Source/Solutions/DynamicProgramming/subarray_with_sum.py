@@ -1,6 +1,9 @@
 # Count how many contiguous subarrays of nums, whose sum is exactly equal to k.
 # Works with negative number as well.
 
+# subarray_sum for nums[i+1...j] = prefix_sum[j] - prefix_sum[i]
+# prefix_sum[i] = prefix_sum[j] - target
+
 from collections import defaultdict
 from typing import List
 
@@ -8,11 +11,11 @@ def find_contiguous_subarrays_with_sum(nums: List[int], target: int) :
     prefix_sum = 0
     subarrays = []
     sum_to_indices = defaultdict(list)
-    sum_to_indices[0].append(-1)  # Handles subarrays starting at index 0
+    sum_to_indices[0].append(-1)  # Starting with sum = 0, at index -1
 
     for index, value in enumerate(nums):
         prefix_sum += value
-        required_sum = prefix_sum - target
+        required_sum = prefix_sum - target  
 
         for start_index in sum_to_indices.get(required_sum, []):  # if required_sum in sum_to_indices: is not preferred.
             subarrays.append(nums[start_index + 1 : index + 1])
@@ -44,7 +47,7 @@ def find_subsets_with_sum(nums: List[int], target: int) -> List[List[int]]:
             backtrack(i + 1, path, current_sum + nums[i])
             path.pop()  # backtrack
 
-    backtrack(0, [], 0)
+    backtrack(0, [], 0) # start index, path, sum
     
     # Remove empty subset(s)
     result = [subset for subset in result if subset]

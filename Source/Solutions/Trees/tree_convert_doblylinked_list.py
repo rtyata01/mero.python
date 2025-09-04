@@ -18,17 +18,14 @@ class DoublyLinkedList:
     def convert_to_doubly_linked_list(self, root: TreeNode):
         self.head = None
         self.tail = None
-
-        if not root:
-            return None, None
-                    
+            
         # Helper function to perform in-order traversal
-        def traverse_in_order(node):
+        def inorder_traverse(node):
             if not node:
                 return
             
             # Recursively flatten the left subtree
-            traverse_in_order(node.left)
+            inorder_traverse(node.left)
             
             new_node = DoublyLinkedListNode(node.val)
             
@@ -41,9 +38,9 @@ class DoublyLinkedList:
             self.tail = new_node
             
             # Recursively flatten the right subtree
-            traverse_in_order(node.right)
+            inorder_traverse(node.right)
         
-        traverse_in_order(root)
+        inorder_traverse(root)
         return self.head, self.tail
 
 def print_tree(root: TreeNode):

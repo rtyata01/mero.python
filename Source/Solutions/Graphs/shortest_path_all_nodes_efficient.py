@@ -5,7 +5,7 @@ from collections import deque
 
 def shortest_path_length(graph):
     nodes = len(graph)
-    all_visited = (1 << nodes) - 1  # Bitmask when all nodes are visited 1 << 4 = 0b10000 - 1 = 0b01111 where n = 4
+    all_visited = (1 << nodes) - 1  # Bitmask when all nodes, n = 4,  1 << 4 = 10000 - 1 = 1111
     queue = deque()
     visited = set()
 
@@ -23,7 +23,7 @@ def shortest_path_length(graph):
             return steps
 
         for neighbor in graph[current_node]:
-            next_mask = visited_mask | (1 << neighbor)
+            next_mask = visited_mask | (1 << neighbor)  # bitwise OR
             state = (neighbor, next_mask)
             if state not in visited:
                 visited.add(state)

@@ -1,3 +1,17 @@
+# Matrix Directions - rows, cols
+"""
+1) Row index increases downwards.
+2) Column index increases to the right.
+
+                ( -1, 0 ) up
+                    ↑
+                    |
+left ( 0, -1 ) ← ( 0, 0 ) → ( 0, 1 ) right -> row 0
+                    |
+                    ↓
+            down ( 1, 0 ) → ( 1, 1 ) right -> row 1
+"""
+
 from collections import defaultdict
 
 def find_longest_increasing_path(grid):
@@ -26,12 +40,12 @@ def find_longest_increasing_path(grid):
         memo[(x, y)] = max_sum
         return max_sum
 
-    max_path = 0
+    longest_path = 0
     for i in range(rows):
         for j in range(cols):
-                max_path = max(max_path, dfs(i, j))
+                longest_path = max(longest_path, dfs(i, j))
 
-    return max_path
+    return longest_path
 
 grid = [
     [9,  9, 4],

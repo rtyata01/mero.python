@@ -5,28 +5,31 @@ class TreeNode:
         self.val = val
         self.left = left
         self.right = right
-        
-def find_good_nodes(root):
-    cache = set()
-    
+
+def find_good_nodes_count(root):
     def dfs(node, max_value):
         if not node:
             return 0
-
-        good_nodes_count = 0
-        if node.val >= max_value:
-            good_nodes_count += 1
-            cache.add(node.val)
-
+        # This node is good if its value >= max along path
+        good = 1 if node.val >= max_value else 0
         max_value = max(max_value, node.val)
-        good_nodes_count += dfs(node.left, max_value)
-        good_nodes_count += dfs(node.right, max_value)
-        return good_nodes_count
-    
-    good_nodes_count = dfs(root, root.val)
-    print(f"Good Nodes Count: {good_nodes_count}")
-    
-    return cache
+        return good + dfs(node.left, max_value) + dfs(node.right, max_value)
+
+    return dfs(root, root.val)
+
+
+def find_good_nodes(root):
+    result = []
+    def dfs(node, max_value):
+        if not node:
+            return
+        if node.val >= max_value:
+            result.append(node.val)
+        max_value = max(max_value, node.val)
+        dfs(node.left, max_value)
+        dfs(node.right, max_value)
+    dfs(root, root.val)
+    return result
 
 def pre_order_traverse(root):
     if not root:
