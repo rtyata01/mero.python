@@ -4,6 +4,10 @@ pip install yfinance pandas numpy ta
 pip install scikit-learn matplotlib
 pip install yahooquery
 
+# FAISS Vector Database
+pip install faiss-cpu
+pip install faiss-gpu
+
 # Summary Table: News That Moves Stocks upgrade
 
 | **Catalyst Type**                    | **Example**                            | **Why It Moves Stocks**                   |
