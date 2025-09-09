@@ -79,10 +79,16 @@ def save_vectors_csv(ticker, df, vectors):
     file_name = os.path.join(Path(__file__).resolve().parent, DATA_DIR, filename_with_date)
     os.makedirs(os.path.dirname(file_name), exist_ok=True)
     
-    vec_df = pd.DataFrame(vectors, index=df.index[-len(vectors):])
-    vec_df.reset_index(inplace=True)  # bring date into a column
+    # Ensure vectors is 2D numpy array
+    vectors = np.array(vectors)
+    
+    # Create a simple DataFrame with proper column names
+    col_names = [f"PC{i}" for i in range(vectors.shape[1])]
+    vec_df = pd.DataFrame(vectors, index=df.index[-len(vectors):], columns=col_names)
+    
+    vec_df.reset_index(inplace=True)
     vec_df.rename(columns={"index": "date"}, inplace=True)
-    vec_df.insert(0, "ticker", ticker)  # add ticker column
+    vec_df.insert(0, "ticker", ticker)
 
     # Append to one big CSV
     try:
