@@ -1,7 +1,18 @@
-# Screen the high volume stocks
-# The average volume exceeds the baseline (e.g., 25th percentile of history)
-# The latest volume exceeds mean + N × std_dev (statistically significant), where N = 2 (95% confidence) or N = 3 (99.7% confidence)
-# The latest volume exceeds the percentile threshold (80th Percentile)
+# Screen and identify stocks with strong fundamentals and statistically significant trading activity.
+#
+# Scoring components:
+#     1. EPS > 0 (weight=2)
+#     2. ROE > industry_avg_roe (weight=2)
+#     3. Debt/Equity < industry_avg_debt_to_equity (weight=1)
+#     4. P/E ratio < industry_avg_pe (weight=1)
+#     5. Price trend: high-confidence monthly increases (weight=2)
+#     6. Volume trend: recent volume spike (weight=2)
+#
+# Interpretation:
+# - Stocks with fundamental score >= 4 are considered likely strong candidates.
+# - Price trend uses percentage of increasing months (high-confidence if >= 75% months increase)
+# - Volume trend uses percentile (e.g., 80th percentile) or z-score thresholds for significance
+# - Filtering ensures sufficient liquidity and reduces noisy or illiquid stocks from consideration.
 
 import time
 import random
@@ -25,10 +36,9 @@ from screener_utils import init_cache_db, get_stock_history, save_stock_history,
 DATA_DIR = "data"
 DB_NAME = "stock_data_cache.db"
 MAX_WORKERS = 5
-LOOKBACK_DAYS = 90
+LOOKBACK_DAYS = 60  # ~12 weeks
 VOLUME_PERCENTILE_THRESHOLD = 80.0    # e.g. today's volume must exceed the 80th percentile
-MIN_AVERAGE_PERCENTILE = 25.0         # e.g. filter out lowest 25% volume days dynamically
-STD_DEV_MULTIPLIER = 2.0              # require volume > mean + 2·std_dev
+PRICE_INCREASE_THRESHOLD = 0.75  # 75% of months must show increasing average price
 DATE_FORMAT = "%Y-%m-%d"
 
 # --- Logging ---
@@ -79,27 +89,55 @@ def get_tickers_to_screen_monthly() -> List[str]:
         logger.error(msg)
         raise ConnectionError(msg)
 
-
-def has_incrementing_monthly_prices(hist):
-    """Check if monthly average prices are increasing."""
-    if not isinstance(hist, pd.DataFrame) or hist.empty:
+def has_incrementing_monthly_prices(hist: pd.DataFrame, lookback_days: int = LOOKBACK_DAYS) -> bool:
+    """
+    Check if monthly average prices are increasing for the majority of months.
+    Considered high-confidence if >= PRICE_INCREASE_THRESHOLD of months show increase.
+    """
+    if hist.empty or 'Close' not in hist:
         return False
     try:
-        monthly_prices = hist['Close'].resample('ME').mean()
-        prices = monthly_prices.values
-        return all(prices[i] < prices[i + 1] for i in range(len(prices) - 1))
+        # Align to last N trading days
+        close_prices = hist['Close'].dropna().iloc[-lookback_days:]
+        if len(close_prices) < lookback_days * 0.6:  # require at least 60% of days
+            return False
+
+        # Resample to monthly mean prices
+        monthly_prices = close_prices.resample('M').mean()
+        if len(monthly_prices) < 2:
+            return False
+
+        # Calculate percent of increasing months
+        increases = (monthly_prices.diff().dropna() > 0).sum()
+        percent_increasing = increases / (len(monthly_prices) - 1)
+
+        return percent_increasing >= PRICE_INCREASE_THRESHOLD
     except Exception:
         return False
-
-def has_high_volume_trend(hist):
-    """Check if trading volume is increasing or high."""
-    if not isinstance(hist, pd.DataFrame) or hist.empty or hist['Volume'].isnull().all():
+    
+# --- Improved Volume Trend ---
+def has_high_volume_trend(hist: pd.DataFrame, lookback_days: int = LOOKBACK_DAYS) -> bool:
+    """
+    Check if recent trading volume is statistically significant.
+    - Recent volume must exceed the Nth percentile of historical volume.
+    - Uses last `lookback_days` trading days.
+    """
+    if hist.empty or 'Volume' not in hist or hist['Volume'].isnull().all():
         return False
     try:
-        weekly_volume = hist['Volume'].resample('W').mean()
-        avg_volume = weekly_volume.mean()
-        recent_volume = weekly_volume[-4:].mean()
-        return recent_volume > avg_volume * 1.2
+        volume_data = hist['Volume'].dropna().iloc[-lookback_days:]
+        if len(volume_data) < lookback_days * 0.6:  # require at least 60% of days
+            return False
+
+        # Percentile-based threshold
+        threshold = np.percentile(volume_data, VOLUME_PERCENTILE_THRESHOLD)
+        latest_volume = volume_data.iloc[-1]
+
+        # Optionally, also consider z-score
+        z_score = (latest_volume - volume_data.mean()) / (volume_data.std() + 1e-6)
+        is_significant = latest_volume > threshold or z_score > 2.0  # 95% confidence
+
+        return is_significant
     except Exception:
         return False
     
@@ -120,33 +158,34 @@ def safe_fetch_stock_data(stock: yf.Ticker, start, end):
     return stock.history(start=start, end=end, interval="1d", auto_adjust=True)
 
 def get_fundamental_score(ticker, hist, stock: yf.Ticker):
-    """Predict fundamental score greater than 4 out of 6, will be likely good"""
-    score = 0
+    """Calculate a weighted fundamental score (out of 10) for a stock."""
+    score = 0.0
     industry_avg_roe = 0.15
     industry_avg_debt_to_equity = 1.0
-    industry_avg_pe = 25
-
+    industry_avg_pe = 25.0
+    
+    #logger.info(f"Processing fundamental score for {ticker}!")
     eps = stock.info.get("trailingEps", None)
     if isinstance(eps, (int, float)) and eps > 0:
-        score += 1
+        score += 2.0
 
     roe = stock.info.get("returnOnEquity", None)
     if isinstance(roe, (int, float)) and roe > industry_avg_roe:
-        score += 1
+        score += 2.0
 
     debt_to_equity = stock.info.get("debtToEquity", None)
     if isinstance(debt_to_equity, (int, float)) and (debt_to_equity * 0.01) < industry_avg_debt_to_equity:
-        score += 1
+        score += 1.0
 
     pe_ratio = stock.info.get("trailingPE", None)
     if isinstance(pe_ratio, (int, float)) and pe_ratio < industry_avg_pe:
-        score += 1
+        score += 1.0
 
     if has_incrementing_monthly_prices(hist):
-        score += 1
+        score += 2.0
 
     if has_high_volume_trend(hist):
-        score += 1
+        score += 2.0
 
     return score
 
@@ -208,7 +247,7 @@ def find_trending_stocks(tickers = None, max_workers: int = MAX_WORKERS, monthly
             ticker = futures[future]
             try:
                 trending_score, name, price, volume = future.result()
-                if trending_score >= 4:
+                if trending_score >= 7:  # strong threshold for fundamentals.
                     results.append((ticker, name, price, volume, trending_score))
             except Exception as err:
                 logger.warning(f"Error processing {ticker}: {err}")
@@ -246,7 +285,6 @@ def save_trending_tickers_to_db(ticker_data: List[Tuple[str, str, Optional[float
     except Exception as e:
         logger.error(f"Database insert failed: {e}")
         raise RuntimeError("DB insert failed") from e
-
 
 # --- Main Execution ---
 if __name__ == "__main__":

@@ -1,7 +1,9 @@
-# Screen the high volume stocks
-# The average volume exceeds the baseline (e.g., 25th percentile of history)
-# The latest volume exceeds mean + N × std_dev (statistically significant), where N = 2 (95% confidence) or N = 3 (99.7% confidence)
-# The latest volume exceeds the percentile threshold (80th Percentile)
+# Screen and identify stocks with a strong upward volume trend over the last ~12 weeks (~60 trading days)
+# The stock’s typical volume exceeds a baseline threshold (e.g., median or 25th percentile of its historical volume)
+# The latest volume shows a statistically significant spike compared to history 
+#   (e.g., exceeds Median + k×MAD or has a high z-score on log(volume))
+# The latest volume also exceeds a high absolute threshold 
+#   (e.g., above the 80th percentile of historical volumes)
 
 import time
 import random
@@ -22,7 +24,7 @@ from screener_utils import init_cache_db, get_stock_history, save_stock_history,
 DATA_DIR = "data"
 DB_NAME = "stock_data_cache.db"
 MAX_WORKERS = 5
-LOOKBACK_DAYS = 90
+LOOKBACK_DAYS = 60  # ~12 weeks
 VOLUME_PERCENTILE_THRESHOLD = 80.0    # e.g. today's volume must exceed the 80th percentile
 MIN_AVERAGE_PERCENTILE = 25.0         # e.g. filter out lowest 25% volume days dynamically
 STD_DEV_MULTIPLIER = 2.0              # require volume > mean + 2·std_dev
@@ -70,29 +72,26 @@ def save_volume_tickers_to_db(tickers_data: List[Tuple[str, str, Optional[float]
         logger.error(f"Database insert failed: {e}")
         raise RuntimeError("DB insert failed") from e
 
-def has_high_confidence_spike(hist: pd.DataFrame) -> Tuple[Optional[int], Optional[float]]:
+def has_high_confidence_spike(hist: pd.DataFrame) -> Tuple[Optional[int], bool]:
     """Calculate high confidence spike from volume history."""
     if hist.empty or len(hist) < 2:
         return None, False
-    
-    # Exclude the latest day for historical stats
-    historical_volumes = hist['Volume'].iloc[:-1]
-    latest_volume = int(hist['Volume'].iloc[-1])
-    avg_volume = historical_volumes.mean()
-    std_volume = historical_volumes.std()
-    
-     # Calculate min_avg_volume_default dynamically as the percentile of past volumes
-    min_avg_volume = np.percentile(historical_volumes, MIN_AVERAGE_PERCENTILE)  # 25%
-    if avg_volume < min_avg_volume:
-        return None, False  # Stock is too illiquid for confident spike detection
-    
-    percentile_volume = np.percentile(historical_volumes, VOLUME_PERCENTILE_THRESHOLD)  # 80%
-    
-    is_above_std_threshold  = latest_volume > avg_volume + STD_DEV_MULTIPLIER * std_volume
-    is_above_percentile_threshold  = latest_volume > percentile_volume
-    has_high_volume = is_above_std_threshold and is_above_percentile_threshold
-    
-    return latest_volume, has_high_volume
+
+    historical_volumes = hist['Volume'].iloc[:-1].astype(float)
+    latest_volume = float(hist['Volume'].iloc[-1])
+
+    median_vol = np.median(historical_volumes)
+    mad_vol = np.median(np.abs(historical_volumes - median_vol))
+    z_score = (latest_volume - median_vol) / (mad_vol if mad_vol else 1)
+
+    # percentiles
+    high_percentile = np.percentile(historical_volumes, VOLUME_PERCENTILE_THRESHOLD)
+
+    # require at least N-MAD spike *and* above percentile
+    has_high_volume = z_score > 3 and latest_volume > high_percentile
+
+    return int(latest_volume), has_high_volume
+
 
 def sleep_with_jitter(min_delay=0.5, max_delay=1.5):
     """Add delay with jitter to avoid triggering rate limits."""
@@ -179,10 +178,10 @@ def find_high_volume_stocks(max_workers: int = MAX_WORKERS) -> List[Tuple[str, s
 if __name__ == "__main__":
     try:
         init_cache_db()
-        logger.info("Starting high-volume stock screening...")
+        logger.info("Screening rising-volume stock ...")
         tickers = find_high_volume_stocks()
         save_volume_tickers_to_db(tickers)
-        logger.info(f"Completed. {len(tickers)} tickers updated in DB.")
+        logger.info(f"Found {len(tickers)} rising-volume stocks.")
     except Exception as main_err:
         logger.error(f"Fatal error: {main_err}")
         print(f"Error: {main_err}")

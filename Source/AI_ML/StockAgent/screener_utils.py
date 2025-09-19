@@ -163,7 +163,7 @@ def save_stock_history(ticker: str, df: pd.DataFrame) -> None:
 def load_trending_tickers() -> List[str]:
     try:
         with db_connection() as conn:
-            query = "SELECT symbol FROM eligible_stocks WHERE CAST(fundamental_score AS INTEGER) >= 4"
+            query = "SELECT symbol FROM eligible_stocks WHERE CAST(fundamental_score AS INTEGER) >= 7"
             df = pd.read_sql_query(query, conn)
             if df.empty:
                 logger.warning("No trending tickers found.")
@@ -183,7 +183,7 @@ def load_trending_tickers() -> List[str]:
 def load_quality_tickers() -> List[str]:
     try:
         with db_connection() as conn:
-            query = "SELECT symbol FROM eligible_stocks WHERE CAST(quality_score AS INTEGER) >= 4"
+            query = "SELECT symbol FROM eligible_stocks WHERE CAST(quality_score AS INTEGER) >= 7"
             df = pd.read_sql_query(query, conn)
             if df.empty:
                 logger.warning("No quality tickers found.")

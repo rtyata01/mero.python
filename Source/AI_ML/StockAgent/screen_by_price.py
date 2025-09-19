@@ -1,9 +1,9 @@
-# Screen the high volume stocks and find stock with higher average monthly price for last 12 Weeks i.e. ~3 months.
-# latest price > price 12 weeks before
-# is_increasing_percent = count consecutive price increments (day[i] > day[i-1]) / total number of days > 0.75 
-# Noisy signal = 50%  
-# Balanced signal = 66.67%
-# High signal = 75%
+# Screen and identify stocks with a strong upward price trend over the last ~12 weeks (~60 trading days)
+# - Latest closing price must be higher than the closing price ~12 weeks ago
+# - Calculate daily increases: count of days where Close[i] > Close[i-1] over the last 60 trading days
+# - Percent of increasing days = (number of increasing days) / (total trading days - 1)
+# - Only consider "High" signal: percent of increasing days >= 75%
+#   (signals with lower percentages are ignored to reduce noisy trends)
 
 import time
 import random
@@ -23,8 +23,8 @@ from screener_utils import init_cache_db, get_stock_history, save_stock_history,
 DATA_DIR = "data"
 DB_NAME = "stock_data_cache.db"
 MAX_WORKERS = 5
-LOOKBACK_DAYS = 90
-HIGH_CONFIDENCE_PERCENT = 0.75
+LOOKBACK_DAYS = 60  # ~12 weeks
+HIGH_THRESHOLD = 0.75
 
 # --- Logging ---
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
@@ -121,21 +121,17 @@ def has_increasing_monthly_prices(ticker: str) -> Tuple[bool, str, Optional[floa
         latest_price = close_prices.iloc[-1]
         latest_volume = hist['Volume'].iloc[-1] if 'Volume' in hist else None
 
+       # Cumulative growth check
         if latest_price <= start_price:
-            logger.info(f"{ticker} latest price: {latest_price} is lower than starting price {start_price}!")
             return False, stock_name, latest_price, latest_volume
 
-        # Count daily increases
-        daily_increases = sum(
-            1 for i in range(1, len(close_prices)) if close_prices.iloc[i] > close_prices.iloc[i - 1]
-        )
-
+        # Rolling / cumulative daily increases
+        daily_increases = (close_prices.diff() > 0).sum()
         percent_increase_days = daily_increases / (len(close_prices) - 1)
-        is_increasing = percent_increase_days > HIGH_CONFIDENCE_PERCENT
 
-        if is_increasing:
-            logger.info(f"{ticker} has increasing price!")
-            return is_increasing, stock_name, latest_price, latest_volume
+        # Only consider "High" signal
+        if percent_increase_days >= HIGH_THRESHOLD:
+            return True, stock_name, latest_price, latest_volume
         else:
             return False, stock_name, latest_price, latest_volume
 
@@ -170,12 +166,13 @@ def find_increasing_price_stocks() -> List[Tuple[str, str, float, int, bool]]:
 if __name__ == "__main__":
     try:
         init_cache_db()
+        logger.info("Screening rising-price stocks ...")
         rising_stocks = find_increasing_price_stocks()
         save_price_tickers_to_db(rising_stocks)
 
         count = len(rising_stocks)
         symbols = [t[0] for t in rising_stocks]
-        logger.info(f"Completed: {count} rising-price tickers found.")
+        logger.info(f"Found {count} rising-price stocks.")
         print(f"Tickers with rising-prices ({count}): {symbols}")
 
     except Exception as e:
