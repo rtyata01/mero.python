@@ -152,3 +152,6 @@ dmypy.json
 
 # Local config files
 *.local
+
+# Ignore DS store
+.DS_Store
